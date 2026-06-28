@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Prescription Content</title>
+    <style>
+        @page {
+            size: A4;
+            margin-top: 58mm;    /* Skip pre-printed clinic header zone */
+            margin-bottom: 72mm; /* Skip pre-printed footer + QR zone */
+            margin-left: 20mm;
+            margin-right: 20mm;
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11pt;
+            color: #111111;
+            line-height: 1.4;
+            background: transparent;
+            margin: 0;
+            padding: 0;
+        }
+        .patient-info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            border-bottom: 1px double #000000;
+            padding-bottom: 10px;
+        }
+        .patient-info-table td {
+            padding: 4px 0;
+        }
+        .patient-label {
+            font-weight: bold;
+            color: #333333;
+        }
+        .patient-value {
+            border-bottom: 1px dotted #888888;
+        }
+        .rx-symbol {
+            font-size: 28pt;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            margin: 10px 0 15px 0;
+            line-height: 1;
+            color: #000000;
+        }
+        .details-block {
+            margin-bottom: 25px;
+            white-space: pre-wrap;
+            font-size: 11pt;
+            color: #222222;
+        }
+        .medicines-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .medicines-table th {
+            border-bottom: 1px solid #000000;
+            font-weight: bold;
+            text-align: left;
+            padding: 8px 4px;
+            font-size: 10pt;
+        }
+        .medicines-table td {
+            padding: 10px 4px;
+            border-bottom: 1px solid #eeeeee;
+            font-size: 10.5pt;
+        }
+        .qty-col {
+            text-align: center;
+            width: 15%;
+        }
+        .dosage-col {
+            width: 35%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Compact Patient Information Section -->
+    <table class="patient-info-table">
+        <tr>
+            <td class="patient-label" style="width: 12%;">Patient:</td>
+            <td class="patient-value" style="width: 48%; font-weight: bold;" th:text="${rx.patientName}">John Doe</td>
+            <td class="patient-label" style="width: 10%; text-align: right; padding-right: 5px;">Date:</td>
+            <td class="patient-value" style="width: 30%;" th:text="${rx.date}">20/06/2026</td>
+        </tr>
+        <tr>
+            <td class="patient-label">Age/Sex:</td>
+            <td class="patient-value" colspan="3" th:text="${rx.ageGender}">34 yrs / Male</td>
+        </tr>
+    </table>
+
+    <!-- The ℞ Symbol -->
+    <div class="rx-symbol">℞</div>
+
+    <!-- Free-text clinical notes/details -->
+    <div class="details-block" th:text="${rx.details}">Clinical findings and notes go here...</div>
+
+    <!-- Prescribed Medications -->
+    <table class="medicines-table" th:if="${rx.medicines != null and !rx.medicines.isEmpty()}">
+        <thead>
+            <tr>
+                <th>Medicine Name</th>
+                <th class="dosage-col">Dosage Instructions</th>
+                <th class="qty-col">Qty</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="med : ${rx.medicines}">
+                <td style="font-weight: bold;" th:text="${med.medicineName}">Amoxicillin 500mg</td>
+                <td class="dosage-col" th:text="${med.dosage}">1-0-1 (After food)</td>
+                <td class="qty-col" th:text="${med.quantity}">10</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

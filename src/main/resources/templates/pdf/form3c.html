@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Form 3C — Dental Register</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 15mm;
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 10pt;
+            color: #222222;
+            line-height: 1.3;
+            margin: 0;
+            padding: 0;
+        }
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        .header-left {
+            text-align: left;
+            vertical-align: top;
+        }
+        .header-right {
+            text-align: right;
+            vertical-align: top;
+            font-size: 9pt;
+            color: #555555;
+        }
+        .title {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #000000;
+            margin: 0;
+        }
+        .subtitle {
+            font-size: 10pt;
+            font-style: italic;
+            margin: 2px 0;
+        }
+        .register-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .register-table th {
+            border: 1px solid #000000;
+            background-color: #f2f2f2;
+            font-weight: bold;
+            padding: 6px;
+            text-align: left;
+            font-size: 9pt;
+        }
+        .register-table td {
+            border: 1px solid #000000;
+            padding: 6px;
+            vertical-align: top;
+        }
+        .date-row {
+            background-color: #e6e6e6;
+            font-weight: bold;
+            font-size: 9.5pt;
+        }
+        .indented-name {
+            padding-left: 15px;
+            font-style: italic;
+            color: #333333;
+        }
+        .amount-col {
+            text-align: right;
+            width: 15%;
+        }
+        .rec-col {
+            width: 10%;
+        }
+        .case-patient-col {
+            width: 35%;
+        }
+        .treatment-col {
+            width: 40%;
+        }
+        .daily-total-row {
+            font-weight: bold;
+            background-color: #fafafa;
+        }
+        .grand-total-section {
+            margin-top: 20px;
+            text-align: right;
+            font-size: 12pt;
+            font-weight: bold;
+        }
+        .grand-total-box {
+            display: inline-block;
+            border: 2px solid #000000;
+            padding: 8px 15px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <table class="header-table">
+        <tr>
+            <td class="header-left">
+                <div class="title">FORM 3C</div>
+                <div class="subtitle">(See rules under Dentists Act, 1948)</div>
+                <div style="font-weight: bold; margin-top: 5px;">DENTAL REGISTER</div>
+            </td>
+            <td class="header-right">
+                <div>Clinic: <strong>Aditya Dental Clinic</strong></div>
+                <div th:if="${form3c.doctorName != null}">Doctor: <strong th:text="${form3c.doctorName}">Dr. Kumar</strong></div>
+                <div>Period: <span th:text="${form3c.fromDate}">01-01-2026</span> to <span th:text="${form3c.toDate}">31-01-2026</span></div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="register-table">
+        <thead>
+            <tr>
+                <th class="rec-col">Rec. No.</th>
+                <th class="case-patient-col">Case No. / Patient Name</th>
+                <th class="treatment-col">Treatment Given</th>
+                <th class="amount-col">Amount (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <th:block th:each="group : ${form3c.groups}">
+                <!-- Date Header Row -->
+                <tr class="date-row">
+                    <td colspan="4" th:text="${group.dateLabel}">09-06-2026</td>
+                </tr>
+                
+                <!-- Entries for this Date -->
+                <th:block th:each="entry : ${group.entries}">
+                    <tr>
+                        <td rowspan="2" class="rec-col" th:text="${entry.recNo}">101</td>
+                        <td class="case-patient-col" style="font-weight: bold;" th:text="${entry.caseNumber}">CASE-992</td>
+                        <td rowspan="2" class="treatment-col" th:text="${entry.treatmentGiven}">Scaling and Polishing</td>
+                        <td rowspan="2" class="amount-col" th:text="${#numbers.formatDecimal(entry.amount, 1, 2)}">1200.00</td>
+                    </tr>
+                    <tr>
+                        <td class="case-patient-col indented-name" th:text="${entry.patientName}">John Doe</td>
+                    </tr>
+                </th:block>
+
+                <!-- Daily Total Row -->
+                <tr class="daily-total-row">
+                    <td colspan="3" style="text-align: right;">Total for <span th:text="${group.dateLabel}">09-06-2026</span>:</td>
+                    <td class="amount-col" th:text="${#numbers.formatDecimal(group.dailyTotal, 1, 2)}">1200.00</td>
+                </tr>
+            </th:block>
+        </tbody>
+    </table>
+
+    <div class="grand-total-section">
+        <div class="grand-total-box">
+            Grand Total Amount: ₹<span th:text="${#numbers.formatDecimal(form3c.grandTotal, 1, 2)}">1200.00</span>
+        </div>
+    </div>
+
+</body>
+</html>

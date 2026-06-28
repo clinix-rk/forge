@@ -1,0 +1,38 @@
+package com.clinix.forge.prescription.entity;
+
+import com.clinix.forge.core.entity.BaseEntity;
+import jakarta.persistence.*;
+import lombok.*;
+
+/**
+ * Entity mapping that links medicines to prescriptions with a specific dosage and quantity.
+ */
+@Entity
+@Table(
+        name = "prescription_medicines",
+        indexes = {
+                @Index(name = "idx_presc_med", columnList = "prescription_id, medicine_id")
+        }
+)
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class PrescriptionMedicineEntity extends BaseEntity {
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "prescription_id", nullable = false)
+    private PrescriptionEntity prescription;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "medicine_id", nullable = false)
+    private MedicineEntity medicine;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "dosage_id", nullable = false)
+    private DrugDosageEntity dosage;
+
+    @Column(nullable = false)
+    private Integer quantity;
+}

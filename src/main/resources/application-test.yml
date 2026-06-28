@@ -1,0 +1,40 @@
+server:
+  port: 8081 # Prevents execution port collision during local test suites
+
+spring:
+  datasource:
+    # Uses H2 in-memory mode or a dedicated ephemeral containerized test database
+    url: jdbc:h2:mem:clinix_test_db;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop # Drops database architecture schemas instantly after testing lifecycle
+    show-sql: false
+
+  flyway:
+    enabled: false # Turn off migrations to rely purely on Hibernate schema generation speed
+
+springdoc:
+  api-docs:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health # Telemetry verification only
+
+clinix:
+  security:
+    jwt:
+      secret: 7A25432A462D4A614E645267556B58703273357638792F423F4528482B4D6251
+      expiration-ms: 3600000 # 1 Hour short validation window
+
+logging:
+  level:
+    com.clinix: WARN
+    org.springframework: WARN

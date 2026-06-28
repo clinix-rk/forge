@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Receipt</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            color: #333333;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+        .watermark {
+            position: absolute;
+            top: 35%;
+            left: 25%;
+            width: 50%;
+            opacity: 0.05;
+            z-index: -1;
+        }
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+        .header-logo {
+            width: 80px;
+            vertical-align: middle;
+        }
+        .header-text {
+            padding-left: 20px;
+            vertical-align: middle;
+        }
+        .clinic-name {
+            font-size: 24pt;
+            font-weight: bold;
+            color: #0d47a1;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+        .clinic-details {
+            font-size: 10pt;
+            color: #555555;
+            margin: 3px 0 0 0;
+        }
+        .divider {
+            border-top: 2px solid #0d47a1;
+            margin-bottom: 20px;
+        }
+        .title {
+            text-align: center;
+            font-size: 16pt;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .info-table td {
+            padding: 5px;
+            border: 1px solid #cccccc;
+        }
+        .info-label {
+            font-weight: bold;
+            width: 25%;
+            background-color: #f5f5f5;
+        }
+        .info-value {
+            width: 75%;
+        }
+        .salutation {
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        .treatment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
+        .treatment-table th {
+            background-color: #0d47a1;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #0d47a1;
+        }
+        .treatment-table td {
+            padding: 10px;
+            border: 1px solid #dddddd;
+        }
+        .treatment-table .amount-col {
+            text-align: right;
+            width: 20%;
+        }
+        .treatment-table .date-col {
+            width: 20%;
+        }
+        .treatment-table .total-row td {
+            font-weight: bold;
+            background-color: #f5f5f5;
+            border-top: 2px solid #0d47a1;
+        }
+        .footer-sign {
+            margin-top: 50px;
+            text-align: right;
+            float: right;
+            width: 250px;
+        }
+        .footer-sign-space {
+            height: 60px;
+        }
+        .footer-clinic {
+            font-weight: bold;
+            color: #0d47a1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Subtle Tooth Background Watermark -->
+    <svg class="watermark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#0d47a1" d="M50,5 C40,5 30,10 25,20 C20,30 18,45 22,55 C25,62 30,68 35,73 C38,76 40,82 40,88 C40,92 43,95 47,95 C49,95 50,93 50,91 C50,93 51,95 53,95 C57,95 60,92 60,88 C60,82 62,76 65,73 C70,68 75,62 78,55 C82,45 80,30 75,20 C70,10 60,5 50,5 Z"/>
+    </svg>
+
+    <table class="header-table">
+        <tr>
+            <td class="header-logo">
+                <img src="images/clinic_logo.png" alt="Logo" width="80" height="80"/>
+            </td>
+            <td class="header-text">
+                <div class="clinic-name">ADITYA DENTAL CLINIC</div>
+                <div class="clinic-details">Specialist Dental Care &amp; Implant Centre</div>
+                <div class="clinic-details">Contact: +91 98765 43210 | Email: contact@adityadental.com</div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="divider"></div>
+
+    <div class="title">Receipt</div>
+
+    <table class="info-table">
+        <tr>
+            <td class="info-label">Doctor In Charge:</td>
+            <td class="info-value" th:text="${receipt.doctorName}">Dr. Aditya Kumar</td>
+        </tr>
+    </table>
+
+    <div class="salutation">
+        To, <br/>
+        Whosesoever it may concern, <br/><br/>
+        This is to certify that payment has been received for the following dental treatments:
+    </div>
+
+    <table class="treatment-table">
+        <thead>
+            <tr>
+                <th class="date-col">Date</th>
+                <th>Work Done / Treatment Description</th>
+                <th class="amount-col">Amount (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="line : ${receipt.lines}">
+                <td class="date-col" th:text="${line.date}">12/05/2026</td>
+                <td th:text="${line.workDone}">Root Canal Treatment</td>
+                <td class="amount-col" th:text="${#numbers.formatDecimal(line.amount, 1, 2)}">5000.00</td>
+            </tr>
+            <tr class="total-row">
+                <td colspan="2" style="text-align: right;">Grand Total:</td>
+                <td class="amount-col" th:text="${#numbers.formatDecimal(receipt.total, 1, 2)}">5000.00</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer-sign">
+        <div class="footer-sign-space"></div>
+        <div class="footer-clinic">For Aditya Dental Clinic</div>
+        <div style="font-size: 10pt; margin-top: 5px;" th:text="${receipt.doctorName}">Dr. Aditya Kumar</div>
+    </div>
+
+</body>
+</html>
