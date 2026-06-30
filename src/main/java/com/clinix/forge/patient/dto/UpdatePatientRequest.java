@@ -13,11 +13,9 @@ public record UpdatePatientRequest(
         @Size(max = 50, message = "Name must not exceed 50 characters")
         String name,
 
-        @NotNull(message = "Date of birth is required")
         @Past(message = "Date of birth must be a past date")
         LocalDate dateOfBirth,
 
-        @NotNull(message = "Gender specification is required")
         Gender gender,
 
         @Email(message = "Invalid email format")
