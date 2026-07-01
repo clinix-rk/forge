@@ -199,3 +199,10 @@ README.html
 *.iml
 .idea
 .exercism
+
+# Logs
+/logs/
+/backend.log
+
+# Uploads
+/uploads/
