@@ -68,7 +68,7 @@ public class TreatmentCategoryController {
                 .ok(ApiResponse.success("Treatment categories retrieved.", categories));
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @Operation(
             summary = "Update a treatment",
             description = "Updates an existing patient treatment record."
@@ -89,7 +89,7 @@ public class TreatmentCategoryController {
         return ResponseEntity.ok(ApiResponse.success("Treatment category updated.", response));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @Operation(
             summary = "Delete a treatment",
             description = "Deletes an existing patient treatment record."

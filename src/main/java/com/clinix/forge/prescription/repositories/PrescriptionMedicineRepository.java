@@ -1,4 +1,4 @@
-package com.clinix.forge.prescription;
+package com.clinix.forge.prescription.repositories;
 
 import com.clinix.forge.prescription.entity.PrescriptionMedicineEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

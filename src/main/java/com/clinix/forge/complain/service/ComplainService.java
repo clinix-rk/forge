@@ -34,11 +34,11 @@ public class ComplainService {
     private final ComplainMapper complainMapper;
 
     @Transactional(rollbackFor = Exception.class)
-    public ComplainResponse createComplain(CreateComplainRequest request) {
-        log.info("Creating complain for patient ID: {}", request.patientId());
+    public ComplainResponse createComplain(Long patientId, CreateComplainRequest request) {
+        log.debug("Adding complain for patientId : ", patientId);
 
-        PatientEntity patient = patientRepository.findById(request.patientId())
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + request.patientId()));
+        PatientEntity patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + patientId));
 
         ComplainCategoryEntity category = complainCategoryRepository.findById(request.categoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Complain category not found with ID: " + request.categoryId()));
@@ -48,22 +48,17 @@ public class ComplainService {
         entity.setCategory(category);
 
         ComplainEntity saved = complainRepository.save(entity);
-        log.info("Complain created with ID: {}", saved.getId());
+        log.debug("Complain created with ID: {}", saved.getId());
         return complainMapper.toResponse(saved);
-    }
-
-    @Transactional(readOnly = true)
-    public PaginatedPayload<ComplainResponse> getAllComplains(int pageNo, int pageSize) {
-        return getAllComplains(null, pageNo, pageSize);
     }
 
     @Transactional(readOnly = true)
     public PaginatedPayload<ComplainResponse> getAllComplains(Long patientId, int pageNo, int pageSize) {
         log.debug("Fetching complains - PatientId: {}, PageNo: {}, PageSize: {}", patientId, pageNo, pageSize);
+
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
-        Page<ComplainEntity> complainPage = (patientId != null)
-                ? complainRepository.findByPatientId(patientId, pageRequest)
-                : complainRepository.findAll(pageRequest);
+
+        Page<ComplainEntity> complainPage = complainRepository.findByPatientId(patientId, pageRequest);
 
         List<ComplainResponse> responses = complainPage.getContent().stream()
                 .map(complainMapper::toResponse)
@@ -73,7 +68,7 @@ public class ComplainService {
     }
 
     @Transactional(readOnly = true)
-    public ComplainResponse getComplainById(Long id) {
+    public ComplainResponse getComplainById(Long patientId, Long id) {
         log.debug("Fetching complain with ID: {}", id);
         ComplainEntity complain = complainRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Complain not found with ID: " + id));
@@ -81,8 +76,8 @@ public class ComplainService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ComplainResponse updateComplainById(Long id, UpdateComplainRequest request) {
-        log.info("Updating complain with ID: {}", id);
+    public ComplainResponse updateComplainById(Long patientId, Long id, UpdateComplainRequest request) {
+        log.debug("Updating complain with ID: {}", id);
         ComplainEntity complain = complainRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Complain not found with ID: " + id));
 
@@ -93,17 +88,17 @@ public class ComplainService {
         complain.setCategory(category);
 
         ComplainEntity updated = complainRepository.save(complain);
-        log.info("Complain updated with ID: {}", updated.getId());
+        log.debug("Complain updated with ID: {}", updated.getId());
         return complainMapper.toResponse(updated);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteComplainById(Long id) {
-        log.info("Deleting complain with ID: {}", id);
+    public void deleteComplainById(Long patientId, Long id) {
+        log.debug("Deleting complain with ID: {}", id);
         if (!complainRepository.existsById(id)) {
             throw new ResourceNotFoundException("Complain not found with ID: " + id);
         }
         complainRepository.deleteById(id);
-        log.info("Complain deleted successfully: {}", id);
+        log.debug("Complain deleted successfully: {}", id);
     }
 }

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/complains")
+@RequestMapping("/patients/{patientId}/complains")
 @RequiredArgsConstructor
 @Tag(name = "Complain Management", description = "Endpoints for managing patient complaints and categories")
 public class ComplainController {
@@ -30,10 +30,11 @@ public class ComplainController {
     @PostMapping
     @Operation(summary = "Register a new complain", description = "Creates a new patient complain record.")
     public ResponseEntity<ApiResponse<ComplainResponse>> createComplain(
+            @PathVariable Long patientId,
             @RequestBody @Valid CreateComplainRequest request
     ) {
         log.debug("API call: Create new complain");
-        ComplainResponse response = complainService.createComplain(request);
+        ComplainResponse response = complainService.createComplain(patientId, request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Complain registered successfully.", response));
@@ -44,7 +45,7 @@ public class ComplainController {
     public ResponseEntity<ApiResponse<PaginatedPayload<ComplainResponse>>> getAllComplains(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize,
-            @RequestParam(required = false) Long patientId
+            @PathVariable Long patientId
     ) {
         log.debug("API call: Fetching complains paginated - Page: {}, Size: {}, PatientId: {}", pageNo, pageSize, patientId);
         PaginatedPayload<ComplainResponse> response = complainService.getAllComplains(patientId, pageNo, pageSize);
@@ -55,9 +56,12 @@ public class ComplainController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get complain by ID", description = "Retrieves a complain's details by ID.")
-    public ResponseEntity<ApiResponse<ComplainResponse>> getComplainById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ComplainResponse>> getComplainById(
+            @PathVariable Long id,
+            @PathVariable Long patientId
+    ) {
         log.debug("API call: Fetching complain with ID: {}", id);
-        ComplainResponse response = complainService.getComplainById(id);
+        ComplainResponse response = complainService.getComplainById(patientId, id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Complain retrieved successfully.", response));
@@ -66,11 +70,12 @@ public class ComplainController {
     @PutMapping("/{id}")
     @Operation(summary = "Update complain by ID", description = "Updates an existing complain record.")
     public ResponseEntity<ApiResponse<ComplainResponse>> updateComplainById(
+            @PathVariable Long patientId,
             @PathVariable Long id,
             @RequestBody @Valid UpdateComplainRequest request
     ) {
         log.debug("API call: Updating complain with ID: {}", id);
-        ComplainResponse response = complainService.updateComplainById(id, request);
+        ComplainResponse response = complainService.updateComplainById(patientId, id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Complain updated successfully.", response));
@@ -78,9 +83,12 @@ public class ComplainController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete complain by ID", description = "Deletes a complain record based on ID.")
-    public ResponseEntity<Void> deleteComplainById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteComplainById(
+            @PathVariable Long id,
+            @PathVariable Long patientId
+    ) {
         log.debug("API call: Deleting complain with ID: {}", id);
-        complainService.deleteComplainById(id);
+        complainService.deleteComplainById(patientId, id);
         return ResponseEntity.noContent().build();
     }
 }

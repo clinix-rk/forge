@@ -1,8 +1,9 @@
-package com.clinix.forge.prescription;
+package com.clinix.forge.prescription.services;
 
 import com.clinix.forge.core.exception.DuplicateResourceException;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
 import com.clinix.forge.core.payload.PaginatedPayload;
+import com.clinix.forge.prescription.PrescriptionMapper;
 import com.clinix.forge.prescription.dto.CreateMedicineRequest;
 import com.clinix.forge.prescription.dto.MedicineResponse;
 import com.clinix.forge.prescription.dto.UpdateMedicineRequest;

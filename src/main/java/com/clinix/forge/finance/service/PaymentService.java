@@ -1,15 +1,17 @@
-package com.clinix.forge.finance;
+package com.clinix.forge.finance.service;
 
 import com.clinix.forge.core.exception.DuplicateResourceException;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
 import com.clinix.forge.core.payload.PaginatedPayload;
+import com.clinix.forge.finance.PaymentMapper;
+import com.clinix.forge.finance.PaymentRepository;
 import com.clinix.forge.finance.dto.CreatePaymentRequest;
-import com.clinix.forge.finance.dto.EnrichedPaymentResponse;
 import com.clinix.forge.finance.dto.PaymentResponse;
 import com.clinix.forge.finance.dto.UpdatePaymentRequest;
 import com.clinix.forge.finance.entity.PaymentEntity;
 import com.clinix.forge.finance.entity.PaymentMethod;
-import com.clinix.forge.finance.entity.ReciptEntity;
+import com.clinix.forge.patient.entity.PatientEntity;
+import com.clinix.forge.patient.repositories.PatientRepository;
 import com.clinix.forge.treatment.repository.TreatmentRepository;
 import com.clinix.forge.treatment.entity.TreatmentEntity;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,6 @@ import org.springframework.validation.annotation.Validated;
 import java.time.LocalDate;
 import java.util.List;
 
-
 @Slf4j
 @Service
 @Validated
@@ -31,44 +32,39 @@ import java.util.List;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final ReciptRepository reciptRepository;
+    private final PatientRepository patientRepository;
     private final TreatmentRepository treatmentRepository;
     private final PaymentMapper paymentMapper;
 
     @Transactional(rollbackFor = Exception.class)
-    public PaymentResponse createPayment(CreatePaymentRequest request) {
-        log.info("Creating payment for recipt ID: {} and treatment ID: {}", request.reciptId(), request.treatmentId());
-
-        ReciptEntity recipt = reciptRepository.findById(request.reciptId())
-                .orElseThrow(() -> new ResourceNotFoundException("Recipt not found with ID: " + request.reciptId()));
+    public PaymentResponse createPayment(Long patientId, CreatePaymentRequest request) {
+        log.debug("Adding payment for patient : {}", patientId);
 
         TreatmentEntity treatment = treatmentRepository.findById(request.treatmentId())
-                .orElseThrow(() -> new ResourceNotFoundException("Treatment not found with ID: " + request.treatmentId()));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Treatment id %d not found", request.treatmentId())));
+
+        PatientEntity patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Patient id %d not found", patientId)));
 
         if (paymentRepository.findByTreatmentId(request.treatmentId()).isPresent()) {
-            throw new DuplicateResourceException("A payment has already been registered for treatment ID: " + request.treatmentId());
+            throw new DuplicateResourceException(String.format("Payment for treatment id %d already exists", request.treatmentId()));
         }
 
         PaymentEntity entity = paymentMapper.toEntity(request);
-        entity.setRecipt(recipt);
+        entity.setPatient(patient);
         entity.setTreatment(treatment);
 
         PaymentEntity saved = paymentRepository.save(entity);
-        log.info("Payment created with ID: {}", saved.getId());
+        log.debug("Payment id {} created", saved.getId());
         return paymentMapper.toResponse(saved);
     }
 
     @Transactional(readOnly = true)
-    public PaginatedPayload<PaymentResponse> getAllPayments(int pageNo, int pageSize) {
-        return getAllPayments(null, pageNo, pageSize);
-    }
-
-    @Transactional(readOnly = true)
     public PaginatedPayload<PaymentResponse> getAllPayments(Long patientId, int pageNo, int pageSize) {
-        log.debug("Fetching payments - PatientId: {}, PageNo: {}, PageSize: {}", patientId, pageNo, pageSize);
+        log.debug("Reading payments patient id {}", patientId);
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
         Page<PaymentEntity> page = (patientId != null)
-                ? paymentRepository.findByPatientId(patientId, pageRequest)
+                ? paymentRepository.findAllByPatientId(patientId, pageRequest)
                 : paymentRepository.findAll(pageRequest);
 
         List<PaymentResponse> responses = page.getContent().stream()
@@ -79,49 +75,33 @@ public class PaymentService {
     }
 
     @Transactional(readOnly = true)
-    public PaymentResponse getPaymentById(Long id) {
-        log.debug("Fetching payment with ID: {}", id);
+    public PaymentResponse getPaymentById(Long patientId, Long id) {
+        log.debug("Reading payment id {} for patient id {}", id, patientId);
         PaymentEntity entity = paymentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Payment not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Payment id %d not found", id)));
         return paymentMapper.toResponse(entity);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public PaymentResponse updatePaymentById(Long id, UpdatePaymentRequest request) {
-        log.info("Updating payment with ID: {}", id);
+    public PaymentResponse updatePaymentById(Long patientId, Long id, UpdatePaymentRequest request) {
+        log.debug("Updating payment id {} for patient id {}", id, patientId);
         PaymentEntity entity = paymentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Payment not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Payment id %d not found", id)));
 
         paymentMapper.updateEntityFromRequest(request, entity);
         PaymentEntity updated = paymentRepository.save(entity);
-        log.info("Payment updated with ID: {}", updated.getId());
+        log.debug("Updated payment id : {}", updated.getId());
         return paymentMapper.toResponse(updated);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deletePaymentById(Long id) {
-        log.info("Deleting payment with ID: {}", id);
+    public void deletePaymentById(Long patientId, Long id) {
+        log.debug("Deleting payment id : {}", id);
         if (!paymentRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Payment not found with ID: " + id);
+            throw new ResourceNotFoundException(String.format("Payment id %d not found", id));
         }
         paymentRepository.deleteById(id);
-        log.info("Payment deleted: {}", id);
-    }
-
-    @Transactional(readOnly = true)
-    public PaginatedPayload<EnrichedPaymentResponse> getEnrichedPayments(
-            int pageNo, int pageSize, PaymentMethod method, LocalDate fromDate, LocalDate toDate, String search) {
-        log.debug("Fetching enriched payments - PageNo: {}, PageSize: {}, Method: {}, FromDate: {}, ToDate: {}, Search: {}",
-                pageNo, pageSize, method, fromDate, toDate, search);
-        // Convert 1-based pageNo query param to 0-based JPA Pageable
-        PageRequest pageRequest = PageRequest.of(pageNo - 1, pageSize);
-        Page<PaymentEntity> page = paymentRepository.findEnrichedPayments(method, fromDate, toDate, search, pageRequest);
-
-        List<EnrichedPaymentResponse> responses = page.getContent().stream()
-                .map(paymentMapper::toEnrichedResponse)
-                .toList();
-
-        return PaginatedPayload.of(responses, page);
+        log.debug("Deleted payment id : {}", id);
     }
 }
 

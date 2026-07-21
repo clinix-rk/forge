@@ -1,4 +1,4 @@
-package com.clinix.forge.finance;
+package com.clinix.forge.finance.service;
 
 import com.clinix.forge.core.exception.ResourceNotFoundException;
 import com.clinix.forge.core.pdf.PdfGenerationService;
@@ -7,6 +7,7 @@ import com.clinix.forge.core.pdf.dto.Form3CDateGroup;
 import com.clinix.forge.core.pdf.dto.Form3CEntry;
 import com.clinix.forge.doctors.DoctorEntity;
 import com.clinix.forge.doctors.DoctorRepository;
+import com.clinix.forge.finance.PaymentRepository;
 import com.clinix.forge.finance.entity.PaymentEntity;
 import com.clinix.forge.treatment.repository.TreatmentRepository;
 import com.clinix.forge.treatment.entity.TreatmentEntity;
@@ -85,6 +86,10 @@ public class Form3CPdfService {
         Context context = new Context();
         context.setVariable("form3c", form3cData);
 
-        return pdfGenerationService.generatePdf("pdf/form3c", context);
+        try {
+            return pdfGenerationService.generatePdf("pdf/form3c", context);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

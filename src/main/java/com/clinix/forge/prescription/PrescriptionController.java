@@ -3,6 +3,9 @@ package com.clinix.forge.prescription;
 import com.clinix.forge.core.payload.ApiResponse;
 import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.prescription.dto.*;
+import com.clinix.forge.prescription.services.DrugDosageService;
+import com.clinix.forge.prescription.services.MedicineService;
+import com.clinix.forge.prescription.services.PrescriptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -19,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/prescriptions")
+@RequestMapping("/{patientId}/prescriptions")
 @RequiredArgsConstructor
 @Tag(name = "Prescription Management", description = "Endpoints for managing prescriptions, medicines, and drug dosages")
 public class PrescriptionController {
@@ -28,11 +31,10 @@ public class PrescriptionController {
     private final MedicineService medicineService;
     private final DrugDosageService drugDosageService;
 
-    // --- Prescription Endpoints ---
-
     @PostMapping
     @Operation(summary = "Create a prescription", description = "Creates a new patient prescription.")
     public ResponseEntity<ApiResponse<PrescriptionResponse>> createPrescription(
+            @PathVariable Long patientId,
             @RequestBody @Valid CreatePrescriptionRequest request
     ) {
         log.debug("API call: Create prescription");

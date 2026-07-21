@@ -2,9 +2,7 @@ package com.clinix.forge.treatment.service;
 
 import com.clinix.forge.core.exception.ResourceNotFoundException;
 import com.clinix.forge.core.payload.PaginatedPayload;
-import com.clinix.forge.finance.ReciptRepository;
 import com.clinix.forge.finance.PaymentRepository;
-import com.clinix.forge.finance.entity.ReciptEntity;
 import com.clinix.forge.finance.entity.PaymentEntity;
 import com.clinix.forge.finance.entity.PaymentMethod;
 import com.clinix.forge.patient.entity.PatientEntity;
@@ -38,7 +36,6 @@ public class TreatmentService {
     private final TreatmentCategoryRepository treatmentCategoryRepository;
     private final PatientRepository patientRepository;
     private final TreatmentMapper treatmentMapper;
-    private final ReciptRepository reciptRepository;
     private final PaymentRepository paymentRepository;
 
     @Transactional(rollbackFor = Exception.class)
@@ -58,24 +55,13 @@ public class TreatmentService {
         TreatmentEntity saved = treatmentRepository.save(entity);
         log.info("Treatment created with ID: {}", saved.getId());
 
-        // Generate a dummy receipt with amount 0.0 and method CASH
         String doctorPrefix = patient.getDoctor() != null ? patient.getDoctor().getCaseNoPrefix() : "D";
         LocalDate date = request.date() != null ? request.date() : LocalDate.now();
         int year = date.getYear();
         int month = date.getMonthValue();
         String financialYear = (month >= 4) ? (year + "-" + (year + 1)) : ((year - 1) + "-" + year);
 
-        int nextSerial = reciptRepository.findMaxSerialByFinancialYearAndDoctorIdentityCharacter(financialYear, doctorPrefix) + 1;
-
-        ReciptEntity dummyRecipt = ReciptEntity.builder()
-                .doctorIdentityCharacter(doctorPrefix)
-                .financialYear(financialYear)
-                .serial(nextSerial)
-                .build();
-        dummyRecipt = reciptRepository.save(dummyRecipt);
-
         PaymentEntity dummyPayment = PaymentEntity.builder()
-                .recipt(dummyRecipt)
                 .treatment(saved)
                 .amount(0.0)
                 .method(PaymentMethod.CASH)

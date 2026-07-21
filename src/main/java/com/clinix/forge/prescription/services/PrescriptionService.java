@@ -1,9 +1,10 @@
-package com.clinix.forge.prescription;
+package com.clinix.forge.prescription.services;
 
 import com.clinix.forge.core.exception.ResourceNotFoundException;
 import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.patient.entity.PatientEntity;
 import com.clinix.forge.patient.repositories.PatientRepository;
+import com.clinix.forge.prescription.PrescriptionMapper;
 import com.clinix.forge.prescription.dto.*;
 import com.clinix.forge.prescription.entity.DrugDosageEntity;
 import com.clinix.forge.prescription.entity.MedicineEntity;
@@ -150,6 +151,7 @@ public class PrescriptionService {
 
         PatientEntity patient = prescription.getPatient();
         String patientName = patient != null ? patient.getName() : "Unknown";
+        String caseNo = patient.getCaseNo() != null ? patient.getCaseNo() : "Missing Case Number";
 
         String ageGender = "";
         if (patient != null) {
@@ -174,6 +176,7 @@ public class PrescriptionService {
                 .toList();
 
         PrescriptionPdfData data = new PrescriptionPdfData(
+                caseNo,
                 patientName,
                 dateStr,
                 ageGender,
@@ -184,6 +187,10 @@ public class PrescriptionService {
         Context context = new Context();
         context.setVariable("rx", data);
 
-        return pdfGenerationService.generatePdf("pdf/prescription", context);
+        try {
+            return pdfGenerationService.generatePdf("pdf/prescription", context);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
