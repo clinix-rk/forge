@@ -3,6 +3,8 @@ package com.clinix.forge.finance;
 import com.clinix.forge.core.payload.ApiResponse;
 import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.finance.dto.*;
+import com.clinix.forge.finance.service.Form3CPdfService;
+import com.clinix.forge.finance.service.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -20,7 +22,6 @@ import com.clinix.forge.finance.entity.PaymentMethod;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
-
 @Slf4j
 @Validated
 @RestController
@@ -30,7 +31,6 @@ import java.time.LocalDate;
 public class FinanceController {
 
     private final PaymentService paymentService;
-    private final ReciptService reciptService;
     private final Form3CPdfService form3CPdfService;
 
     // --- Payment Endpoints ---
@@ -96,11 +96,11 @@ public class FinanceController {
 
     @PostMapping("/recipts")
     @Operation(summary = "Create a receipt", description = "Creates a new receipt (spelled recipt to match database).")
-    public ResponseEntity<ApiResponse<ReciptResponse>> createRecipt(
-            @RequestBody @Valid CreateReciptRequest request
+    public ResponseEntity<ApiResponse<ReceiptResponse>> createRecipt(
+            @RequestBody @Valid CreateReceiptRequest request
     ) {
         log.debug("API call: Create recipt");
-        ReciptResponse response = reciptService.createRecipt(request);
+        ReceiptResponse response = reciptService.createReceipt(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Recipt created successfully.", response));
@@ -108,13 +108,13 @@ public class FinanceController {
 
     @GetMapping("/recipts")
     @Operation(summary = "Get receipts (Paginated)", description = "Retrieves a paginated list of all receipts.")
-    public ResponseEntity<ApiResponse<PaginatedPayload<ReciptResponse>>> getAllRecipts(
+    public ResponseEntity<ApiResponse<PaginatedPayload<ReceiptResponse>>> getAllRecipts(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize,
             @RequestParam(required = false) Long patientId
     ) {
         log.debug("API call: Fetching recipts paginated - Page: {}, Size: {}, PatientId: {}", pageNo, pageSize, patientId);
-        PaginatedPayload<ReciptResponse> response = reciptService.getAllRecipts(patientId, pageNo, pageSize);
+        PaginatedPayload<ReceiptResponse> response = reciptService.getAllRecipts(patientId, pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Recipts retrieved successfully.", response));
@@ -122,9 +122,9 @@ public class FinanceController {
 
     @GetMapping("/recipts/{id}")
     @Operation(summary = "Get receipt by ID", description = "Retrieves a receipt's details by ID.")
-    public ResponseEntity<ApiResponse<ReciptResponse>> getReciptById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ReceiptResponse>> getReciptById(@PathVariable Long id) {
         log.debug("API call: Fetching recipt with ID: {}", id);
-        ReciptResponse response = reciptService.getReciptById(id);
+        ReceiptResponse response = reciptService.getReciptById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Recipt retrieved successfully.", response));
@@ -132,12 +132,12 @@ public class FinanceController {
 
     @PutMapping("/recipts/{id}")
     @Operation(summary = "Update receipt by ID", description = "Updates an existing receipt details.")
-    public ResponseEntity<ApiResponse<ReciptResponse>> updateReciptById(
+    public ResponseEntity<ApiResponse<ReceiptResponse>> updateReciptById(
             @PathVariable Long id,
-            @RequestBody @Valid UpdateReciptRequest request
+            @RequestBody @Valid UpdateReceiptRequest request
     ) {
         log.debug("API call: Updating recipt with ID: {}", id);
-        ReciptResponse response = reciptService.updateReciptById(id, request);
+        ReceiptResponse response = reciptService.updateReciptById(id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("Recipt updated successfully.", response));

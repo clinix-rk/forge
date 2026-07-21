@@ -9,6 +9,9 @@ import com.clinix.forge.prescription.entity.DrugDosageEntity;
 import com.clinix.forge.prescription.entity.MedicineEntity;
 import com.clinix.forge.prescription.entity.PrescriptionEntity;
 import com.clinix.forge.prescription.entity.PrescriptionMedicineEntity;
+import com.clinix.forge.prescription.repositories.DrugDosageRepository;
+import com.clinix.forge.prescription.repositories.MedicineRepository;
+import com.clinix.forge.prescription.repositories.PrescriptionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,7 +23,6 @@ import org.springframework.validation.annotation.Validated;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.clinix.forge.core.pdf.PdfGenerationService;
 import com.clinix.forge.core.pdf.dto.PrescriptionMedicineItem;

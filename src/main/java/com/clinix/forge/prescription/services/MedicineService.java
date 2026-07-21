@@ -7,6 +7,7 @@ import com.clinix.forge.prescription.dto.CreateMedicineRequest;
 import com.clinix.forge.prescription.dto.MedicineResponse;
 import com.clinix.forge.prescription.dto.UpdateMedicineRequest;
 import com.clinix.forge.prescription.entity.MedicineEntity;
+import com.clinix.forge.prescription.repositories.MedicineRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

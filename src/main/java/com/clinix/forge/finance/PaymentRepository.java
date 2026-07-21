@@ -1,4 +1,4 @@
-package com.clinix.forge.finance;
+package com.clinix.forge.finance.mapper;
 
 import com.clinix.forge.finance.entity.PaymentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

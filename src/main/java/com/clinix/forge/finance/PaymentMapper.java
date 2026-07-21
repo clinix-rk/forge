@@ -1,4 +1,4 @@
-package com.clinix.forge.finance;
+package com.clinix.forge.finance.repository;
 
 import com.clinix.forge.finance.dto.CreatePaymentRequest;
 import com.clinix.forge.finance.dto.EnrichedPaymentResponse;
