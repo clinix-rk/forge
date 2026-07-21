@@ -1,6 +1,6 @@
 server:
   error:
-    include-message: always # Helps debugging internal development API failures
+    include-message: always
 
 spring:
   datasource:
@@ -14,7 +14,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update # Automatically schema updates for rapid feature iteration
+      ddl-auto: update
     show-sql: true
 
   flyway:
@@ -24,13 +24,13 @@ springdoc:
   api-docs:
     path: /docs
   swagger-ui:
-    enabled: true # Visual API interaction for local iteration
+    enabled: true
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*" # Full structural debugging metrics opened locally
+        include: "*"
   endpoint:
     health:
       show-details: always
