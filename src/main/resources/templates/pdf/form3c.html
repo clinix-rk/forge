@@ -4,22 +4,29 @@
     <meta charset="UTF-8"/>
     <title>Form 3C — Dental Register</title>
     <style>
+        /* Enforced portrait orientation */
         @page {
-            size: A4 landscape;
+            size: A4 portrait;
             margin: 15mm;
+            @bottom-right {
+                content: "Page " counter(page) " of " counter(pages);
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                font-size: 8pt;
+                color: #777777;
+            }
         }
         body {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 10pt;
-            color: #222222;
-            line-height: 1.3;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 9pt; /* Scaled down slightly for narrower width */
+            color: #1a1a1a;
+            line-height: 1.4;
             margin: 0;
             padding: 0;
         }
         .header-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         .header-left {
             text-align: left;
@@ -28,139 +35,154 @@
         .header-right {
             text-align: right;
             vertical-align: top;
-            font-size: 9pt;
+            font-size: 8.5pt;
             color: #555555;
+            line-height: 1.5;
         }
         .title {
-            font-size: 14pt;
-            font-weight: bold;
-            color: #000000;
+            font-size: 15pt;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: 0.5px;
             margin: 0;
         }
         .subtitle {
-            font-size: 10pt;
-            font-style: italic;
-            margin: 2px 0;
+            font-size: 8.5pt;
+            color: #c5a059;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin: 4px 0;
         }
         .register-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
+            -fs-table-paginate: paginate;
         }
         .register-table th {
-            border: 1px solid #000000;
-            background-color: #f2f2f2;
+            border-bottom: 2px solid #1a1a1a;
+            border-top: 1px solid #e0e0e0;
+            background-color: #f9f9f9;
             font-weight: bold;
-            padding: 6px;
+            padding: 8px 4px;
             text-align: left;
-            font-size: 9pt;
+            font-size: 8.5pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .register-table td {
-            border: 1px solid #000000;
-            padding: 6px;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 8px 4px;
             vertical-align: top;
         }
+        .register-table tr {
+            page-break-inside: avoid;
+        }
         .date-row {
-            background-color: #e6e6e6;
+            background-color: #f5f5f5;
             font-weight: bold;
-            font-size: 9.5pt;
+            font-size: 8.5pt;
+            letter-spacing: 0.5px;
+        }
+        .date-row td {
+            border-bottom: 1px solid #1a1a1a;
+            border-top: 1px solid #e0e0e0;
+            color: #c5a059;
         }
         .indented-name {
-            padding-left: 15px;
-            font-style: italic;
-            color: #333333;
+            padding-left: 10px;
+            color: #555555;
+            font-size: 8.5pt;
         }
+
+        /* Adjusted column widths for portrait constraints */
+        .rec-col { width: 12%; }
+        .case-patient-col { width: 33%; }
+        .treatment-col { width: 38%; }
         .amount-col {
             text-align: right;
-            width: 15%;
+            width: 17%;
+            font-variant-numeric: tabular-nums;
         }
-        .rec-col {
-            width: 10%;
-        }
-        .case-patient-col {
-            width: 35%;
-        }
-        .treatment-col {
-            width: 40%;
-        }
-        .daily-total-row {
+
+        .daily-total-row td {
             font-weight: bold;
-            background-color: #fafafa;
+            background-color: #fdfaf2;
+            border-bottom: 1px solid #c5a059;
+            font-size: 9pt;
         }
         .grand-total-section {
-            margin-top: 20px;
+            margin-top: 25px;
             text-align: right;
-            font-size: 12pt;
-            font-weight: bold;
+            page-break-inside: avoid;
         }
         .grand-total-box {
             display: inline-block;
-            border: 2px solid #000000;
-            padding: 8px 15px;
-            background-color: #f9f9f9;
+            border-bottom: 3px double #1a1a1a;
+            border-top: 1px solid #1a1a1a;
+            padding: 8px 0;
+            font-size: 10pt;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <table class="header-table">
-        <tr>
-            <td class="header-left">
-                <div class="title">FORM 3C</div>
-                <div class="subtitle">(See rules under Dentists Act, 1948)</div>
-                <div style="font-weight: bold; margin-top: 5px;">DENTAL REGISTER</div>
-            </td>
-            <td class="header-right">
-                <div>Clinic: <strong>Aditya Dental Clinic</strong></div>
-                <div th:if="${form3c.doctorName != null}">Doctor: <strong th:text="${form3c.doctorName}">Dr. Kumar</strong></div>
-                <div>Period: <span th:text="${form3c.fromDate}">01-01-2026</span> to <span th:text="${form3c.toDate}">31-01-2026</span></div>
-            </td>
+<table class="header-table">
+    <tr>
+        <td class="header-left">
+            <div class="title">FORM 3C</div>
+            <div class="subtitle">Dental Register</div>
+            <div style="font-size: 8pt; color: #777777;">(See rules under Dentists Act, 1948)</div>
+        </td>
+        <td class="header-right">
+            <div>Clinic: <strong>Aditya Dental Clinic</strong></div>
+            <div th:if="${form3c.doctorName != null}">Doctor: <strong th:text="${form3c.doctorName}">Dr. Kumar</strong></div>
+            <div>Period: <span th:text="${form3c.fromDate}">01-01-2026</span> to <span th:text="${form3c.toDate}">31-01-2026</span></div>
+        </td>
+    </tr>
+</table>
+
+<table class="register-table">
+    <thead>
+    <tr>
+        <th class="rec-col">Rec. No.</th>
+        <th class="case-patient-col">Case No. / Name</th>
+        <th class="treatment-col">Treatment Given</th>
+        <th class="amount-col">Amount (₹)</th>
+    </tr>
+    </thead>
+    <tbody>
+    <th:block th:each="group : ${form3c.groups}">
+        <tr class="date-row">
+            <td colspan="4" th:text="${group.dateLabel}">09-06-2026</td>
         </tr>
-    </table>
 
-    <table class="register-table">
-        <thead>
+        <th:block th:each="entry : ${group.entries}">
             <tr>
-                <th class="rec-col">Rec. No.</th>
-                <th class="case-patient-col">Case No. / Patient Name</th>
-                <th class="treatment-col">Treatment Given</th>
-                <th class="amount-col">Amount (₹)</th>
+                <td rowspan="2" class="rec-col" th:text="${entry.recNo}">101</td>
+                <td class="case-patient-col" style="font-weight: 600;" th:text="${entry.caseNumber}">CASE-992</td>
+                <td rowspan="2" class="treatment-col" th:text="${entry.treatmentGiven}">Scaling and Polishing</td>
+                <td rowspan="2" class="amount-col" th:text="${#numbers.formatDecimal(entry.amount, 1, 2)}">1,200.00</td>
             </tr>
-        </thead>
-        <tbody>
-            <th:block th:each="group : ${form3c.groups}">
-                <!-- Date Header Row -->
-                <tr class="date-row">
-                    <td colspan="4" th:text="${group.dateLabel}">09-06-2026</td>
-                </tr>
-                
-                <!-- Entries for this Date -->
-                <th:block th:each="entry : ${group.entries}">
-                    <tr>
-                        <td rowspan="2" class="rec-col" th:text="${entry.recNo}">101</td>
-                        <td class="case-patient-col" style="font-weight: bold;" th:text="${entry.caseNumber}">CASE-992</td>
-                        <td rowspan="2" class="treatment-col" th:text="${entry.treatmentGiven}">Scaling and Polishing</td>
-                        <td rowspan="2" class="amount-col" th:text="${#numbers.formatDecimal(entry.amount, 1, 2)}">1200.00</td>
-                    </tr>
-                    <tr>
-                        <td class="case-patient-col indented-name" th:text="${entry.patientName}">John Doe</td>
-                    </tr>
-                </th:block>
+            <tr>
+                <td class="case-patient-col indented-name" th:text="${entry.patientName}">John Doe</td>
+            </tr>
+        </th:block>
 
-                <!-- Daily Total Row -->
-                <tr class="daily-total-row">
-                    <td colspan="3" style="text-align: right;">Total for <span th:text="${group.dateLabel}">09-06-2026</span>:</td>
-                    <td class="amount-col" th:text="${#numbers.formatDecimal(group.dailyTotal, 1, 2)}">1200.00</td>
-                </tr>
-            </th:block>
-        </tbody>
-    </table>
+        <tr class="daily-total-row">
+            <td colspan="3" style="text-align: right;">Total for <span th:text="${group.dateLabel}">09-06-2026</span>:</td>
+            <td class="amount-col" th:text="${#numbers.formatDecimal(group.dailyTotal, 1, 2)}">1,200.00</td>
+        </tr>
+    </th:block>
+    </tbody>
+</table>
 
-    <div class="grand-total-section">
-        <div class="grand-total-box">
-            Grand Total Amount: ₹<span th:text="${#numbers.formatDecimal(form3c.grandTotal, 1, 2)}">1200.00</span>
-        </div>
+<div class="grand-total-section">
+    <div class="grand-total-box">
+        Grand Total Amount: &nbsp; ₹<span th:text="${#numbers.formatDecimal(form3c.grandTotal, 1, 2)}">1,200.00</span>
     </div>
+</div>
 
 </body>
 </html>
