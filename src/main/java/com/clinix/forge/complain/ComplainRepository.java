@@ -1,6 +1,5 @@
-package com.clinix.forge.complain.repository;
+package com.clinix.forge.complain;
 
-import com.clinix.forge.complain.entity.ComplainEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

@@ -1,4 +1,4 @@
-package com.clinix.forge.complain.entity;
+package com.clinix.forge.complain;
 
 import com.clinix.forge.catalog.complains.ComplainCategoryEntity;
 import com.clinix.forge.core.entity.BaseEntity;

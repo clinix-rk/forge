@@ -1,4 +1,4 @@
-package com.clinix.forge.complain.dto;
+package com.clinix.forge.catalog.complains.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

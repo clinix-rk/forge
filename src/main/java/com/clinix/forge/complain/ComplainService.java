@@ -1,13 +1,10 @@
-package com.clinix.forge.complain.service;
+package com.clinix.forge.complain;
 
-import com.clinix.forge.complain.mapper.ComplainMapper;
 import com.clinix.forge.complain.dto.ComplainResponse;
 import com.clinix.forge.complain.dto.CreateComplainRequest;
 import com.clinix.forge.complain.dto.UpdateComplainRequest;
 import com.clinix.forge.catalog.complains.ComplainCategoryEntity;
-import com.clinix.forge.complain.entity.ComplainEntity;
 import com.clinix.forge.catalog.complains.ComplainCategoryRepository;
-import com.clinix.forge.complain.repository.ComplainRepository;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
 import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.patient.entity.PatientEntity;

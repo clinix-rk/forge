@@ -1,9 +1,8 @@
-package com.clinix.forge.complain.controller;
+package com.clinix.forge.catalog.complains;
 
-import com.clinix.forge.complain.dto.ComplainCategoryResponse;
-import com.clinix.forge.complain.dto.CreateComplainCategoryRequest;
-import com.clinix.forge.complain.dto.UpdateComplainCategoryRequest;
-import com.clinix.forge.complain.service.ComplainCategoryService;
+import com.clinix.forge.catalog.complains.dto.ComplainCategoryResponse;
+import com.clinix.forge.catalog.complains.dto.CreateComplainCategoryRequest;
+import com.clinix.forge.catalog.complains.dto.UpdateComplainCategoryRequest;
 import com.clinix.forge.core.payload.ApiResponse;
 import com.clinix.forge.core.payload.PaginatedPayload;
 import io.swagger.v3.oas.annotations.Operation;

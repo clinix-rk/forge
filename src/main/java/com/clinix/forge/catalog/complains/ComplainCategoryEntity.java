@@ -1,5 +1,6 @@
-package com.clinix.forge.complain.entity;
+package com.clinix.forge.catalog.complains;
 
+import com.clinix.forge.complain.ComplainEntity;
 import com.clinix.forge.core.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;

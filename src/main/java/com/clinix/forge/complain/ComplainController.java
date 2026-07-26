@@ -1,7 +1,6 @@
-package com.clinix.forge.complain.controller;
+package com.clinix.forge.complain;
 
 import com.clinix.forge.complain.dto.*;
-import com.clinix.forge.complain.service.ComplainService;
 import com.clinix.forge.core.payload.ApiResponse;
 import com.clinix.forge.core.payload.PaginatedPayload;
 import io.swagger.v3.oas.annotations.Operation;
