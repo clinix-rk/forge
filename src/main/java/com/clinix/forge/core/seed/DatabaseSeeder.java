@@ -1,15 +1,15 @@
 package com.clinix.forge.core.seed;
 
-import com.clinix.forge.complain.repository.ComplainCategoryRepository;
-import com.clinix.forge.complain.entity.ComplainCategoryEntity;
+import com.clinix.forge.catalog.complains.ComplainCategoryRepository;
+import com.clinix.forge.catalog.complains.ComplainCategoryEntity;
 import com.clinix.forge.doctors.DoctorEntity;
 import com.clinix.forge.doctors.DoctorRepository;
-import com.clinix.forge.prescription.repositories.DrugDosageRepository;
-import com.clinix.forge.prescription.repositories.MedicineRepository;
-import com.clinix.forge.prescription.entity.DrugDosageEntity;
-import com.clinix.forge.prescription.entity.MedicineEntity;
-import com.clinix.forge.treatment.repository.TreatmentCategoryRepository;
-import com.clinix.forge.treatment.entity.TreatmentCategoryEntity;
+import com.clinix.forge.catalog.dosages.DrugDosageRepository;
+import com.clinix.forge.catalog.medicines.MedicineRepository;
+import com.clinix.forge.catalog.dosages.DrugDosageEntity;
+import com.clinix.forge.catalog.medicines.MedicineEntity;
+import com.clinix.forge.catalog.treatments.TreatmentCategoryRepository;
+import com.clinix.forge.catalog.treatments.TreatmentCategoryEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
