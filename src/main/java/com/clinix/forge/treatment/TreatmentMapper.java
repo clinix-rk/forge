@@ -1,8 +1,6 @@
-package com.clinix.forge.treatment.mapper;
+package com.clinix.forge.treatment;
 
 import com.clinix.forge.treatment.dto.*;
-import com.clinix.forge.treatment.entity.TreatmentCategoryEntity;
-import com.clinix.forge.treatment.entity.TreatmentEntity;
 import org.mapstruct.*;
 
 @Mapper(

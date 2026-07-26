@@ -1,6 +1,5 @@
-package com.clinix.forge.treatment.repository;
+package com.clinix.forge.treatment;
 
-import com.clinix.forge.treatment.entity.TreatmentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.data.jpa.repository.Query;

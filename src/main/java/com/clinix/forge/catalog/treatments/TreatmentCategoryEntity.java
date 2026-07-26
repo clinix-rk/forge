@@ -1,6 +1,7 @@
-package com.clinix.forge.treatment.entity;
+package com.clinix.forge.catalog.treatments;
 
 import com.clinix.forge.core.entity.BaseEntity;
+import com.clinix.forge.treatment.TreatmentEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.HashSet;

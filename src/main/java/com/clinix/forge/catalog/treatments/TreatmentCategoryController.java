@@ -1,10 +1,9 @@
-package com.clinix.forge.treatment.controller;
+package com.clinix.forge.catalog.treatments;
 
+import com.clinix.forge.catalog.treatments.dto.CreateTreatmentCategoryRequest;
+import com.clinix.forge.catalog.treatments.dto.TreatmentCategoryResponse;
+import com.clinix.forge.catalog.treatments.dto.UpdateTreatmentCategoryRequest;
 import com.clinix.forge.core.payload.ApiResponse;
-import com.clinix.forge.treatment.dto.CreateTreatmentCategoryRequest;
-import com.clinix.forge.treatment.dto.TreatmentCategoryResponse;
-import com.clinix.forge.treatment.dto.UpdateTreatmentCategoryRequest;
-import com.clinix.forge.treatment.service.TreatmentCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -40,7 +39,7 @@ public class TreatmentCategoryController {
             @Valid
             @NotNull(message = "Request body cannot be null.")
             @RequestBody
-        CreateTreatmentCategoryRequest request
+            CreateTreatmentCategoryRequest request
     ) {
         log.debug("Serving create request : {}", request);
 

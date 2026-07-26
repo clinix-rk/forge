@@ -1,6 +1,5 @@
-package com.clinix.forge.treatment.repository;
+package com.clinix.forge.catalog.treatments;
 
-import com.clinix.forge.treatment.entity.TreatmentCategoryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

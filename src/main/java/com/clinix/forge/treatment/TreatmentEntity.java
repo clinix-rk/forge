@@ -1,5 +1,6 @@
-package com.clinix.forge.treatment.entity;
+package com.clinix.forge.treatment;
 
+import com.clinix.forge.catalog.treatments.TreatmentCategoryEntity;
 import com.clinix.forge.core.entity.BaseEntity;
 import com.clinix.forge.finance.entity.PaymentEntity;
 import com.clinix.forge.patient.entity.PatientEntity;

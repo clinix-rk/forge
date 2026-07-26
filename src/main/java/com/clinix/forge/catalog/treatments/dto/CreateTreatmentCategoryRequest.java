@@ -1,9 +1,8 @@
-package com.clinix.forge.treatment.dto;
+package com.clinix.forge.catalog.treatments.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.ToString;
 
 @Schema(description = "Request payload for creating a treatment category")
 public record CreateTreatmentCategoryRequest(

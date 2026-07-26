@@ -1,9 +1,8 @@
-package com.clinix.forge.treatment.mapper;
+package com.clinix.forge.catalog.treatments;
 
-import com.clinix.forge.treatment.dto.CreateTreatmentCategoryRequest;
-import com.clinix.forge.treatment.dto.TreatmentCategoryResponse;
-import com.clinix.forge.treatment.dto.UpdateTreatmentCategoryRequest;
-import com.clinix.forge.treatment.entity.TreatmentCategoryEntity;
+import com.clinix.forge.catalog.treatments.dto.CreateTreatmentCategoryRequest;
+import com.clinix.forge.catalog.treatments.dto.TreatmentCategoryResponse;
+import com.clinix.forge.catalog.treatments.dto.UpdateTreatmentCategoryRequest;
 import org.mapstruct.*;
 
 @Mapper(

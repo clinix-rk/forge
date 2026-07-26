@@ -1,13 +1,10 @@
-package com.clinix.forge.treatment.service;
+package com.clinix.forge.catalog.treatments;
 
+import com.clinix.forge.catalog.treatments.dto.CreateTreatmentCategoryRequest;
+import com.clinix.forge.catalog.treatments.dto.TreatmentCategoryResponse;
+import com.clinix.forge.catalog.treatments.dto.UpdateTreatmentCategoryRequest;
 import com.clinix.forge.core.exception.DuplicateResourceException;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
-import com.clinix.forge.treatment.mapper.TreatmentCategoryMapper;
-import com.clinix.forge.treatment.dto.CreateTreatmentCategoryRequest;
-import com.clinix.forge.treatment.dto.TreatmentCategoryResponse;
-import com.clinix.forge.treatment.dto.UpdateTreatmentCategoryRequest;
-import com.clinix.forge.treatment.entity.TreatmentCategoryEntity;
-import com.clinix.forge.treatment.repository.TreatmentCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
