@@ -1,7 +1,6 @@
 package com.clinix.forge.complain.mapper;
 
 import com.clinix.forge.complain.dto.*;
-import com.clinix.forge.complain.entity.ComplainCategoryEntity;
 import com.clinix.forge.complain.entity.ComplainEntity;
 import org.mapstruct.*;
 

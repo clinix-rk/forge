@@ -1,12 +1,11 @@
-package com.clinix.forge.prescription.repositories;
+package com.clinix.forge.catalog.dosages;
 
-import com.clinix.forge.prescription.entity.DrugDosageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 /**
  * Repository interface for managing DrugDosageEntity objects.
  */
-public interface DrugDosageRepository extends JpaRepository<DrugDosageEntity, Long> {
+public interface DosageRepository extends JpaRepository<DrugDosageEntity, Long> {
     Optional<DrugDosageEntity> findByDosage(String dosage);
 }

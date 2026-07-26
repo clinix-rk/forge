@@ -1,4 +1,4 @@
-package com.clinix.forge.prescription.dto;
+package com.clinix.forge.catalog.dosages.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;

@@ -1,6 +1,7 @@
-package com.clinix.forge.prescription.entity;
+package com.clinix.forge.catalog.medicines;
 
 import com.clinix.forge.core.entity.BaseEntity;
+import com.clinix.forge.prescription.entity.PrescriptionMedicineEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.HashSet;

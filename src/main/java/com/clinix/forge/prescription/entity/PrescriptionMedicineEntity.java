@@ -1,5 +1,7 @@
 package com.clinix.forge.prescription.entity;
 
+import com.clinix.forge.catalog.dosages.DrugDosageEntity;
+import com.clinix.forge.catalog.medicines.MedicineEntity;
 import com.clinix.forge.core.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;

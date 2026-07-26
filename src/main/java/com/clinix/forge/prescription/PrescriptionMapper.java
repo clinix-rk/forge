@@ -10,38 +10,6 @@ import org.mapstruct.*;
         builder = @org.mapstruct.Builder(disableBuilder = true)
 )
 public interface PrescriptionMapper {
-
-    // DrugDosage mappings
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "prescriptionMedicines", ignore = true)
-    DrugDosageEntity toDosageEntity(CreateDrugDosageRequest request);
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "prescriptionMedicines", ignore = true)
-    void updateDosageFromRequest(UpdateDrugDosageRequest request, @MappingTarget DrugDosageEntity entity);
-
-    DrugDosageResponse toDosageResponse(DrugDosageEntity entity);
-
-    // Medicine mappings
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "prescriptionMedicines", ignore = true)
-    MedicineEntity toMedicineEntity(CreateMedicineRequest request);
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "prescriptionMedicines", ignore = true)
-    void updateMedicineFromRequest(UpdateMedicineRequest request, @MappingTarget MedicineEntity entity);
-
-    MedicineResponse toMedicineResponse(MedicineEntity entity);
-
-    // Prescription mappings
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

@@ -1,14 +1,12 @@
-package com.clinix.forge.prescription.services;
+package com.clinix.forge.catalog.medicines;
 
+import com.clinix.forge.catalog.medicines.dto.CreateMedicineRequest;
+import com.clinix.forge.catalog.medicines.dto.MedicineResponse;
+import com.clinix.forge.catalog.medicines.dto.UpdateMedicineRequest;
 import com.clinix.forge.core.exception.DuplicateResourceException;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
 import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.prescription.PrescriptionMapper;
-import com.clinix.forge.prescription.dto.CreateMedicineRequest;
-import com.clinix.forge.prescription.dto.MedicineResponse;
-import com.clinix.forge.prescription.dto.UpdateMedicineRequest;
-import com.clinix.forge.prescription.entity.MedicineEntity;
-import com.clinix.forge.prescription.repositories.MedicineRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

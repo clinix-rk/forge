@@ -1,14 +1,12 @@
-package com.clinix.forge.prescription.services;
+package com.clinix.forge.catalog.dosages;
 
+import com.clinix.forge.catalog.dosages.dto.CreateDrugDosageRequest;
+import com.clinix.forge.catalog.dosages.dto.DrugDosageResponse;
+import com.clinix.forge.catalog.dosages.dto.UpdateDrugDosageRequest;
 import com.clinix.forge.core.exception.DuplicateResourceException;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
 import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.prescription.PrescriptionMapper;
-import com.clinix.forge.prescription.dto.CreateDrugDosageRequest;
-import com.clinix.forge.prescription.dto.DrugDosageResponse;
-import com.clinix.forge.prescription.dto.UpdateDrugDosageRequest;
-import com.clinix.forge.prescription.entity.DrugDosageEntity;
-import com.clinix.forge.prescription.repositories.DrugDosageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,7 +21,7 @@ import java.util.List;
 @Service
 @Validated
 @RequiredArgsConstructor
-public class DrugDosageService {
+public class DosageService {
 
     private final DrugDosageRepository drugDosageRepository;
     private final PrescriptionMapper prescriptionMapper;

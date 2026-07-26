@@ -1,6 +1,7 @@
-package com.clinix.forge.prescription.entity;
+package com.clinix.forge.catalog.dosages;
 
 import com.clinix.forge.core.entity.BaseEntity;
+import com.clinix.forge.prescription.entity.PrescriptionMedicineEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.HashSet;
@@ -16,7 +17,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DrugDosageEntity extends BaseEntity {
+public class DosageEntity extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private String dosage;
