@@ -3,6 +3,7 @@ package com.clinix.forge.complain.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+
 import java.time.LocalDate;
 
 @Schema(description = "Request payload for updating a patient complain")
@@ -18,4 +19,5 @@ public record UpdateComplainRequest(
         @Positive(message = "Category ID must be a positive number")
         @Schema(description = "Unique ID of the complain category", example = "1")
         Long categoryId
-) {}
+) {
+}

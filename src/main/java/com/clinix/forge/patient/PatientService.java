@@ -6,11 +6,9 @@ import com.clinix.forge.doctors.DoctorEntity;
 import com.clinix.forge.doctors.DoctorRepository;
 import com.clinix.forge.patient.dto.CreatePatientRequest;
 import com.clinix.forge.patient.dto.PatientResponse;
+import com.clinix.forge.patient.dto.PhoneNumberRequest;
 import com.clinix.forge.patient.dto.UpdatePatientRequest;
-import com.clinix.forge.patient.entity.DrugAllergyEntity;
-import com.clinix.forge.patient.entity.MedicalConditionEntity;
-import com.clinix.forge.patient.entity.PatientEntity;
-import com.clinix.forge.patient.entity.PhoneNumberEntity;
+import com.clinix.forge.patient.entity.*;
 import com.clinix.forge.patient.repositories.DrugAllergyRepository;
 import com.clinix.forge.patient.repositories.MedicalConditionRepository;
 import com.clinix.forge.patient.repositories.PatientRepository;
@@ -27,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import com.clinix.forge.patient.entity.PhoneType;
-import com.clinix.forge.patient.dto.PhoneNumberRequest;
 
 @Slf4j
 @Service

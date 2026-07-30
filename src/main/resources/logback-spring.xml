@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <property name="log_path" value="logs" />
-    <property name="log_archive" value="${log_path}/archived" />
+    <property name="log_path" value="logs"/>
+    <property name="log_archive" value="${log_path}/archived"/>
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
-                %clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) %clr(---){faint} %clr([%15.15t]){1} %clr(%-40.40logger{39}){cyan} %clr(:){faint} [%X{traceId:-no-trace}] %msg%n%wex
+                %clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) %clr(---){faint}
+                %clr([%15.15t]){1} %clr(%-40.40logger{39}){cyan} %clr(:){faint}
+                [%X{traceId:-no-trace}] %msg%n%wex
             </pattern>
         </encoder>
     </appender>
@@ -35,9 +37,9 @@
     </appender>
 
     <root level="info">
-        <appender-ref ref="console" />
-        <appender-ref ref="file" />
+        <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
     </root>
 
-    <logger name="com.clinix" level="debug" />
+    <logger name="com.clinix" level="debug"/>
 </configuration>

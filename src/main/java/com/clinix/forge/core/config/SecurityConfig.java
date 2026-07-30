@@ -25,10 +25,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-            .headers(headers -> headers.frameOptions(frame -> frame.disable()));
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()));
         return http.build();
     }
 
@@ -40,7 +40,7 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
         configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

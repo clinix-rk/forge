@@ -55,7 +55,7 @@ public class TreatmentCategoryController {
             summary = "Get all treatment categories",
             description = "Retrieves a list of all treatment categories."
     )
-    public ResponseEntity<ApiResponse<List<TreatmentCategoryResponse>>> getAllTreatmentCategories (
+    public ResponseEntity<ApiResponse<List<TreatmentCategoryResponse>>> getAllTreatmentCategories(
             @RequestParam(value = "null", required = false)
             Long parentId
     ) {
@@ -72,7 +72,7 @@ public class TreatmentCategoryController {
             summary = "Update a treatment",
             description = "Updates an existing patient treatment record."
     )
-    public ResponseEntity<ApiResponse<TreatmentCategoryResponse>> updateTreatmentCategoryById (
+    public ResponseEntity<ApiResponse<TreatmentCategoryResponse>> updateTreatmentCategoryById(
             @PathVariable(required = true)
             Long id,
 
@@ -93,7 +93,7 @@ public class TreatmentCategoryController {
             summary = "Delete a treatment",
             description = "Deletes an existing patient treatment record."
     )
-    public ResponseEntity<ApiResponse<Boolean>> deleteTreatmentCategory (
+    public ResponseEntity<ApiResponse<Boolean>> deleteTreatmentCategory(
             @PathVariable(required = true)
             Long id
     ) {

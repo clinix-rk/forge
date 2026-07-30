@@ -51,7 +51,7 @@ public class DoctorService {
     public DoctorResponse createDoctor(CreateDoctorRequest dto) {
         log.debug("Registering new doctor : { name: {}, caseNoPrefix: {} }", dto.name(), dto.caseNoPrefix());
 
-        if(doctorRepository.existsByCaseNoPrefix(dto.caseNoPrefix())) {
+        if (doctorRepository.existsByCaseNoPrefix(dto.caseNoPrefix())) {
             throw new DuplicateResourceException("Doctor with the same case number prefix already exists.");
         }
 
@@ -151,7 +151,7 @@ public class DoctorService {
     public void deleteDoctorById(Long id) {
         log.debug("Attempting to delete doctor with ID: {}.", id);
 
-        if(!doctorRepository.existsById(id)) {
+        if (!doctorRepository.existsById(id)) {
             log.warn("Doctor deletion failed. ID {} not found.", id);
             throw new ResourceNotFoundException("Doctor not found with ID: " + id);
         }

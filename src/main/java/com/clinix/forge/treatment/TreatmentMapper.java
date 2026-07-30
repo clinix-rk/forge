@@ -1,6 +1,8 @@
 package com.clinix.forge.treatment;
 
-import com.clinix.forge.treatment.dto.*;
+import com.clinix.forge.treatment.dto.CreateTreatmentRequest;
+import com.clinix.forge.treatment.dto.TreatmentResponse;
+import com.clinix.forge.treatment.dto.UpdateTreatmentRequest;
 import org.mapstruct.*;
 
 @Mapper(

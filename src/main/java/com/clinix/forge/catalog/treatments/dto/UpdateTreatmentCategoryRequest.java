@@ -13,4 +13,5 @@ public record UpdateTreatmentCategoryRequest(
 
         @Schema(description = "Updated parent category ID for hierarchical grouping", example = "3")
         Long parentId
-) {}
+) {
+}

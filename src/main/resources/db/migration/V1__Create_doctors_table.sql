@@ -1,6 +1,7 @@
-CREATE TABLE doctors (
-    id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+CREATE TABLE doctors
+(
+    id         BIGSERIAL PRIMARY KEY,
+    name       VARCHAR(255)             NOT NULL,
     case_no_prefixVARCHAR(1) NOT NULL UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()

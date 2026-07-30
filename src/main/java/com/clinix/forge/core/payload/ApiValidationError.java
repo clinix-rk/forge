@@ -7,4 +7,5 @@ public record ApiValidationError(
         String field,
         String message,
         Object rejectedValue
-) {}
+) {
+}

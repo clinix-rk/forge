@@ -1,7 +1,8 @@
 package com.clinix.forge.prescription;
 
 import com.clinix.forge.prescription.dto.*;
-import com.clinix.forge.prescription.entity.*;
+import com.clinix.forge.prescription.entity.PrescriptionEntity;
+import com.clinix.forge.prescription.entity.PrescriptionMedicineEntity;
 import org.mapstruct.*;
 
 @Mapper(
@@ -14,14 +15,16 @@ public interface PrescriptionMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "patient", ignore = true)       // Set manually in service
-    @Mapping(target = "prescriptionMedicines", ignore = true) // Set manually in service
+    @Mapping(target = "prescriptionMedicines", ignore = true)
+        // Set manually in service
     PrescriptionEntity toPrescriptionEntity(CreatePrescriptionRequest request);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "patient", ignore = true)
-    @Mapping(target = "prescriptionMedicines", ignore = true) // Set manually in service
+    @Mapping(target = "prescriptionMedicines", ignore = true)
+        // Set manually in service
     void updatePrescriptionFromRequest(UpdatePrescriptionRequest request, @MappingTarget PrescriptionEntity entity);
 
     @Mapping(target = "patientId", source = "patient.id")
@@ -34,7 +37,8 @@ public interface PrescriptionMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "prescription", ignore = true)   // Set manually in service
     @Mapping(target = "medicine", ignore = true)       // Set manually in service
-    @Mapping(target = "dosage", ignore = true)         // Set manually in service
+    @Mapping(target = "dosage", ignore = true)
+    // Set manually in service
     PrescriptionMedicineEntity toPrescriptionMedicineEntity(PrescriptionMedicineRequest request);
 
     @Mapping(target = "medicineId", source = "medicine.id")

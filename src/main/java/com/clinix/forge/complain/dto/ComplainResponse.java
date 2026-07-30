@@ -1,6 +1,7 @@
 package com.clinix.forge.complain.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 import java.time.LocalDate;
 
@@ -26,4 +27,5 @@ public record ComplainResponse(
 
         @Schema(description = "Timestamp when the complain record was last updated")
         Instant updatedAt
-) {}
+) {
+}

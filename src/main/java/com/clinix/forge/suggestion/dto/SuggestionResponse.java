@@ -2,6 +2,7 @@ package com.clinix.forge.suggestion.dto;
 
 import com.clinix.forge.suggestion.entity.SuggestionStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 import java.time.LocalDate;
 
@@ -33,4 +34,5 @@ public record SuggestionResponse(
 
         @Schema(description = "Timestamp when the suggestion record was last updated")
         Instant updatedAt
-) {}
+) {
+}

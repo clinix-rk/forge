@@ -15,4 +15,5 @@ public record UpdateFileRequest(
         @Size(max = 512, message = "File location must not exceed 512 characters")
         @Schema(description = "Updated storage path or URL of the file", example = "/uploads/patients/5/xray_v2.png")
         String location
-) {}
+) {
+}

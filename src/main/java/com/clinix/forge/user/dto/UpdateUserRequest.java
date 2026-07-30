@@ -20,4 +20,5 @@ public record UpdateUserRequest(
         @NotNull(message = "Role is required")
         @Schema(description = "Updated role assigned to the user", example = "ADMIN")
         Role role
-) {}
+) {
+}

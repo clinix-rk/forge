@@ -16,13 +16,15 @@ public interface FileMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "patient", ignore = true) // Set manually in service
+    @Mapping(target = "patient", ignore = true)
+        // Set manually in service
     FileEntity toEntity(CreateFileRequest request);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "patient", ignore = true) // Do not modify patient relation
+    @Mapping(target = "patient", ignore = true)
+        // Do not modify patient relation
     void updateEntityFromRequest(UpdateFileRequest request, @MappingTarget FileEntity entity);
 
     @Mapping(target = "patientId", source = "patient.id")

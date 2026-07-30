@@ -2,7 +2,9 @@ package com.clinix.forge.treatment;
 
 import com.clinix.forge.core.payload.ApiResponse;
 import com.clinix.forge.core.payload.PaginatedPayload;
-import com.clinix.forge.treatment.dto.*;
+import com.clinix.forge.treatment.dto.CreateTreatmentRequest;
+import com.clinix.forge.treatment.dto.TreatmentResponse;
+import com.clinix.forge.treatment.dto.UpdateTreatmentRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

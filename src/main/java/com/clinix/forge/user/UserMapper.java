@@ -16,13 +16,15 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "password", ignore = true) // Set manually in service
+    @Mapping(target = "password", ignore = true)
+        // Set manually in service
     UserEntity toEntity(CreateUserRequest request);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "password", ignore = true) // Set manually in service
+    @Mapping(target = "password", ignore = true)
+        // Set manually in service
     void updateEntityFromRequest(UpdateUserRequest request, @MappingTarget UserEntity entity);
 
     UserResponse toResponse(UserEntity entity);

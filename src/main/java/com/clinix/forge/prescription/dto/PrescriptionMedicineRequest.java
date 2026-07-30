@@ -20,4 +20,5 @@ public record PrescriptionMedicineRequest(
         @Positive(message = "Quantity must be a positive number")
         @Schema(description = "Quantity of medicine units to prescribe", example = "10")
         Integer quantity
-) {}
+) {
+}

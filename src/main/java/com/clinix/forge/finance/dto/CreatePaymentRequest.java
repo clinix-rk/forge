@@ -25,4 +25,5 @@ public record CreatePaymentRequest(
         @Size(max = 255, message = "Reference must not exceed 255 characters")
         @Schema(description = "Optional transaction reference or check number", example = "TXN987654321")
         String reference
-) {}
+) {
+}

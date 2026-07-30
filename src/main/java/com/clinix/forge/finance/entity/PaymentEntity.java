@@ -2,7 +2,7 @@ package com.clinix.forge.finance.entity;
 
 import com.clinix.forge.core.entity.BaseEntity;
 import com.clinix.forge.patient.entity.PatientEntity;
-import com.clinix.forge.treatment.entity.TreatmentEntity;
+import com.clinix.forge.treatment.TreatmentEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

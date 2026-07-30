@@ -1,6 +1,8 @@
 package com.clinix.forge.complain;
 
-import com.clinix.forge.complain.dto.*;
+import com.clinix.forge.complain.dto.ComplainResponse;
+import com.clinix.forge.complain.dto.CreateComplainRequest;
+import com.clinix.forge.complain.dto.UpdateComplainRequest;
 import org.mapstruct.*;
 
 @Mapper(

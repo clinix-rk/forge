@@ -13,4 +13,5 @@ public record CreateComplainCategoryRequest(
 
         @Schema(description = "Optional parent category ID for hierarchical grouping", example = "2")
         Long parentId
-) {}
+) {
+}

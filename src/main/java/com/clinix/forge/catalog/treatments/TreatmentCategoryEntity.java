@@ -4,6 +4,7 @@ import com.clinix.forge.core.entity.BaseEntity;
 import com.clinix.forge.treatment.TreatmentEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.HashSet;
 import java.util.Set;
 

@@ -1,6 +1,7 @@
 package com.clinix.forge.treatment.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 import java.time.LocalDate;
 
@@ -26,4 +27,5 @@ public record TreatmentResponse(
 
         @Schema(description = "Timestamp when the treatment record was last updated")
         Instant updatedAt
-) {}
+) {
+}

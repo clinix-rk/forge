@@ -37,7 +37,7 @@ public class ComplainCategoryService {
         }
 
         if (isDuplicateWithSameParent(request.name(), request.parentId(), null)) {
-                throw new DuplicateResourceException("Complain category with name '" + request.name() + "' already exists under this parent");
+            throw new DuplicateResourceException("Complain category with name '" + request.name() + "' already exists under this parent");
         }
 
         ComplainCategoryEntity entity = complainCategoryMapper.toComplainCategoryEntity(request);
@@ -89,7 +89,7 @@ public class ComplainCategoryService {
                     .orElseThrow(() -> new ResourceNotFoundException("Parent category not found with ID: " + request.parentId()));
         }
 
-        if(isDuplicateWithSameParent(request.name(), request.parentId(), id)) {
+        if (isDuplicateWithSameParent(request.name(), request.parentId(), id)) {
             throw new DuplicateResourceException("Complain category with name '" + request.name() + "' already exists under this parent");
         }
 

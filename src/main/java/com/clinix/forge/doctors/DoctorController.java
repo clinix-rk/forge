@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/doctors")
 @RequiredArgsConstructor
-@Tag(name = "Doctor Management", description = "Endpoints for managing doctors in the Clinix system")
+@Tag(name = "Doctor management", description = "Endpoints to manage doctor records")
 public class DoctorController {
 
     private final DoctorService doctorService;
@@ -40,7 +40,10 @@ public class DoctorController {
      * @return the created doctor details
      */
     @PostMapping
-    @Operation(summary = "Add a new doctor", description = "Creates a new doctor record with the provided details.")
+    @Operation(
+            summary = "Add a new doctor",
+            description = "Creates a new doctor record with the provided details."
+    )
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Doctor record saved successfully"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid input data")

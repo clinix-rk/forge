@@ -1,7 +1,7 @@
 package com.clinix.forge.appointment;
 
-import com.clinix.forge.appointment.dto.CreateAppointmentRequest;
 import com.clinix.forge.appointment.dto.AppointmentResponse;
+import com.clinix.forge.appointment.dto.CreateAppointmentRequest;
 import com.clinix.forge.appointment.dto.UpdateAppointmentRequest;
 import com.clinix.forge.appointment.entity.AppointmentEntity;
 import com.clinix.forge.appointment.exception.AppointmentConflictException;

@@ -149,7 +149,7 @@ public class FileService {
         }
         java.util.Optional<FileEntity> sameLocationOpt = fileRepository.findByLocation(entity.getLocation());
         if (sameLocationOpt.isPresent() && !sameLocationOpt.get().getPatient().getId().equals(patientId)) {
-             throw new DuplicateResourceException("File at location " + entity.getLocation() + " already exists for another patient");
+            throw new DuplicateResourceException("File at location " + entity.getLocation() + " already exists for another patient");
         }
 
         FileEntity saved = fileRepository.save(entity);

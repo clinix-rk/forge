@@ -8,4 +8,5 @@ public record CreateDrugDosageRequest(
         @NotBlank(message = "Dosage pattern text is required")
         @Schema(description = "The dosage prescription pattern (e.g., 1-0-1 or once daily)", example = "1-0-1")
         String dosage
-) {}
+) {
+}

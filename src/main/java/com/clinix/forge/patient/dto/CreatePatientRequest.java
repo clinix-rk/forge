@@ -47,4 +47,5 @@ public record CreatePatientRequest(
 
         @Valid
         Set<String> drugAllergies
-) {}
+) {
+}

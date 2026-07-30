@@ -17,6 +17,7 @@
                 color: #888888;
             }
         }
+
         body {
             font-family: Arial, sans-serif;
             font-size: 10.5pt;
@@ -34,10 +35,12 @@
             margin-bottom: 25px;
             table-layout: fixed;
         }
+
         .patient-info-table td {
             padding: 8px 4px;
             vertical-align: bottom;
         }
+
         .patient-label {
             font-weight: bold;
             color: #555555;
@@ -47,16 +50,19 @@
             white-space: nowrap;
             width: 18%;
         }
+
         .patient-value {
             border-bottom: 1px solid #e0e0e0;
             padding-left: 5px;
             color: #1a1a1a;
             width: 32%;
         }
+
         .label-right {
             text-align: right;
             padding-right: 10px;
         }
+
         /* --------------------------------------- */
 
         .rx-symbol {
@@ -67,18 +73,21 @@
             margin: 15px 0 10px 0;
             line-height: 1;
         }
+
         .details-block {
             margin-bottom: 30px;
             white-space: pre-wrap;
             font-size: 10.5pt;
             color: #222222;
         }
+
         .medicines-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
             -fs-table-paginate: paginate;
         }
+
         .medicines-table th {
             border-bottom: 2px solid #1a1a1a;
             font-weight: bold;
@@ -89,18 +98,22 @@
             letter-spacing: 0.5px;
             color: #555555;
         }
+
         .medicines-table td {
             padding: 10px 4px;
             border-bottom: 1px solid #eeeeee;
         }
+
         .medicines-table tr {
             page-break-inside: avoid;
         }
+
         .qty-col {
             text-align: center;
             width: 15%;
             font-variant-numeric: tabular-nums;
         }
+
         .dosage-col {
             width: 40%;
         }
@@ -114,11 +127,14 @@
         <td class="patient-label">Case No:</td>
         <td class="patient-value" style="font-weight: bold;" th:text="${rx.caseNo}">Y00001</td>
         <td class="patient-label label-right">Date:</td>
-        <td class="patient-value" style="font-variant-numeric: tabular-nums;" th:text="${rx.date}">20/06/2026</td>
+        <td class="patient-value" style="font-variant-numeric: tabular-nums;" th:text="${rx.date}">
+            20/06/2026
+        </td>
     </tr>
     <tr>
         <td class="patient-label">Patient Name:</td>
-        <td class="patient-value" style="font-weight: bold;" th:text="${rx.patientName}">John Doe</td>
+        <td class="patient-value" style="font-weight: bold;" th:text="${rx.patientName}">John Doe
+        </td>
         <td class="patient-label label-right">Age / Gender:</td>
         <td class="patient-value" th:text="${rx.ageGender}">34 yrs / Male</td>
     </tr>

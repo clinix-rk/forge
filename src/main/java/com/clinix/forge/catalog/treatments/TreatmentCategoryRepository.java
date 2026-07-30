@@ -1,6 +1,7 @@
 package com.clinix.forge.catalog.treatments;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.Optional;
 
 /**
@@ -8,5 +9,6 @@ import java.util.Optional;
  */
 public interface TreatmentCategoryRepository extends JpaRepository<TreatmentCategoryEntity, Long> {
     Optional<TreatmentCategoryEntity> findByNameAndParentId(String name, Long parentId);
+
     Optional<TreatmentCategoryEntity> findByNameAndParentIsNull(String name);
 }

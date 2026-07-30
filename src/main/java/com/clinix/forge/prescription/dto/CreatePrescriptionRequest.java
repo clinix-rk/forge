@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -26,4 +27,5 @@ public record CreatePrescriptionRequest(
         @Valid
         @Schema(description = "List of medicines and their dosage details prescribed")
         List<PrescriptionMedicineRequest> medicines
-) {}
+) {
+}

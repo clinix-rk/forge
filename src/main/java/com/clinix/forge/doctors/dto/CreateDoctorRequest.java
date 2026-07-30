@@ -14,4 +14,5 @@ public record CreateDoctorRequest(
         @Size(max = 5, message = "Case number prefix cannot exceed 5 characters")
         @Schema(description = "Short prefix used for patient case numbers (e.g., R for Rut Koticha)", example = "RK")
         String caseNoPrefix
-) {}
+) {
+}

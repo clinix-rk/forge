@@ -1,6 +1,7 @@
 package com.clinix.forge.catalog.dosages.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 
 @Schema(description = "Represents a predefined drug dosage pattern details")
@@ -16,4 +17,5 @@ public record DrugDosageResponse(
 
         @Schema(description = "Timestamp when the dosage pattern was last updated")
         Instant updatedAt
-) {}
+) {
+}

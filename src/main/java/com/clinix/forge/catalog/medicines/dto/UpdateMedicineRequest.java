@@ -20,4 +20,5 @@ public record UpdateMedicineRequest(
         @Size(max = 255, message = "Instruction must not exceed 255 characters")
         @Schema(description = "Updated administration instructions for this medicine", example = "Take after food with warm water")
         String instruction
-) {}
+) {
+}

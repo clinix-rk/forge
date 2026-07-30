@@ -1,5 +1,7 @@
 package com.clinix.forge.treatment;
 
+import com.clinix.forge.catalog.treatments.TreatmentCategoryEntity;
+import com.clinix.forge.catalog.treatments.TreatmentCategoryRepository;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
 import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.finance.PaymentRepository;
@@ -10,8 +12,6 @@ import com.clinix.forge.patient.repositories.PatientRepository;
 import com.clinix.forge.treatment.dto.CreateTreatmentRequest;
 import com.clinix.forge.treatment.dto.TreatmentResponse;
 import com.clinix.forge.treatment.dto.UpdateTreatmentRequest;
-import com.clinix.forge.catalog.treatments.TreatmentCategoryEntity;
-import com.clinix.forge.catalog.treatments.TreatmentCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

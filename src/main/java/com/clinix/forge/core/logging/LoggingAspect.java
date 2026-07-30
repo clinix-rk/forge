@@ -26,7 +26,7 @@ public class LoggingAspect {
         long start = System.currentTimeMillis();
 
         if (log.isDebugEnabled()) {
-            log.debug("Entering method [{}.{}] with arguments: {}", 
+            log.debug("Entering method [{}.{}] with arguments: {}",
                     className, methodName, serializeAndMask(joinPoint.getArgs()));
         } else {
             log.trace("Entering method [{}.{}]", className, methodName);
@@ -39,7 +39,7 @@ public class LoggingAspect {
             long duration = System.currentTimeMillis() - start;
 
             if (log.isDebugEnabled()) {
-                log.debug("Exiting method [{}.{}] in {}ms returning: {}", 
+                log.debug("Exiting method [{}.{}] in {}ms returning: {}",
                         className, methodName, duration, maskSensitive(result));
             } else {
                 log.trace("Exiting method [{}.{}] in {}ms", className, methodName, duration);

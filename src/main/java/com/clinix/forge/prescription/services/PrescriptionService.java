@@ -1,17 +1,23 @@
 package com.clinix.forge.prescription.services;
 
+import com.clinix.forge.catalog.dosages.DrugDosageEntity;
+import com.clinix.forge.catalog.dosages.DrugDosageRepository;
+import com.clinix.forge.catalog.medicines.MedicineEntity;
+import com.clinix.forge.catalog.medicines.MedicineRepository;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
 import com.clinix.forge.core.payload.PaginatedPayload;
+import com.clinix.forge.core.pdf.PdfGenerationService;
+import com.clinix.forge.core.pdf.dto.PrescriptionMedicineItem;
+import com.clinix.forge.core.pdf.dto.PrescriptionPdfData;
 import com.clinix.forge.patient.entity.PatientEntity;
 import com.clinix.forge.patient.repositories.PatientRepository;
 import com.clinix.forge.prescription.PrescriptionMapper;
-import com.clinix.forge.prescription.dto.*;
-import com.clinix.forge.catalog.dosages.DrugDosageEntity;
-import com.clinix.forge.catalog.medicines.MedicineEntity;
+import com.clinix.forge.prescription.dto.CreatePrescriptionRequest;
+import com.clinix.forge.prescription.dto.PrescriptionMedicineRequest;
+import com.clinix.forge.prescription.dto.PrescriptionResponse;
+import com.clinix.forge.prescription.dto.UpdatePrescriptionRequest;
 import com.clinix.forge.prescription.entity.PrescriptionEntity;
 import com.clinix.forge.prescription.entity.PrescriptionMedicineEntity;
-import com.clinix.forge.catalog.dosages.DrugDosageRepository;
-import com.clinix.forge.catalog.medicines.MedicineRepository;
 import com.clinix.forge.prescription.repositories.PrescriptionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,19 +26,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import com.clinix.forge.core.pdf.PdfGenerationService;
-import com.clinix.forge.core.pdf.dto.PrescriptionMedicineItem;
-import com.clinix.forge.core.pdf.dto.PrescriptionPdfData;
 import org.thymeleaf.context.Context;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service

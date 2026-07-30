@@ -42,7 +42,7 @@ public class GlobalExceptionHandlerAdvice {
         log.warn("Validation failed for request. Errors count: {}", validationErrors.size());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(ApiResponse.error("Validation failed.", validationErrors));
+                .body(ApiResponse.error("Validation failed.", validationErrors));
     }
 
     @ExceptionHandler(Exception.class)

@@ -43,4 +43,5 @@ public record UpdatePatientRequest(
 
         @Valid
         Set<String> drugAllergies
-) {}
+) {
+}

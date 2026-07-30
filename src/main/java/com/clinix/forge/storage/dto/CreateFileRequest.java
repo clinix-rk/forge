@@ -22,4 +22,5 @@ public record CreateFileRequest(
         @Size(max = 512, message = "File location must not exceed 512 characters")
         @Schema(description = "Storage path or URL of the file", example = "/uploads/patients/5/xray.png")
         String location
-) {}
+) {
+}

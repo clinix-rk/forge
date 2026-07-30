@@ -9,4 +9,5 @@ public record PrescriptionPdfData(
         String ageGender,     // "34 yrs / Male"
         String details,       // free text details
         List<PrescriptionMedicineItem> medicines
-) {}
+) {
+}

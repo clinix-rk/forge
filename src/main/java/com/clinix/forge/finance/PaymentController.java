@@ -2,7 +2,9 @@ package com.clinix.forge.finance;
 
 import com.clinix.forge.core.payload.ApiResponse;
 import com.clinix.forge.core.payload.PaginatedPayload;
-import com.clinix.forge.finance.dto.*;
+import com.clinix.forge.finance.dto.CreatePaymentRequest;
+import com.clinix.forge.finance.dto.PaymentResponse;
+import com.clinix.forge.finance.dto.UpdatePaymentRequest;
 import com.clinix.forge.finance.service.Form3CPdfService;
 import com.clinix.forge.finance.service.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,7 +14,6 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

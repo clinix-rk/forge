@@ -1,6 +1,7 @@
 package com.clinix.forge.catalog.complains.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 
 @Schema(description = "Represents a category of patient complaints in the system")
@@ -19,4 +20,5 @@ public record ComplainCategoryResponse(
 
         @Schema(description = "Timestamp when the category was last updated")
         Instant updatedAt
-) {}
+) {
+}

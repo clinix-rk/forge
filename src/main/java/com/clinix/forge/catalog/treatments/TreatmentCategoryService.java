@@ -33,7 +33,7 @@ public class TreatmentCategoryService {
                     .orElseThrow(() -> new ResourceNotFoundException("Parent category not found with ID: " + request.parentId()));
         }
 
-        if(isDuplicateWithSameParent(request.name(), request.parentId(), null)) {
+        if (isDuplicateWithSameParent(request.name(), request.parentId(), null)) {
             throw new DuplicateResourceException("Treatment category with name '" + request.name() + "' already exists under the same parent");
         }
 
@@ -72,7 +72,7 @@ public class TreatmentCategoryService {
                     .orElseThrow(() -> new ResourceNotFoundException("Parent category not found with ID: " + request.parentId()));
         }
 
-        if(isDuplicateWithSameParent(request.name(), request.parentId(), id) ) {
+        if (isDuplicateWithSameParent(request.name(), request.parentId(), id)) {
             throw new DuplicateResourceException("Treatment category with name '" + request.name() + "' already exists under the same parent");
         }
 

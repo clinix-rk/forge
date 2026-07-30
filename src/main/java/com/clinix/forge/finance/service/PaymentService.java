@@ -9,11 +9,10 @@ import com.clinix.forge.finance.dto.CreatePaymentRequest;
 import com.clinix.forge.finance.dto.PaymentResponse;
 import com.clinix.forge.finance.dto.UpdatePaymentRequest;
 import com.clinix.forge.finance.entity.PaymentEntity;
-import com.clinix.forge.finance.entity.PaymentMethod;
 import com.clinix.forge.patient.entity.PatientEntity;
 import com.clinix.forge.patient.repositories.PatientRepository;
-import com.clinix.forge.treatment.repository.TreatmentRepository;
-import com.clinix.forge.treatment.entity.TreatmentEntity;
+import com.clinix.forge.treatment.TreatmentEntity;
+import com.clinix.forge.treatment.TreatmentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j

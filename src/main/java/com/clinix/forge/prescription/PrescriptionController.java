@@ -1,9 +1,12 @@
 package com.clinix.forge.prescription;
 
+import com.clinix.forge.catalog.medicines.MedicineService;
 import com.clinix.forge.core.payload.ApiResponse;
 import com.clinix.forge.core.payload.PaginatedPayload;
-import com.clinix.forge.prescription.dto.*;
-import com.clinix.forge.catalog.medicines.MedicineService;
+import com.clinix.forge.core.pdf.PdfResponseUtil;
+import com.clinix.forge.prescription.dto.CreatePrescriptionRequest;
+import com.clinix.forge.prescription.dto.PrescriptionResponse;
+import com.clinix.forge.prescription.dto.UpdatePrescriptionRequest;
 import com.clinix.forge.prescription.services.PrescriptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,7 +15,6 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.clinix.forge.core.pdf.PdfResponseUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -89,8 +91,8 @@ public class PrescriptionController {
 
     @GetMapping("/{id}/pdf")
     @Operation(
-        summary = "Generate Prescription Print-Fill PDF",
-        description = "Generates a content-only PDF for printing on the pre-printed Aditya Dental Clinic letterhead pad. The physical paper provides the header, watermark, footer, and QR code."
+            summary = "Generate Prescription Print-Fill PDF",
+            description = "Generates a content-only PDF for printing on the pre-printed Aditya Dental Clinic letterhead pad. The physical paper provides the header, watermark, footer, and QR code."
     )
     public ResponseEntity<byte[]> getPrescriptionPdf(@PathVariable Long id) {
         log.info("API call: Generate prescription PDF for ID: {}", id);

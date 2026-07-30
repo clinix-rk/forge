@@ -49,7 +49,7 @@ public class PdfGenerationService {
 
             // Supplies the cached font bytes via an in-memory stream, bypassing disk I/O
             builder.useFont(
-                    (FSSupplier<InputStream>) () -> new ByteArrayInputStream(cachedFontBytes),
+                    () -> new ByteArrayInputStream(cachedFontBytes),
                     "NotoSerif",
                     400,
                     FontStyle.NORMAL,

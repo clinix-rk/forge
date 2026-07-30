@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
 
 @Schema(description = "Request payload for updating an existing suggestion's details")
@@ -30,4 +31,5 @@ public record UpdateSuggestionRequest(
         @NotNull(message = "Status is required")
         @Schema(description = "Updated status of the suggestion (SUGGESTED, ACCEPTED, DECLINED)")
         SuggestionStatus status
-) {}
+) {
+}

@@ -84,4 +84,5 @@ public record PatientResponse(
                 description = "The system metadata for when the patient record was last updated"
         )
         Instant updatedAt
-) {}
+) {
+}

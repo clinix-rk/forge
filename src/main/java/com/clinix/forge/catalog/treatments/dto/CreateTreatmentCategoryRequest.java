@@ -13,4 +13,5 @@ public record CreateTreatmentCategoryRequest(
 
         @Schema(description = "Optional parent category ID for hierarchical grouping", example = "3")
         Long parentId
-) {}
+) {
+}

@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /**
@@ -201,6 +202,7 @@ public class PatientController {
         List<String> allergies = patientService.getAllDrugAllergies();
         return ResponseEntity.ok(ApiResponse.success("Drug allergies retrieved successfully.", allergies));
     }
+
     /**
      * Deletes a patient record from the system.
      *

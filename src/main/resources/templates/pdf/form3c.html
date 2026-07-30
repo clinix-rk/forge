@@ -15,6 +15,7 @@
                 color: #777777;
             }
         }
+
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             font-size: 9pt; /* Scaled down slightly for narrower width */
@@ -23,15 +24,18 @@
             margin: 0;
             padding: 0;
         }
+
         .header-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
+
         .header-left {
             text-align: left;
             vertical-align: top;
         }
+
         .header-right {
             text-align: right;
             vertical-align: top;
@@ -39,6 +43,7 @@
             color: #555555;
             line-height: 1.5;
         }
+
         .title {
             font-size: 15pt;
             font-weight: 700;
@@ -46,6 +51,7 @@
             letter-spacing: 0.5px;
             margin: 0;
         }
+
         .subtitle {
             font-size: 8.5pt;
             color: #c5a059;
@@ -53,12 +59,14 @@
             text-transform: uppercase;
             margin: 4px 0;
         }
+
         .register-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
             -fs-table-paginate: paginate;
         }
+
         .register-table th {
             border-bottom: 2px solid #1a1a1a;
             border-top: 1px solid #e0e0e0;
@@ -70,25 +78,30 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+
         .register-table td {
             border-bottom: 1px solid #e0e0e0;
             padding: 8px 4px;
             vertical-align: top;
         }
+
         .register-table tr {
             page-break-inside: avoid;
         }
+
         .date-row {
             background-color: #f5f5f5;
             font-weight: bold;
             font-size: 8.5pt;
             letter-spacing: 0.5px;
         }
+
         .date-row td {
             border-bottom: 1px solid #1a1a1a;
             border-top: 1px solid #e0e0e0;
             color: #c5a059;
         }
+
         .indented-name {
             padding-left: 10px;
             color: #555555;
@@ -96,9 +109,18 @@
         }
 
         /* Adjusted column widths for portrait constraints */
-        .rec-col { width: 12%; }
-        .case-patient-col { width: 33%; }
-        .treatment-col { width: 38%; }
+        .rec-col {
+            width: 12%;
+        }
+
+        .case-patient-col {
+            width: 33%;
+        }
+
+        .treatment-col {
+            width: 38%;
+        }
+
         .amount-col {
             text-align: right;
             width: 17%;
@@ -111,11 +133,13 @@
             border-bottom: 1px solid #c5a059;
             font-size: 9pt;
         }
+
         .grand-total-section {
             margin-top: 25px;
             text-align: right;
             page-break-inside: avoid;
         }
+
         .grand-total-box {
             display: inline-block;
             border-bottom: 3px double #1a1a1a;
@@ -137,8 +161,10 @@
         </td>
         <td class="header-right">
             <div>Clinic: <strong>Aditya Dental Clinic</strong></div>
-            <div th:if="${form3c.doctorName != null}">Doctor: <strong th:text="${form3c.doctorName}">Dr. Kumar</strong></div>
-            <div>Period: <span th:text="${form3c.fromDate}">01-01-2026</span> to <span th:text="${form3c.toDate}">31-01-2026</span></div>
+            <div th:if="${form3c.doctorName != null}">Doctor: <strong
+                    th:text="${form3c.doctorName}">Dr. Kumar</strong></div>
+            <div>Period: <span th:text="${form3c.fromDate}">01-01-2026</span> to <span
+                    th:text="${form3c.toDate}">31-01-2026</span></div>
         </td>
     </tr>
 </table>
@@ -160,19 +186,29 @@
 
         <th:block th:each="entry : ${group.entries}">
             <tr>
-                <td rowspan="2" class="rec-col" th:text="${entry.recNo}">101</td>
-                <td class="case-patient-col" style="font-weight: 600;" th:text="${entry.caseNumber}">CASE-992</td>
-                <td rowspan="2" class="treatment-col" th:text="${entry.treatmentGiven}">Scaling and Polishing</td>
-                <td rowspan="2" class="amount-col" th:text="${#numbers.formatDecimal(entry.amount, 1, 2)}">1,200.00</td>
+                <td class="rec-col" rowspan="2" th:text="${entry.recNo}">101</td>
+                <td class="case-patient-col" style="font-weight: 600;"
+                    th:text="${entry.caseNumber}">CASE-992
+                </td>
+                <td class="treatment-col" rowspan="2" th:text="${entry.treatmentGiven}">Scaling and
+                    Polishing
+                </td>
+                <td class="amount-col" rowspan="2"
+                    th:text="${#numbers.formatDecimal(entry.amount, 1, 2)}">1,200.00
+                </td>
             </tr>
             <tr>
-                <td class="case-patient-col indented-name" th:text="${entry.patientName}">John Doe</td>
+                <td class="case-patient-col indented-name" th:text="${entry.patientName}">John Doe
+                </td>
             </tr>
         </th:block>
 
         <tr class="daily-total-row">
-            <td colspan="3" style="text-align: right;">Total for <span th:text="${group.dateLabel}">09-06-2026</span>:</td>
-            <td class="amount-col" th:text="${#numbers.formatDecimal(group.dailyTotal, 1, 2)}">1,200.00</td>
+            <td colspan="3" style="text-align: right;">Total for <span th:text="${group.dateLabel}">09-06-2026</span>:
+            </td>
+            <td class="amount-col" th:text="${#numbers.formatDecimal(group.dailyTotal, 1, 2)}">
+                1,200.00
+            </td>
         </tr>
     </th:block>
     </tbody>
@@ -180,7 +216,8 @@
 
 <div class="grand-total-section">
     <div class="grand-total-box">
-        Grand Total Amount: &nbsp; ₹<span th:text="${#numbers.formatDecimal(form3c.grandTotal, 1, 2)}">1,200.00</span>
+        Grand Total Amount: &nbsp; ₹<span
+            th:text="${#numbers.formatDecimal(form3c.grandTotal, 1, 2)}">1,200.00</span>
     </div>
 </div>
 

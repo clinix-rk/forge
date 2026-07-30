@@ -1,6 +1,7 @@
 package com.clinix.forge.appointment.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 
@@ -23,4 +24,5 @@ public record AppointmentResponse(
 
         @Schema(description = "Timestamp when the appointment record was last updated")
         Instant updatedAt
-) {}
+) {
+}

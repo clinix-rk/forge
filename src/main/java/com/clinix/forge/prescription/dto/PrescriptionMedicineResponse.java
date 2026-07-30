@@ -1,6 +1,7 @@
 package com.clinix.forge.prescription.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 
 @Schema(description = "Represents a medicine item details linked within a prescription")
@@ -22,4 +23,5 @@ public record PrescriptionMedicineResponse(
 
         @Schema(description = "Timestamp when the prescription medicine record was last updated")
         Instant updatedAt
-) {}
+) {
+}

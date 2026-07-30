@@ -2,11 +2,8 @@ package com.clinix.forge.suggestion.dto;
 
 import com.clinix.forge.suggestion.entity.SuggestionStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+
 import java.time.LocalDate;
 
 @Schema(description = "Request payload for proposing a new suggestion to a patient")
@@ -35,4 +32,5 @@ public record CreateSuggestionRequest(
         @Positive(message = "Patient ID must be a positive number")
         @Schema(description = "Unique ID of the patient", example = "5")
         Long patientId
-) {}
+) {
+}

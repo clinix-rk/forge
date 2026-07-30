@@ -23,14 +23,14 @@ import lombok.*;
 @NoArgsConstructor
 public class PhoneNumberEntity extends BaseEntity {
 
-        @Column(name = "phone_number", length = 20, nullable = false)
-        private String phoneNumber;
+    @Column(name = "phone_number", length = 20, nullable = false)
+    private String phoneNumber;
 
-        @Enumerated(value = EnumType.STRING)
-        @Column(nullable = false)
-        private PhoneType type;
+    @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
+    private PhoneType type;
 
-        @ManyToOne(fetch = FetchType.LAZY, optional = false)
-        @JoinColumn(name = "patient_id", nullable = false)
-        private PatientEntity patient;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "patient_id", nullable = false)
+    private PatientEntity patient;
 }
