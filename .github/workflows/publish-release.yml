@@ -1,0 +1,64 @@
+name: Forge - Publish Release to GHCR
+
+on:
+  push:
+    branches: [ "release" ]
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+    
+    - name: Run final tests
+      run: mvn -B clean test --file pom.xml
+    
+    - name: Get version tag
+      id: version
+      run: |
+        if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+          VERSION=${GITHUB_REF#refs/tags/}
+        elif [[ -n "${{ github.event.inputs.version }}" ]]; then
+          VERSION=${{ github.event.inputs.version }}
+        else
+          VERSION=$(git describe --tags --always --abbrev=7)
+        fi
+        echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+        echo "Publishing version: ${VERSION}"
+    
+    - name: Build and publish to GHCR
+      run: |
+        mvn -B jib:build \
+          --file pom.xml \
+          -Djib.to.image=ghcr.io/${{ github.repository_owner }}/forge:${{ steps.version.outputs.VERSION }} \
+          -Djib.to.image=ghcr.io/${{ github.repository_owner }}/forge:latest \
+          -Djib.to.auth.username=${{ github.actor }} \
+          -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Create GitHub Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.VERSION }}
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
