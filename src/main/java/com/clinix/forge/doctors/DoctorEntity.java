@@ -2,11 +2,9 @@ package com.clinix.forge.doctors;
 
 import com.clinix.forge.core.entity.BaseEntity;
 import com.clinix.forge.patient.entity.PatientEntity;
-import com.clinix.forge.patient.entity.PhoneNumberEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 

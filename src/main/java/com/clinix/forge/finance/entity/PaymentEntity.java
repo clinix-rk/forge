@@ -1,13 +1,14 @@
 package com.clinix.forge.finance.entity;
 
 import com.clinix.forge.core.entity.BaseEntity;
-import com.clinix.forge.treatment.entity.TreatmentEntity;
+import com.clinix.forge.patient.entity.PatientEntity;
+import com.clinix.forge.treatment.TreatmentEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-/**
- * Entity mapping representing payments associated with treatments.
- */
 @Entity
 @Table(
         name = "payments",
@@ -17,14 +18,21 @@ import lombok.*;
 )
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaymentEntity extends BaseEntity {
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "recipt_id", nullable = false)
-    private ReciptEntity recipt;
+    @JoinColumn(name = "patient_id", nullable = false)
+    private PatientEntity patient;
+
+    @Column(name = "doctor_identity_character", nullable = false, length = 1)
+    private String doctorIdentityCharacter;
+
+    @Column(name = "financial_year", nullable = false, length = 50)
+    private String financialYear;
+
+    @Column(nullable = false)
+    private Integer serial;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "treatment_id", unique = true, nullable = false)
@@ -38,6 +46,5 @@ public class PaymentEntity extends BaseEntity {
     private PaymentMethod method;
 
     @Column(nullable = false, length = 255)
-    @Builder.Default
     private String reference = "";
 }

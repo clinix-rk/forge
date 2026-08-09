@@ -34,7 +34,7 @@ public interface DoctorMapper {
      * Updates an existing {@link DoctorEntity} entity with values from an {@link UpdateDoctorRequest}.
      * The ID and license number are ignored during this update to prevent accidental modification.
      *
-     * @param dto the data transfer object containing update details
+     * @param dto    the data transfer object containing update details
      * @param entity the existing doctor entity to update
      */
     @Mapping(target = "id", ignore = true)

@@ -2,6 +2,7 @@ package com.clinix.forge.user.dto;
 
 import com.clinix.forge.user.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 
 @Schema(description = "Represents user account details in the system")
@@ -20,4 +21,5 @@ public record UserResponse(
 
         @Schema(description = "Timestamp when the user account was last updated")
         Instant updatedAt
-) {}
+) {
+}

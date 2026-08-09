@@ -1,9 +1,11 @@
 package com.clinix.forge.suggestion.entity;
 
+import com.clinix.forge.catalog.treatments.TreatmentCategoryEntity;
 import com.clinix.forge.core.entity.BaseEntity;
 import com.clinix.forge.patient.entity.PatientEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDate;
 
 /**
@@ -21,8 +23,9 @@ public class SuggestionEntity extends BaseEntity {
     @Column(nullable = false)
     private LocalDate date;
 
-    @Column(nullable = false, length = 100)
-    private String category;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "suggestion_category_id", nullable = false)
+    private TreatmentCategoryEntity category;
 
     @Column(columnDefinition = "TEXT")
     private String details;

@@ -1,48 +1,48 @@
 server:
-  error:
-    include-message: always # Helps debugging internal development API failures
+    error:
+        include-message: always
 
 spring:
-  datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:clinix_datastore}
-    username: ${DB_USER:clinix_application}
-    password: ${DB_PASSWORD:password}
+    datasource:
+        url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:clinix_dev}
+        username: ${DB_USER:clinix_application}
+        password: ${DB_PASSWORD:password}
 
-  docker:
-    compose:
-      enabled: false
+    docker:
+        compose:
+            enabled: false
 
-  jpa:
-    hibernate:
-      ddl-auto: update # Automatically schema updates for rapid feature iteration
-    show-sql: true
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
 
-  flyway:
-    enabled: true
+    flyway:
+        enabled: false
 
 springdoc:
-  api-docs:
-    path: /docs
-  swagger-ui:
-    enabled: true # Visual API interaction for local iteration
+    api-docs:
+        path: /docs
+    swagger-ui:
+        enabled: true
 
 management:
-  endpoints:
-    web:
-      exposure:
-        include: "*" # Full structural debugging metrics opened locally
-  endpoint:
-    health:
-      show-details: always
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+    endpoint:
+        health:
+            show-details: always
 
 clinix:
-  security:
-    jwt:
-      secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970} # Local fallback secret
-      expiration-ms: 86400000 # 24 Hours
+    security:
+        jwt:
+            secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970} # Local fallback secret
+            expiration-ms: 86400000 # 24 Hours
 
 logging:
-  level:
-    com.clinix: DEBUG
-    org.springframework: INFO
-    org.hibernate.SQL: DEBUG
+    level:
+        com.clinix: DEBUG
+        org.springframework: INFO
+        org.hibernate.SQL: DEBUG

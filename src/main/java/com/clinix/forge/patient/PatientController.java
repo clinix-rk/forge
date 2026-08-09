@@ -1,7 +1,7 @@
 package com.clinix.forge.patient;
 
 import com.clinix.forge.core.payload.ApiResponse;
-import com.clinix.forge.core.payload.PaginatedPayload;
+import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.patient.dto.CreatePatientRequest;
 import com.clinix.forge.patient.dto.PatientResponse;
 import com.clinix.forge.patient.dto.UpdatePatientRequest;
@@ -13,10 +13,12 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /**
@@ -55,10 +57,7 @@ public class PatientController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(
-                        "Patient record has been successfully saved to the system.",
-                        savedPatient
-                ));
+                .body(ApiResponse.success(savedPatient));
     }
 
     /**
@@ -81,10 +80,7 @@ public class PatientController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(
-                        "Patient record retrieved successfully.",
-                        patient
-                ));
+                .body(ApiResponse.success(patient));
     }
 
     /**
@@ -107,10 +103,7 @@ public class PatientController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(
-                        "Patient record retrieved successfully.",
-                        patient
-                ));
+                .body(ApiResponse.success(patient));
     }
 
     /**
@@ -129,7 +122,7 @@ public class PatientController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Patient records retrieved successfully"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid validation parameters")
     })
-    public ResponseEntity<ApiResponse<PaginatedPayload<PatientResponse>>> searchPatients(
+    public ResponseEntity<ApiResponse<java.util.List<PatientResponse>>> searchPatients(
             @RequestParam(defaultValue = "0")
             @Min(value = 0, message = "Page number must be greater than or equal to 0.")
             int pageNo,
@@ -146,15 +139,12 @@ public class PatientController {
         log.debug("API call: Searching patients - Page: {}, Size: {}, Name: {}, Phone: {}, CaseNo: {}",
                 pageNo, pageSize, name, phoneNo, caseNo);
 
-        PaginatedPayload<PatientResponse> patients = patientService.searchPatients(
+        Page<PatientResponse> patients = patientService.searchPatients(
                 name, phoneNo, caseNo, pageNo, pageSize);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(
-                        "Patient records retrieved successfully.",
-                        patients
-                ));
+                .body(ApiResponse.success(patients.getContent(), new PaginationMetadata(patients.getNumber(), patients.getSize(), patients.getTotalElements(), patients.getTotalPages(), patients.hasNext(), patients.hasPrevious())));
     }
 
     /**
@@ -180,10 +170,7 @@ public class PatientController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(
-                        "Patient record updated successfully.",
-                        updatedPatient
-                ));
+                .body(ApiResponse.success(updatedPatient));
     }
 
     @GetMapping("/medical-conditions")
@@ -191,7 +178,7 @@ public class PatientController {
     public ResponseEntity<ApiResponse<List<String>>> getAllMedicalConditions() {
         log.debug("API call: Fetching all medical conditions");
         List<String> conditions = patientService.getAllMedicalConditions();
-        return ResponseEntity.ok(ApiResponse.success("Medical conditions retrieved successfully.", conditions));
+        return ResponseEntity.ok(ApiResponse.success(conditions));
     }
 
     @GetMapping("/drug-allergies")
@@ -199,8 +186,9 @@ public class PatientController {
     public ResponseEntity<ApiResponse<List<String>>> getAllDrugAllergies() {
         log.debug("API call: Fetching all drug allergies");
         List<String> allergies = patientService.getAllDrugAllergies();
-        return ResponseEntity.ok(ApiResponse.success("Drug allergies retrieved successfully.", allergies));
+        return ResponseEntity.ok(ApiResponse.success(allergies));
     }
+
     /**
      * Deletes a patient record from the system.
      *
@@ -221,4 +209,3 @@ public class PatientController {
         return ResponseEntity.noContent().build();
     }
 }
-

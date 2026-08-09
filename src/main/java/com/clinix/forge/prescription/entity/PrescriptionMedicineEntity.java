@@ -1,5 +1,8 @@
 package com.clinix.forge.prescription.entity;
 
+import com.clinix.forge.catalog.medicines.MedicineEntity;
+import com.clinix.forge.catalog.prescription.dosages.DosageEntity;
+import com.clinix.forge.catalog.prescription.instructions.InstructionEntity;
 import com.clinix.forge.core.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,7 +34,11 @@ public class PrescriptionMedicineEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "dosage_id", nullable = false)
-    private DrugDosageEntity dosage;
+    private DosageEntity dosage;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "instruction_id")
+    private InstructionEntity instruction;
 
     @Column(nullable = false)
     private Integer quantity;

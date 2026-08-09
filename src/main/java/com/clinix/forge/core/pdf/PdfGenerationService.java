@@ -1,39 +1,64 @@
 package com.clinix.forge.core.pdf;
 
+import com.openhtmltopdf.outputdevice.helper.BaseRendererBuilder.FontStyle;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.annotation.PostConstruct;
+import org.jsoup.Jsoup;
+import org.jsoup.helper.W3CDom;
+import org.jsoup.nodes.Document;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.net.URL;
+import java.io.InputStream;
 
-@Slf4j
 @Service
-@RequiredArgsConstructor
 public class PdfGenerationService {
 
     private final SpringTemplateEngine templateEngine;
+    private byte[] cachedFontBytes;
 
-    public byte[] generatePdf(String templateName, Context context) {
-        log.info("Generating PDF from template: {}", templateName);
-        try {
-            String html = templateEngine.process(templateName, context);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    public PdfGenerationService(SpringTemplateEngine templateEngine) {
+        this.templateEngine = templateEngine;
+    }
+
+    @PostConstruct
+    public void init() throws Exception {
+        // Loads the font into memory exactly once during application startup
+        ClassPathResource fontResource = new ClassPathResource("static/fonts/NotoSerif-Regular.ttf");
+        try (InputStream inputStream = fontResource.getInputStream()) {
+            this.cachedFontBytes = inputStream.readAllBytes();
+        }
+    }
+
+    public byte[] generatePdf(String templateName, Context context) throws Exception {
+        String htmlContent = templateEngine.process(templateName, context);
+
+        Document jsoupDoc = Jsoup.parse(htmlContent, "UTF-8");
+        org.w3c.dom.Document w3cDoc = new W3CDom().fromJsoup(jsoupDoc);
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             PdfRendererBuilder builder = new PdfRendererBuilder();
 
-            URL staticFolder = getClass().getResource("/static/");
-            String baseUri = staticFolder != null ? staticFolder.toExternalForm() : "";
+            builder.useFastMode();
+            builder.withW3cDocument(w3cDoc, "/");
 
-            builder.withHtmlContent(html, baseUri);
-            builder.toStream(bos);
+            // Supplies the cached font bytes via an in-memory stream, bypassing disk I/O
+            builder.useFont(
+                    () -> new ByteArrayInputStream(cachedFontBytes),
+                    "NotoSerif",
+                    400,
+                    FontStyle.NORMAL,
+                    true
+            );
+
+            builder.toStream(outputStream);
             builder.run();
-            return bos.toByteArray();
-        } catch (Exception e) {
-            log.error("Failed to generate PDF from template: {}", templateName, e);
-            throw new RuntimeException("Error generating PDF: " + e.getMessage(), e);
+
+            return outputStream.toByteArray();
         }
     }
 }

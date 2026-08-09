@@ -1,46 +1,46 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
-    hikari: # Production database connection pooling tuning
-      maximum-pool-size: 20
-      minimum-idle: 5
-      idle-timeout: 300000
-      max-lifetime: 1200000
+    datasource:
+        url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+        username: ${DB_USER}
+        password: ${DB_PASSWORD}
+        hikari: # Production database connection pooling tuning
+            maximum-pool-size: 20
+            minimum-idle: 5
+            idle-timeout: 300000
+            max-lifetime: 1200000
 
-  jpa:
-    hibernate:
-      ddl-auto: validate # Halts deployment instantly if DB migrations and JPA structures diverge
-    show-sql: false
-    properties:
-      hibernate:
-        format_sql: false # Disabling structural string building saves CPU cycles in high throughput
+    jpa:
+        hibernate:
+            ddl-auto: validate # Halts deployment instantly if DB migrations and JPA structures diverge
+        show-sql: false
+        properties:
+            hibernate:
+                format_sql: false # Disabling structural string building saves CPU cycles in high throughput
 
-  flyway:
-    enabled: true
-    clean-disabled: true # Failsafe constraint against programmatic truncation of tables
+    flyway:
+        enabled: true
+        clean-disabled: true # Failsafe constraint against programmatic truncation of tables
 
 springdoc:
-  api-docs:
-    enabled: false # Closes information leakage channels regarding infrastructure designs
+    api-docs:
+        enabled: false # Closes information leakage channels regarding infrastructure designs
 
 management:
-  endpoints:
-    web:
-      exposure:
-        include: health, info, metrics # Secure monitoring metrics footprint
-  endpoint:
-    health:
-      show-details: when_authorized # Denies unauthenticated configuration scouting
+    endpoints:
+        web:
+            exposure:
+                include: health, info, metrics # Secure monitoring metrics footprint
+    endpoint:
+        health:
+            show-details: when_authorized # Denies unauthenticated configuration scouting
 
 clinix:
-  security:
-    jwt:
-      secret: ${JWT_SECRET} # Enforces zero-compromise runtime environment decryption keys
-      expiration-ms: 1800000 # 30 Minutes short-lived token hardening
+    security:
+        jwt:
+            secret: ${JWT_SECRET} # Enforces zero-compromise runtime environment decryption keys
+            expiration-ms: 1800000 # 30 Minutes short-lived token hardening
 
 logging:
-  level:
-    com.clinix: INFO
-    org.springframework: ERROR
+    level:
+        com.clinix: INFO
+        org.springframework: ERROR

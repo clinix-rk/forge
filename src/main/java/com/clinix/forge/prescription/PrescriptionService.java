@@ -1,14 +1,23 @@
 package com.clinix.forge.prescription;
 
+
+import com.clinix.forge.catalog.medicines.MedicineEntity;
+import com.clinix.forge.catalog.medicines.MedicineRepository;
+import com.clinix.forge.catalog.prescription.dosages.DosageEntity;
+import com.clinix.forge.catalog.prescription.dosages.DosageRepository;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
-import com.clinix.forge.core.payload.PaginatedPayload;
+import com.clinix.forge.core.pdf.PdfGenerationService;
+import com.clinix.forge.core.pdf.dto.PrescriptionMedicineItem;
+import com.clinix.forge.core.pdf.dto.PrescriptionPdfData;
 import com.clinix.forge.patient.entity.PatientEntity;
 import com.clinix.forge.patient.repositories.PatientRepository;
-import com.clinix.forge.prescription.dto.*;
-import com.clinix.forge.prescription.entity.DrugDosageEntity;
-import com.clinix.forge.prescription.entity.MedicineEntity;
+import com.clinix.forge.prescription.dto.CreatePrescriptionRequest;
+import com.clinix.forge.prescription.dto.PrescriptionMedicineRequest;
+import com.clinix.forge.prescription.dto.PrescriptionResponse;
+import com.clinix.forge.prescription.dto.UpdatePrescriptionRequest;
 import com.clinix.forge.prescription.entity.PrescriptionEntity;
 import com.clinix.forge.prescription.entity.PrescriptionMedicineEntity;
+import com.clinix.forge.prescription.repositories.PrescriptionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,20 +25,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import com.clinix.forge.core.pdf.PdfGenerationService;
-import com.clinix.forge.core.pdf.dto.PrescriptionMedicineItem;
-import com.clinix.forge.core.pdf.dto.PrescriptionPdfData;
 import org.thymeleaf.context.Context;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -40,16 +44,45 @@ public class PrescriptionService {
     private final PrescriptionRepository prescriptionRepository;
     private final PatientRepository patientRepository;
     private final MedicineRepository medicineRepository;
-    private final DrugDosageRepository drugDosageRepository;
+    private final DosageRepository dosageRepository;
+
     private final PdfGenerationService pdfGenerationService;
     private final PrescriptionMapper prescriptionMapper;
 
-    @Transactional(rollbackFor = Exception.class)
-    public PrescriptionResponse createPrescription(CreatePrescriptionRequest request) {
-        log.info("Creating prescription for patient ID: {}", request.patientId());
+    /**
+     * Builds a set of {@link PrescriptionMedicineEntity} objects from the given
+     * medicine request items, resolving each medicine and dosage from their
+     * respective catalog repositories.
+     */
+    private Set<PrescriptionMedicineEntity> buildPrescriptionMedicines(
+            List<PrescriptionMedicineRequest> medicines,
+            PrescriptionEntity prescription) {
 
-        PatientEntity patient = patientRepository.findById(request.patientId())
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + request.patientId()));
+        Set<PrescriptionMedicineEntity> result = new HashSet<>();
+        for (PrescriptionMedicineRequest item : medicines) {
+            MedicineEntity medicine = medicineRepository.findById(item.medicineId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Medicine not found with ID: " + item.medicineId()));
+
+            DosageEntity dosage = dosageRepository.findById(item.dosageId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Drug dosage not found with ID: " + item.dosageId()));
+
+            PrescriptionMedicineEntity entity = prescriptionMapper.toPrescriptionMedicineEntity(item);
+            entity.setPrescription(prescription);
+            entity.setMedicine(medicine);
+            entity.setDosage(dosage);
+            result.add(entity);
+        }
+        return result;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public PrescriptionResponse createPrescription(Long patientId, CreatePrescriptionRequest request) {
+        log.info("Creating prescription for patient ID: {}", patientId);
+
+        PatientEntity patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + patientId));
 
         PrescriptionEntity prescription = prescriptionMapper.toPrescriptionEntity(request);
         prescription.setPatient(patient);
@@ -65,27 +98,21 @@ public class PrescriptionService {
     }
 
     @Transactional(readOnly = true)
-    public PaginatedPayload<PrescriptionResponse> getAllPrescriptions(int pageNo, int pageSize) {
-        return getAllPrescriptions(null, pageNo, pageSize);
-    }
-
-    @Transactional(readOnly = true)
-    public PaginatedPayload<PrescriptionResponse> getAllPrescriptions(Long patientId, int pageNo, int pageSize) {
+    public Page<PrescriptionResponse> getAllPrescriptions(Long patientId, int pageNo, int pageSize) {
         log.debug("Fetching prescriptions - PatientId: {}, PageNo: {}, PageSize: {}", patientId, pageNo, pageSize);
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
-        Page<PrescriptionEntity> page = (patientId != null)
-                ? prescriptionRepository.findByPatientId(patientId, pageRequest)
-                : prescriptionRepository.findAll(pageRequest);
 
-        List<PrescriptionResponse> responses = page.getContent().stream()
-                .map(prescriptionMapper::toPrescriptionResponse)
-                .toList();
+        if (patientId == null) {
+            throw new ResourceNotFoundException("Patient with id " + patientId + " not found.");
+        }
 
-        return PaginatedPayload.of(responses, page);
+        Page<PrescriptionEntity> page = prescriptionRepository.findByPatientId(patientId, pageRequest);
+
+        return page.map(prescriptionMapper::toPrescriptionResponse);
     }
 
     @Transactional(readOnly = true)
-    public PrescriptionResponse getPrescriptionById(Long id) {
+    public PrescriptionResponse getPrescriptionById(Long patientId, Long id) {
         log.debug("Fetching prescription with ID: {}", id);
         PrescriptionEntity prescription = prescriptionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Prescription not found with ID: " + id));
@@ -122,23 +149,6 @@ public class PrescriptionService {
         log.info("Prescription deleted: {}", id);
     }
 
-    private Set<PrescriptionMedicineEntity> buildPrescriptionMedicines(List<PrescriptionMedicineRequest> requests, PrescriptionEntity prescription) {
-        Set<PrescriptionMedicineEntity> meds = new HashSet<>();
-        for (PrescriptionMedicineRequest medRequest : requests) {
-            MedicineEntity medicine = medicineRepository.findById(medRequest.medicineId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Medicine not found with ID: " + medRequest.medicineId()));
-
-            DrugDosageEntity dosage = drugDosageRepository.findById(medRequest.dosageId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Drug dosage not found with ID: " + medRequest.dosageId()));
-
-            PrescriptionMedicineEntity medEntity = prescriptionMapper.toPrescriptionMedicineEntity(medRequest);
-            medEntity.setPrescription(prescription);
-            medEntity.setMedicine(medicine);
-            medEntity.setDosage(dosage);
-            meds.add(medEntity);
-        }
-        return meds;
-    }
 
     @Transactional(readOnly = true)
     public byte[] generatePrescriptionPdf(Long id) {
@@ -148,6 +158,7 @@ public class PrescriptionService {
 
         PatientEntity patient = prescription.getPatient();
         String patientName = patient != null ? patient.getName() : "Unknown";
+        String caseNo = patient.getCaseNo() != null ? patient.getCaseNo() : "Missing Case Number";
 
         String ageGender = "";
         if (patient != null) {
@@ -167,12 +178,14 @@ public class PrescriptionService {
                 .map(pm -> {
                     String medicineName = pm.getMedicine() != null ? pm.getMedicine().getName() : "Unknown";
                     String dosage = pm.getDosage() != null ? pm.getDosage().getDosage() : "—";
-                    return new PrescriptionMedicineItem(medicineName, dosage, pm.getQuantity());
+                    String instruction = pm.getInstruction() != null ? pm.getInstruction().getInstruction() : "";
+                    return new PrescriptionMedicineItem(medicineName, dosage, instruction, pm.getQuantity());
                 })
                 .toList();
 
         PrescriptionPdfData data = new PrescriptionPdfData(
-                patientName,
+                caseNo,
+                patientName.toUpperCase(),
                 dateStr,
                 ageGender,
                 prescription.getDetails() != null ? prescription.getDetails() : "",
@@ -182,6 +195,10 @@ public class PrescriptionService {
         Context context = new Context();
         context.setVariable("rx", data);
 
-        return pdfGenerationService.generatePdf("pdf/prescription", context);
+        try {
+            return pdfGenerationService.generatePdf("pdf/prescription", context);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

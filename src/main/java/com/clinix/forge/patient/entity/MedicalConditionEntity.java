@@ -1,7 +1,9 @@
 package com.clinix.forge.patient.entity;
+
 import com.clinix.forge.core.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.HashSet;
 import java.util.Set;
 

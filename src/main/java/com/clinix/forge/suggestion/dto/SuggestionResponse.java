@@ -2,6 +2,7 @@ package com.clinix.forge.suggestion.dto;
 
 import com.clinix.forge.suggestion.entity.SuggestionStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 import java.time.LocalDate;
 
@@ -13,8 +14,8 @@ public record SuggestionResponse(
         @Schema(description = "Date when the suggestion was made")
         LocalDate date,
 
-        @Schema(description = "Category of the suggestion", example = "Diet Plan")
-        String category,
+        @Schema(description = "Unique ID of the associated treatment category", example = "2")
+        Long categoryId,
 
         @Schema(description = "Detailed explanation of the suggestion", example = "Maintain low sodium diet and daily 30 min walk")
         String details,
@@ -33,4 +34,5 @@ public record SuggestionResponse(
 
         @Schema(description = "Timestamp when the suggestion record was last updated")
         Instant updatedAt
-) {}
+) {
+}

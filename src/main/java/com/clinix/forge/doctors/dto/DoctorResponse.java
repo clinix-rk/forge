@@ -1,6 +1,7 @@
 package com.clinix.forge.doctors.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 
 @Schema(description = "Represents a doctor's profile information within the Clinix system")
@@ -22,4 +23,5 @@ public record DoctorResponse(
 
         @Schema(description = "Timestamp indicating the last time the doctor profile was modified")
         Instant updatedAt
-) {}
+) {
+}

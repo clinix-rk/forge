@@ -20,4 +20,5 @@ public record UpdatePaymentRequest(
         @Size(max = 255, message = "Reference must not exceed 255 characters")
         @Schema(description = "Updated transaction reference or check number", example = "TXN987654321")
         String reference
-) {}
+) {
+}

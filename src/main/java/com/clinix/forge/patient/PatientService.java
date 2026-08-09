@@ -1,16 +1,13 @@
 package com.clinix.forge.patient;
 
 import com.clinix.forge.core.exception.ResourceNotFoundException;
-import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.doctors.DoctorEntity;
 import com.clinix.forge.doctors.DoctorRepository;
 import com.clinix.forge.patient.dto.CreatePatientRequest;
 import com.clinix.forge.patient.dto.PatientResponse;
+import com.clinix.forge.patient.dto.PhoneNumberRequest;
 import com.clinix.forge.patient.dto.UpdatePatientRequest;
-import com.clinix.forge.patient.entity.DrugAllergyEntity;
-import com.clinix.forge.patient.entity.MedicalConditionEntity;
-import com.clinix.forge.patient.entity.PatientEntity;
-import com.clinix.forge.patient.entity.PhoneNumberEntity;
+import com.clinix.forge.patient.entity.*;
 import com.clinix.forge.patient.repositories.DrugAllergyRepository;
 import com.clinix.forge.patient.repositories.MedicalConditionRepository;
 import com.clinix.forge.patient.repositories.PatientRepository;
@@ -27,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import com.clinix.forge.patient.entity.PhoneType;
-import com.clinix.forge.patient.dto.PhoneNumberRequest;
 
 @Slf4j
 @Service
@@ -104,7 +99,7 @@ public class PatientService {
      * @return Paginated list of patient responses
      */
     @Transactional(readOnly = true)
-    public PaginatedPayload<PatientResponse> searchPatients(
+    public Page<PatientResponse> searchPatients(
             String name, String phoneNo, String caseNo, int pageNo, int pageSize) {
         log.debug("Searching patients - Name: {}, Phone: {}, CaseNo: {}, PageNo: {}, PageSize: {}",
                 name, phoneNo, caseNo, pageNo, pageSize);
@@ -120,11 +115,7 @@ public class PatientService {
         Page<PatientEntity> patientPage = patientRepository.searchPatients(
                 sanitizedName, sanitizedCaseNo, sanitizedPhoneNo, pageRequest);
 
-        List<PatientResponse> patientResponses = patientPage.getContent().stream()
-                .map(patientMapper::toResponse)
-                .toList();
-
-        return PaginatedPayload.of(patientResponses, patientPage);
+        return patientPage.map(patientMapper::toResponse);
     }
 
     /**

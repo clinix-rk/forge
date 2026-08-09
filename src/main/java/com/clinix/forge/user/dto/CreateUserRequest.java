@@ -21,4 +21,5 @@ public record CreateUserRequest(
         @NotNull(message = "Role is required")
         @Schema(description = "Role assigned to the user", example = "ADMIN")
         Role role
-) {}
+) {
+}

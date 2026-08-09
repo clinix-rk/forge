@@ -8,11 +8,6 @@ import jakarta.validation.constraints.Size;
 
 @Schema(description = "Request payload for registering a payment")
 public record CreatePaymentRequest(
-        @NotNull(message = "Recipt ID is required")
-        @Positive(message = "Recipt ID must be a positive number")
-        @Schema(description = "Unique ID of the associated receipt", example = "1")
-        Long reciptId,
-
         @NotNull(message = "Treatment ID is required")
         @Positive(message = "Treatment ID must be a positive number")
         @Schema(description = "Unique ID of the associated treatment", example = "3")
@@ -30,4 +25,5 @@ public record CreatePaymentRequest(
         @Size(max = 255, message = "Reference must not exceed 255 characters")
         @Schema(description = "Optional transaction reference or check number", example = "TXN987654321")
         String reference
-) {}
+) {
+}

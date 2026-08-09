@@ -3,6 +3,7 @@ package com.clinix.forge.treatment.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+
 import java.time.LocalDate;
 
 @Schema(description = "Request payload for updating an existing treatment's details")
@@ -16,6 +17,7 @@ public record UpdateTreatmentRequest(
 
         @NotNull(message = "Category ID is required")
         @Positive(message = "Category ID must be a positive number")
-        @Schema(description = "Updated unique ID of the associated treatment category", example = "2")
+        @Schema(description = "Updated unique ID of the associated suggestion category", example = "2")
         Long categoryId
-) {}
+) {
+}

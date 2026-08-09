@@ -5,9 +5,7 @@ import com.clinix.forge.doctors.DoctorEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,16 +23,16 @@ import java.util.Set;
 @NoArgsConstructor
 public class PatientEntity extends BaseEntity {
 
-    @Column(name="case_no", nullable = false, unique = true, updatable = false)
+    @Column(name = "case_no", nullable = false, unique = true, updatable = false)
     private String caseNo;
 
     @Column(nullable = false)
     private Integer serial;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 50, nullable = false)
     private String name;
 
-    @Column(name="date_of_birth")
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
     @Enumerated(value = EnumType.STRING)

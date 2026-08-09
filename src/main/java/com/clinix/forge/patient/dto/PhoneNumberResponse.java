@@ -30,4 +30,5 @@ public record PhoneNumberResponse(
                 description = "The system metadata for when the phone number record was last updated"
         )
         Instant updatedAt
-) {}
+) {
+}

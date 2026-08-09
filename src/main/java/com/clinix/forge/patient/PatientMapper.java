@@ -1,10 +1,10 @@
 package com.clinix.forge.patient;
 
 import com.clinix.forge.patient.dto.*;
+import com.clinix.forge.patient.entity.DrugAllergyEntity;
+import com.clinix.forge.patient.entity.MedicalConditionEntity;
 import com.clinix.forge.patient.entity.PatientEntity;
 import com.clinix.forge.patient.entity.PhoneNumberEntity;
-import com.clinix.forge.patient.entity.MedicalConditionEntity;
-import com.clinix.forge.patient.entity.DrugAllergyEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;

@@ -12,5 +12,6 @@ public record PhoneNumberRequest(
 
         @NotNull(message = "Phone type (PRIMARY/SECONDARY) must be specified")
         PhoneType type
-) {}
+) {
+}
 

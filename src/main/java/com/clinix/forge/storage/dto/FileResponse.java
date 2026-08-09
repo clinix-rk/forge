@@ -1,6 +1,7 @@
 package com.clinix.forge.storage.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 
 @Schema(description = "Represents patient file metadata details in the system")
@@ -22,4 +23,5 @@ public record FileResponse(
 
         @Schema(description = "Timestamp when the file metadata was last updated")
         Instant updatedAt
-) {}
+) {
+}

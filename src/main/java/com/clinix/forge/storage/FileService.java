@@ -2,7 +2,6 @@ package com.clinix.forge.storage;
 
 import com.clinix.forge.core.exception.DuplicateResourceException;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
-import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.patient.entity.PatientEntity;
 import com.clinix.forge.patient.repositories.PatientRepository;
 import com.clinix.forge.storage.dto.CreateFileRequest;
@@ -17,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -62,16 +59,12 @@ public class FileService {
     }
 
     @Transactional(readOnly = true)
-    public PaginatedPayload<FileResponse> getAllFiles(int pageNo, int pageSize) {
+    public Page<FileResponse> getAllFiles(int pageNo, int pageSize) {
         log.debug("Fetching files - PageNo: {}, PageSize: {}", pageNo, pageSize);
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
         Page<FileEntity> filePage = fileRepository.findAll(pageRequest);
 
-        List<FileResponse> responses = filePage.getContent().stream()
-                .map(fileMapper::toResponse)
-                .toList();
-
-        return PaginatedPayload.of(responses, filePage);
+        return filePage.map(fileMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
@@ -149,7 +142,7 @@ public class FileService {
         }
         java.util.Optional<FileEntity> sameLocationOpt = fileRepository.findByLocation(entity.getLocation());
         if (sameLocationOpt.isPresent() && !sameLocationOpt.get().getPatient().getId().equals(patientId)) {
-             throw new DuplicateResourceException("File at location " + entity.getLocation() + " already exists for another patient");
+            throw new DuplicateResourceException("File at location " + entity.getLocation() + " already exists for another patient");
         }
 
         FileEntity saved = fileRepository.save(entity);
@@ -179,4 +172,3 @@ public class FileService {
         return fileEntity.getName();
     }
 }
-

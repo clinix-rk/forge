@@ -1,6 +1,7 @@
 package com.clinix.forge.treatment.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 import java.time.LocalDate;
 
@@ -18,6 +19,9 @@ public record TreatmentResponse(
         @Schema(description = "Unique ID of the associated treatment category", example = "2")
         Long categoryId,
 
+        @Schema(description = "Display for the treatment category", example = "RCT / RCO")
+        String categoryDisplay,
+
         @Schema(description = "Unique ID of the patient undergoing treatment", example = "5")
         Long patientId,
 
@@ -26,4 +30,5 @@ public record TreatmentResponse(
 
         @Schema(description = "Timestamp when the treatment record was last updated")
         Instant updatedAt
-) {}
+) {
+}

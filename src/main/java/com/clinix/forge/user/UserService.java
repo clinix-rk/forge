@@ -2,7 +2,6 @@ package com.clinix.forge.user;
 
 import com.clinix.forge.core.exception.DuplicateResourceException;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
-import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.user.dto.CreateUserRequest;
 import com.clinix.forge.user.dto.UpdateUserRequest;
 import com.clinix.forge.user.dto.UserResponse;
@@ -15,8 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -46,16 +43,12 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public PaginatedPayload<UserResponse> getAllUsers(int pageNo, int pageSize) {
+    public Page<UserResponse> getAllUsers(int pageNo, int pageSize) {
         log.debug("Fetching users - PageNo: {}, PageSize: {}", pageNo, pageSize);
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
         Page<UserEntity> userPage = userRepository.findAll(pageRequest);
 
-        List<UserResponse> userResponses = userPage.getContent().stream()
-                .map(userMapper::toResponse)
-                .toList();
-
-        return PaginatedPayload.of(userResponses, userPage);
+        return userPage.map(userMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
