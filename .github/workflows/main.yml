@@ -2,9 +2,9 @@ name: Forge - Build & Test
 
 on:
   push:
-    branches: [main, development]
+    branches: [main]
   pull_request:
-    branches: [main, development]
+    branches: [main]
 
 jobs:
   build:
@@ -23,3 +23,6 @@ jobs:
       
       - name: Build Docker image (Jib)
         run: mvn jib:build -DskipTests -Djib.to.image=myapp-forge:${{ github.sha }}
+permissions:
+  packages: write
+  contents: read
