@@ -6,13 +6,17 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  packages: write
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
@@ -21,8 +25,9 @@ jobs:
       - name: Run tests
         run: mvn clean test
       
-      - name: Build Docker image (Jib)
-        run: mvn jib:build -DskipTests -Djib.to.image=myapp-forge:${{ github.sha }}
-permissions:
-  packages: write
-  contents: read
+      - name: Build and push Docker image (Jib) to GHCR
+        run: mvn jib:build -DskipTests -Djib.to.image=ghcr.io/${{ github.repository }}:${{ github.sha }}
+        env:
+          DOCKER_REGISTRY: ghcr.io
+          DOCKER_USERNAME: ${{ github.actor }}
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
