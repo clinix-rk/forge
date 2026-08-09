@@ -17,16 +17,17 @@ public interface SuggestionMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "patient", ignore = true)
-        // Set manually in service
+    @Mapping(target = "category", ignore = true)
     SuggestionEntity toEntity(CreateSuggestionRequest request);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "patient", ignore = true)
-        // Do not modify patient
+    @Mapping(target = "category", ignore = true)
     void updateEntityFromRequest(UpdateSuggestionRequest request, @MappingTarget SuggestionEntity entity);
 
     @Mapping(target = "patientId", source = "patient.id")
+    @Mapping(target = "categoryId", source = "category.id")
     SuggestionResponse toResponse(SuggestionEntity entity);
 }

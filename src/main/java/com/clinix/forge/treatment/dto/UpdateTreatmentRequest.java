@@ -17,7 +17,7 @@ public record UpdateTreatmentRequest(
 
         @NotNull(message = "Category ID is required")
         @Positive(message = "Category ID must be a positive number")
-        @Schema(description = "Updated unique ID of the associated treatment category", example = "2")
+        @Schema(description = "Updated unique ID of the associated suggestion category", example = "2")
         Long categoryId
 ) {
 }

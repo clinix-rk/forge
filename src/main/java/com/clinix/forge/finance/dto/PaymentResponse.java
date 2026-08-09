@@ -16,6 +16,9 @@ public record PaymentResponse(
         @Schema(description = "Unique ID of the associated treatment", example = "3")
         Long treatmentId,
 
+        @Schema(description = "Detail provided in the associated treatment", example = "Treatment details")
+        String treatmentDetail,
+
         @Schema(description = "The amount paid", example = "1500.00")
         Double amount,
 

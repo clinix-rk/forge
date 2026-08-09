@@ -1,7 +1,8 @@
 package com.clinix.forge.suggestion;
 
+import com.clinix.forge.catalog.treatments.TreatmentCategoryEntity;
+import com.clinix.forge.catalog.treatments.TreatmentCategoryRepository;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
-import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.patient.entity.PatientEntity;
 import com.clinix.forge.patient.repositories.PatientRepository;
 import com.clinix.forge.suggestion.dto.CreateSuggestionRequest;
@@ -17,8 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
-
 @Slf4j
 @Service
 @Validated
@@ -28,6 +27,7 @@ public class SuggestionService {
     private final SuggestionRepository suggestionRepository;
     private final PatientRepository patientRepository;
     private final SuggestionMapper suggestionMapper;
+    private final TreatmentCategoryRepository treatmentCategoryRepository;
 
     @Transactional(rollbackFor = Exception.class)
     public SuggestionResponse createSuggestion(CreateSuggestionRequest request) {
@@ -36,8 +36,12 @@ public class SuggestionService {
         PatientEntity patient = patientRepository.findById(request.patientId())
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + request.patientId()));
 
+        TreatmentCategoryEntity category = treatmentCategoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Treatment category not found with ID: " + request.categoryId()));
+
         SuggestionEntity entity = suggestionMapper.toEntity(request);
         entity.setPatient(patient);
+        entity.setCategory(category);
         if (entity.getStatus() == null) {
             entity.setStatus(SuggestionStatus.SUGGESTED);
         }
@@ -48,23 +52,19 @@ public class SuggestionService {
     }
 
     @Transactional(readOnly = true)
-    public PaginatedPayload<SuggestionResponse> getAllSuggestions(int pageNo, int pageSize) {
+    public Page<SuggestionResponse> getAllSuggestions(int pageNo, int pageSize) {
         return getAllSuggestions(null, pageNo, pageSize);
     }
 
     @Transactional(readOnly = true)
-    public PaginatedPayload<SuggestionResponse> getAllSuggestions(Long patientId, int pageNo, int pageSize) {
+    public Page<SuggestionResponse> getAllSuggestions(Long patientId, int pageNo, int pageSize) {
         log.debug("Fetching suggestions - PatientId: {}, PageNo: {}, PageSize: {}", patientId, pageNo, pageSize);
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
         Page<SuggestionEntity> suggestionPage = (patientId != null)
                 ? suggestionRepository.findByPatientId(patientId, pageRequest)
                 : suggestionRepository.findAll(pageRequest);
 
-        List<SuggestionResponse> responses = suggestionPage.getContent().stream()
-                .map(suggestionMapper::toResponse)
-                .toList();
-
-        return PaginatedPayload.of(responses, suggestionPage);
+        return suggestionPage.map(suggestionMapper::toResponse);
     }
 
     @Transactional(readOnly = true)

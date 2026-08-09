@@ -30,21 +30,25 @@ public class DiskStorageService {
 
     public String store(MultipartFile file, Long patientId) {
         try {
-            if (file.isEmpty()) {
+            if (file == null || file.isEmpty()) {
                 throw new IllegalArgumentException("Failed to store empty file.");
             }
             if (file.getSize() > 10 * 1024 * 1024) {
                 throw new IllegalArgumentException("File size exceeds limit of 10 MB.");
             }
+            String originalFilename = file.getOriginalFilename();
             String contentType = file.getContentType();
-            if (contentType == null || !contentType.equals("application/pdf")) {
+            boolean isPdfContentType = contentType != null && (contentType.equalsIgnoreCase("application/pdf") || contentType.equalsIgnoreCase("application/x-pdf"));
+            boolean isPdfExtension = originalFilename != null && originalFilename.toLowerCase().endsWith(".pdf");
+
+            if (!isPdfContentType && !isPdfExtension) {
                 throw new IllegalArgumentException("Only PDF files are allowed.");
             }
 
             Path patientDir = rootLocation.resolve("patients").resolve(patientId.toString());
             Files.createDirectories(patientDir);
 
-            String filename = StringUtils.cleanPath(file.getOriginalFilename());
+            String filename = StringUtils.cleanPath(originalFilename != null ? originalFilename : "patient.pdf");
             if (filename.contains("..")) {
                 throw new IllegalArgumentException("Cannot store file with relative path outside directory " + filename);
             }
@@ -54,6 +58,7 @@ public class DiskStorageService {
                 Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
             }
 
+            log.info("Successfully stored patient PDF to disk at: {}", destinationFile.toAbsolutePath());
             return destinationFile.toString();
         } catch (IOException e) {
             throw new RuntimeException("Failed to store file", e);

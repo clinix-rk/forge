@@ -47,7 +47,7 @@ public class TreatmentCategoryController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Treatment category created.", response));
+                .body(ApiResponse.success(response));
     }
 
     @GetMapping
@@ -64,7 +64,7 @@ public class TreatmentCategoryController {
         List<TreatmentCategoryResponse> categories = treatmentCategoryService.getAllTreatmentCategories(parentId);
 
         return ResponseEntity
-                .ok(ApiResponse.success("Treatment categories retrieved.", categories));
+                .ok(ApiResponse.success(categories));
     }
 
     @PutMapping("/{id}")
@@ -85,7 +85,7 @@ public class TreatmentCategoryController {
 
         TreatmentCategoryResponse response = treatmentCategoryService.updateTreatmentCategoryById(id, request);
 
-        return ResponseEntity.ok(ApiResponse.success("Treatment category updated.", response));
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
@@ -101,6 +101,6 @@ public class TreatmentCategoryController {
 
         boolean deletionStatus = treatmentCategoryService.deleteTreatmentCategoryById(id);
 
-        return ResponseEntity.ok(ApiResponse.success("Treatment category deleted.", deletionStatus));
+        return ResponseEntity.ok(ApiResponse.success(deletionStatus));
     }
 }

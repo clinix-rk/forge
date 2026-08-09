@@ -32,9 +32,6 @@ public class MedicineEntity extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String type;
 
-    @Column(nullable = false, length = 255)
-    private String instruction;
-
     @Builder.Default
     @OneToMany(mappedBy = "medicine", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PrescriptionMedicineEntity> prescriptionMedicines = new HashSet<>();

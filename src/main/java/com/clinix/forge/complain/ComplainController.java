@@ -4,7 +4,7 @@ import com.clinix.forge.complain.dto.ComplainResponse;
 import com.clinix.forge.complain.dto.CreateComplainRequest;
 import com.clinix.forge.complain.dto.UpdateComplainRequest;
 import com.clinix.forge.core.payload.ApiResponse;
-import com.clinix.forge.core.payload.PaginatedPayload;
+import com.clinix.forge.core.payload.PaginationMetadata;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -12,6 +12,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -37,21 +38,21 @@ public class ComplainController {
         ComplainResponse response = complainService.createComplain(patientId, request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Complain registered successfully.", response));
+                .body(ApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(summary = "Get complains (Paginated)", description = "Retrieves a paginated list of all complains.")
-    public ResponseEntity<ApiResponse<PaginatedPayload<ComplainResponse>>> getAllComplains(
+    public ResponseEntity<ApiResponse<java.util.List<ComplainResponse>>> getAllComplains(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize,
             @PathVariable Long patientId
     ) {
         log.debug("API call: Fetching complains paginated - Page: {}, Size: {}, PatientId: {}", pageNo, pageSize, patientId);
-        PaginatedPayload<ComplainResponse> response = complainService.getAllComplains(patientId, pageNo, pageSize);
+        Page<ComplainResponse> response = complainService.getAllComplains(patientId, pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Complains retrieved successfully.", response));
+                .body(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
     @GetMapping("/{id}")
@@ -64,7 +65,7 @@ public class ComplainController {
         ComplainResponse response = complainService.getComplainById(patientId, id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Complain retrieved successfully.", response));
+                .body(ApiResponse.success(response));
     }
 
     @PutMapping("/{id}")
@@ -78,7 +79,7 @@ public class ComplainController {
         ComplainResponse response = complainService.updateComplainById(patientId, id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Complain updated successfully.", response));
+                .body(ApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")

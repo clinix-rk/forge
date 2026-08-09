@@ -2,7 +2,6 @@ package com.clinix.forge.prescription.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -20,7 +19,6 @@ public record CreatePrescriptionRequest(
         @Schema(description = "Date when the prescription was written")
         LocalDate date,
 
-        @NotBlank(message = "Details cannot be blank")
         @Schema(description = "Detailed clinical observations, notes, or comments", example = "Patient shows symptoms of seasonal allergies. Rest advised.")
         String details,
 

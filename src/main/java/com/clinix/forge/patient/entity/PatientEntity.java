@@ -29,7 +29,7 @@ public class PatientEntity extends BaseEntity {
     @Column(nullable = false)
     private Integer serial;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 50, nullable = false)
     private String name;
 
     @Column(name = "date_of_birth")

@@ -2,7 +2,6 @@ package com.clinix.forge.doctors;
 
 import com.clinix.forge.core.exception.DuplicateResourceException;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
-import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.doctors.dto.CreateDoctorRequest;
 import com.clinix.forge.doctors.dto.DoctorResponse;
 import com.clinix.forge.doctors.dto.UpdateDoctorRequest;
@@ -73,7 +72,7 @@ public class DoctorService {
      * @return a {@code Page<DoctorDTO>} representing the requested page
      */
     @Transactional(readOnly = true)
-    public PaginatedPayload<DoctorResponse> getPaginatedDoctors(Pageable pageable) {
+    public Page<DoctorResponse> getPaginatedDoctors(Pageable pageable) {
         log.debug("Fetching doctor information with pagination constraints: {}", pageable);
 
         int maxSize = 1000;
@@ -85,11 +84,7 @@ public class DoctorService {
 
         Page<DoctorEntity> doctorPage = doctorRepository.findAll(securePageable);
 
-        List<DoctorResponse> dtoList = doctorPage.getContent().stream()
-                .map(doctorMapper::toDTO)
-                .toList();
-
-        return PaginatedPayload.of(dtoList, doctorPage);
+        return doctorPage.map(doctorMapper::toDTO);
     }
 
     /**

@@ -4,7 +4,10 @@ import com.clinix.forge.core.entity.BaseEntity;
 import com.clinix.forge.patient.entity.PatientEntity;
 import com.clinix.forge.treatment.TreatmentEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(
@@ -15,7 +18,6 @@ import lombok.*;
 )
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaymentEntity extends BaseEntity {
@@ -44,6 +46,5 @@ public class PaymentEntity extends BaseEntity {
     private PaymentMethod method;
 
     @Column(nullable = false, length = 255)
-    @Builder.Default
     private String reference = "";
 }

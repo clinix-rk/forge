@@ -15,6 +15,9 @@ public record PrescriptionMedicineResponse(
         @Schema(description = "Unique ID of the drug dosage pattern", example = "3")
         Long dosageId,
 
+        @Schema(description = "Unique ID of the instruction", example = "3")
+        Long instructionId,
+
         @Schema(description = "Quantity of medicine units prescribed", example = "10")
         Integer quantity,
 

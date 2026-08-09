@@ -1,7 +1,7 @@
 package com.clinix.forge.suggestion;
 
 import com.clinix.forge.core.payload.ApiResponse;
-import com.clinix.forge.core.payload.PaginatedPayload;
+import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.suggestion.dto.CreateSuggestionRequest;
 import com.clinix.forge.suggestion.dto.SuggestionResponse;
 import com.clinix.forge.suggestion.dto.UpdateSuggestionRequest;
@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/suggestions")
+@RequestMapping("/patients/{patientId}/suggestions")
 @RequiredArgsConstructor
 @Tag(name = "Suggestion Management", description = "Endpoints for managing suggestions")
 public class SuggestionController {
@@ -36,42 +37,47 @@ public class SuggestionController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Patient not found")
     })
     public ResponseEntity<ApiResponse<SuggestionResponse>> createSuggestion(
+            @PathVariable Long patientId,
             @RequestBody @Valid CreateSuggestionRequest request
     ) {
         log.debug("API call: Create a new suggestion record");
         SuggestionResponse response = suggestionService.createSuggestion(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Suggestion created successfully.", response));
+                .body(ApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(summary = "Get suggestions (Paginated)", description = "Retrieves a paginated list of suggestions.")
-    public ResponseEntity<ApiResponse<PaginatedPayload<SuggestionResponse>>> getAllSuggestions(
+    public ResponseEntity<ApiResponse<java.util.List<SuggestionResponse>>> getAllSuggestions(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize,
-            @RequestParam(required = false) Long patientId
+            @PathVariable Long patientId
     ) {
         log.debug("API call: Fetching suggestions paginated - Page: {}, Size: {}, PatientId: {}", pageNo, pageSize, patientId);
-        PaginatedPayload<SuggestionResponse> suggestions = suggestionService.getAllSuggestions(patientId, pageNo, pageSize);
+        Page<SuggestionResponse> suggestions = suggestionService.getAllSuggestions(patientId, pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Suggestions retrieved successfully.", suggestions));
+                .body(ApiResponse.success(suggestions.getContent(), new PaginationMetadata(suggestions.getNumber(), suggestions.getSize(), suggestions.getTotalElements(), suggestions.getTotalPages(), suggestions.hasNext(), suggestions.hasPrevious())));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get suggestion by ID", description = "Retrieves a suggestion's details by database ID.")
-    public ResponseEntity<ApiResponse<SuggestionResponse>> getSuggestionById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<SuggestionResponse>> getSuggestionById(
+            @PathVariable Long patientId,
+            @PathVariable Long id
+    ) {
         log.debug("API call: Fetching suggestion with ID: {}", id);
         SuggestionResponse response = suggestionService.getSuggestionById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Suggestion retrieved successfully.", response));
+                .body(ApiResponse.success(response));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update suggestion by ID", description = "Updates an existing suggestion's details.")
     public ResponseEntity<ApiResponse<SuggestionResponse>> updateSuggestionById(
+            @PathVariable Long patientId,
             @PathVariable Long id,
             @RequestBody @Valid UpdateSuggestionRequest request
     ) {
@@ -79,12 +85,15 @@ public class SuggestionController {
         SuggestionResponse updatedSuggestion = suggestionService.updateSuggestionById(id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Suggestion updated successfully.", updatedSuggestion));
+                .body(ApiResponse.success(updatedSuggestion));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete suggestion by ID", description = "Deletes a suggestion record based on ID.")
-    public ResponseEntity<Void> deleteSuggestionById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSuggestionById(
+            @PathVariable Long patientId,
+            @PathVariable Long id
+    ) {
         log.debug("API call: Deleting suggestion with ID: {}", id);
         suggestionService.deleteSuggestionById(id);
         return ResponseEntity.noContent().build();

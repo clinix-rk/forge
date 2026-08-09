@@ -6,7 +6,6 @@ import com.clinix.forge.complain.dto.ComplainResponse;
 import com.clinix.forge.complain.dto.CreateComplainRequest;
 import com.clinix.forge.complain.dto.UpdateComplainRequest;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
-import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.patient.entity.PatientEntity;
 import com.clinix.forge.patient.repositories.PatientRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -50,18 +47,14 @@ public class ComplainService {
     }
 
     @Transactional(readOnly = true)
-    public PaginatedPayload<ComplainResponse> getAllComplains(Long patientId, int pageNo, int pageSize) {
+    public Page<ComplainResponse> getAllComplains(Long patientId, int pageNo, int pageSize) {
         log.debug("Fetching complains - PatientId: {}, PageNo: {}, PageSize: {}", patientId, pageNo, pageSize);
 
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
 
         Page<ComplainEntity> complainPage = complainRepository.findByPatientId(patientId, pageRequest);
 
-        List<ComplainResponse> responses = complainPage.getContent().stream()
-                .map(complainMapper::toResponse)
-                .toList();
-
-        return PaginatedPayload.of(responses, complainPage);
+        return complainPage.map(complainMapper::toResponse);
     }
 
     @Transactional(readOnly = true)

@@ -4,7 +4,7 @@ import com.clinix.forge.catalog.complains.dto.ComplainCategoryResponse;
 import com.clinix.forge.catalog.complains.dto.CreateComplainCategoryRequest;
 import com.clinix.forge.catalog.complains.dto.UpdateComplainCategoryRequest;
 import com.clinix.forge.core.payload.ApiResponse;
-import com.clinix.forge.core.payload.PaginatedPayload;
+import com.clinix.forge.core.payload.PaginationMetadata;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -12,6 +12,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Tag(
         name = "Complain Category Management",
-        description = "Endpoints for managing complain categories"
+        description = "Endpoints to manage complain categories"
 )
 public class ComplainCategoryController {
 
@@ -32,29 +34,51 @@ public class ComplainCategoryController {
 
     @PostMapping
     @Operation(
-            summary = "Register a new complain category",
-            description = "Creates a new complain category record."
+            summary = "Create a new complain category",
+            description = "Adds a new complain category to the system."
     )
     public ResponseEntity<ApiResponse<ComplainCategoryResponse>> createComplainCategory(
             @RequestBody
             @Valid
             CreateComplainCategoryRequest request
     ) {
-        log.debug("Serving create request : { name : {} }", request.name());
-
         ComplainCategoryResponse response = complainCategoryService.createComplainCategory(request);
+
+        String traceId = MDC.get("traceId");
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("New complain category created.", response));
+                .body(ApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(
-            summary = "Get complain categories (Paginated)",
-            description = "Retrieves a paginated list of all complain categories."
+            summary = "Get all complain categories",
+            description = "Retrieves all the complain categories."
     )
-    public ResponseEntity<ApiResponse<PaginatedPayload<ComplainCategoryResponse>>> getAllComplainCategories(
+    public ResponseEntity<ApiResponse<java.util.List<ComplainCategoryResponse>>> getAllComplainCategories(
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "Page number must be greater than or equal to 0.")
+            int pageNo,
+
+            @RequestParam(defaultValue = "10")
+            @Min(value = 5, message = "Page size must be at least 5.")
+            @Max(value = 1000, message = "Page size must be less than or equal to 1000.")
+            int pageSize
+    ) {
+        Page<ComplainCategoryResponse> response = complainCategoryService.getPaginatedComplainCategories(pageNo, pageSize);
+
+        return ResponseEntity
+                .ok()
+                .body(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
+    }
+
+    @GetMapping("/{id}")
+    @Operation(
+            summary = "Get all sub-categories",
+            description = "Sends back a list of complain categories under the requested category."
+    )
+    public ResponseEntity<ApiResponse<java.util.List<ComplainCategoryResponse>>> getallSubCategoriesForId(
             @RequestParam(defaultValue = "1")
             @Min(value = 1, message = "Page number must be greater than or equal to 1.")
             int pageNo,
@@ -64,11 +88,9 @@ public class ComplainCategoryController {
             @Max(value = 1000, message = "Page size must be less than or equal to 1000.")
             int pageSize
     ) {
-        log.debug("Serving read request : { pageNo: {}, pageSize: {} }", pageNo, pageSize);
+        Page<ComplainCategoryResponse> response = complainCategoryService.getPaginatedComplainCategories(pageNo, pageSize);
 
-        PaginatedPayload<ComplainCategoryResponse> response = complainCategoryService.getPaginatedComplainCategories(pageNo, pageSize);
-
-        return ResponseEntity.ok(ApiResponse.success("Fetched complain categories", response));
+        return ResponseEntity.ok(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
     @PutMapping("/{id}")
@@ -84,11 +106,9 @@ public class ComplainCategoryController {
             @Valid
             UpdateComplainCategoryRequest request
     ) {
-        log.debug("Serving update request : { id: {} }", id);
-
         ComplainCategoryResponse response = complainCategoryService.updateComplainCategoryById(id, request);
 
-        return ResponseEntity.ok(ApiResponse.success("Updated complain category", response));
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
@@ -100,10 +120,8 @@ public class ComplainCategoryController {
             @PathVariable(required = true)
             Long id
     ) {
-        log.debug("Serving delete request : { id: {} }", id);
-
         boolean successStatus = complainCategoryService.deleteComplainCategoryById(id);
 
-        return ResponseEntity.ok(ApiResponse.success("Deleted complain category", successStatus));
+        return ResponseEntity.ok(ApiResponse.success(successStatus));
     }
 }

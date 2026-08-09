@@ -2,7 +2,6 @@ package com.clinix.forge.finance.service;
 
 import com.clinix.forge.core.exception.DuplicateResourceException;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
-import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.finance.PaymentMapper;
 import com.clinix.forge.finance.PaymentRepository;
 import com.clinix.forge.finance.dto.CreatePaymentRequest;
@@ -20,8 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -58,18 +55,14 @@ public class PaymentService {
     }
 
     @Transactional(readOnly = true)
-    public PaginatedPayload<PaymentResponse> getAllPayments(Long patientId, int pageNo, int pageSize) {
+    public Page<PaymentResponse> getAllPayments(Long patientId, int pageNo, int pageSize) {
         log.debug("Reading payments patient id {}", patientId);
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
         Page<PaymentEntity> page = (patientId != null)
                 ? paymentRepository.findAllByPatientId(patientId, pageRequest)
                 : paymentRepository.findAll(pageRequest);
 
-        List<PaymentResponse> responses = page.getContent().stream()
-                .map(paymentMapper::toResponse)
-                .toList();
-
-        return PaginatedPayload.of(responses, page);
+        return page.map(paymentMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
@@ -102,4 +95,3 @@ public class PaymentService {
         log.debug("Deleted payment id : {}", id);
     }
 }
-

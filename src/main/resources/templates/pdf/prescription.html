@@ -10,17 +10,11 @@
             margin-bottom: 72mm;
             margin-left: 20mm;
             margin-right: 20mm;
-            @bottom-right {
-                content: "Page " counter(page) " of " counter(pages);
-                font-family: Arial, sans-serif;
-                font-size: 8pt;
-                color: #888888;
-            }
         }
 
         body {
             font-family: Arial, sans-serif;
-            font-size: 10.5pt;
+            font-size: 11.5pt;
             color: #1a1a1a;
             line-height: 1.5;
             background: transparent;
@@ -28,48 +22,43 @@
             padding: 0;
         }
 
-        /* --- STRICT TABLE LAYOUT ENFORCEMENT --- */
+        /* --- TABLE LAYOUT FOR PATIENT INFO --- */
         .patient-info-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 25px;
-            table-layout: fixed;
+            table-layout: auto;
+            border: none;
         }
 
         .patient-info-table td {
-            padding: 8px 4px;
-            vertical-align: bottom;
+            border: none;
+            padding: 4px 8px;
+            vertical-align: baseline;
         }
 
-        .patient-label {
+        .patient-info-label {
             font-weight: bold;
             color: #555555;
-            font-size: 9pt;
+            font-size: 10pt;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             white-space: nowrap;
-            width: 18%;
+            padding-right: 8px;
         }
 
-        .patient-value {
-            border-bottom: 1px solid #e0e0e0;
-            padding-left: 5px;
+        .patient-info-value {
             color: #1a1a1a;
-            width: 32%;
-        }
-
-        .label-right {
-            text-align: right;
-            padding-right: 10px;
+            font-size: 11.5pt;
         }
 
         /* --------------------------------------- */
 
         .rx-symbol {
             font-family: 'NotoSerif', sans-serif;
-            font-size: 26pt;
+            font-size: 28pt;
             font-weight: bold;
-            color: #c5a059; /* Golden Eclipse Accent */
+            color: #000000;
             margin: 15px 0 10px 0;
             line-height: 1;
         }
@@ -77,7 +66,7 @@
         .details-block {
             margin-bottom: 30px;
             white-space: pre-wrap;
-            font-size: 10.5pt;
+            font-size: 11.5pt;
             color: #222222;
         }
 
@@ -93,19 +82,36 @@
             font-weight: bold;
             text-align: left;
             padding: 8px 4px;
-            font-size: 9.5pt;
+            font-size: 10.5pt;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #555555;
         }
 
+        .medicines-table thead {
+            display: none;
+        }
+
         .medicines-table td {
             padding: 10px 4px;
             border-bottom: 1px solid #eeeeee;
+            font-size: 11.5pt;
         }
 
         .medicines-table tr {
             page-break-inside: avoid;
+        }
+
+        .type-col {
+            width: 12%;
+        }
+
+        .dosage-col {
+            width: 25%;
+        }
+
+        .instruction-col {
+            width: 30%;
         }
 
         .qty-col {
@@ -113,53 +119,66 @@
             width: 15%;
             font-variant-numeric: tabular-nums;
         }
-
-        .dosage-col {
-            width: 40%;
-        }
     </style>
 </head>
 <body>
 
-<!-- Cleaned HTML structure devoid of conflicting inline widths -->
+<!-- Patient Info Table -->
 <table class="patient-info-table">
+    <!-- Row 1: Empty Left, Date Right -->
     <tr>
-        <td class="patient-label">Case No:</td>
-        <td class="patient-value" style="font-weight: bold;" th:text="${rx.caseNo}">Y00001</td>
-        <td class="patient-label label-right">Date:</td>
-        <td class="patient-value" style="font-variant-numeric: tabular-nums;" th:text="${rx.date}">
-            20/06/2026
+        <td></td>
+        <td>
+            <span class="patient-info-label">Date:</span>
+            <span class="patient-info-value" th:text="${rx.date}">20/06/2026</span>
         </td>
     </tr>
+    <!-- Row 2: Name Left, Age/Gender Right -->
     <tr>
-        <td class="patient-label">Patient Name:</td>
-        <td class="patient-value" style="font-weight: bold;" th:text="${rx.patientName}">John Doe
+        <td>
+            <span class="patient-info-label">Patient Name:</span>
+            <span class="patient-info-value" style="font-weight: bold; font-size: 12.5pt;"
+                  th:text="${rx.patientName}">John Doe</span>
         </td>
-        <td class="patient-label label-right">Age / Gender:</td>
-        <td class="patient-value" th:text="${rx.ageGender}">34 yrs / Male</td>
+        <td>
+            <span class="patient-info-label">Age / Gender:</span>
+            <span class="patient-info-value" th:text="${rx.ageGender}">34 yrs / Male</span>
+        </td>
+    </tr>
+    <!-- Row 3: Case No Left, Empty Right -->
+    <tr>
+        <td>
+            <span class="patient-info-label">Case No:</span>
+            <span class="patient-info-value" style="font-weight: bold;" th:text="${rx.caseNo}">Y00001</span>
+        </td>
+        <td></td>
     </tr>
 </table>
 
 <div class="rx-symbol">℞</div>
 
-<div class="details-block" th:text="${rx.details}">Clinical findings and notes go here...</div>
-
 <table class="medicines-table" th:if="${rx.medicines != null and !rx.medicines.isEmpty()}">
     <thead>
     <tr>
         <th>Medicine Name</th>
-        <th class="dosage-col">Dosage Instructions</th>
+        <th class="dosage-col">Dosage</th>
+        <th class="instruction-col">Instruction</th>
         <th class="qty-col">Qty</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="med : ${rx.medicines}">
-        <td style="font-weight: bold;" th:text="${med.medicineName}">Amoxicillin 500mg</td>
-        <td class="dosage-col" th:text="${med.dosage}">1-0-1 (After food)</td>
+        <td style="font-weight: bold; font-size: 12pt;" th:text="${med.medicineName}">Amoxicillin
+            500mg
+        </td>
+        <td class="dosage-col" th:text="${med.dosage}">1-0-1</td>
+        <td class="instruction-col" th:text="${med.instruction}">After food</td>
         <td class="qty-col" th:text="${med.quantity}">10</td>
     </tr>
     </tbody>
 </table>
+
+<div class="details-block" th:text="${rx.details}">Clinical findings and notes go here...</div>
 
 </body>
 </html>

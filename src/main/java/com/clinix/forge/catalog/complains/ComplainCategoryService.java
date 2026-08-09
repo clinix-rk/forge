@@ -5,7 +5,6 @@ import com.clinix.forge.catalog.complains.dto.CreateComplainCategoryRequest;
 import com.clinix.forge.catalog.complains.dto.UpdateComplainCategoryRequest;
 import com.clinix.forge.core.exception.DuplicateResourceException;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
-import com.clinix.forge.core.payload.PaginatedPayload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -51,17 +49,13 @@ public class ComplainCategoryService {
     }
 
     @Transactional(readOnly = true)
-    public PaginatedPayload<ComplainCategoryResponse> getPaginatedComplainCategories(int pageNo, int pageSize) {
+    public Page<ComplainCategoryResponse> getPaginatedComplainCategories(int pageNo, int pageSize) {
         log.debug("Fetching complain categories : { pageNo: {}, pageSize: {} }", pageNo, pageSize);
 
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
         Page<ComplainCategoryEntity> categoryPage = complainCategoryRepository.findAll(pageRequest);
 
-        List<ComplainCategoryResponse> responses = categoryPage.getContent().stream()
-                .map(complainCategoryMapper::toComplainCategoryResponse)
-                .toList();
-
-        return PaginatedPayload.of(responses, categoryPage);
+        return categoryPage.map(complainCategoryMapper::toComplainCategoryResponse);
     }
 
     @Transactional(readOnly = true)

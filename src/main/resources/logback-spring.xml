@@ -1,45 +1,212 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
+    <!-- Properties -->
     <property name="log_path" value="logs"/>
     <property name="log_archive" value="${log_path}/archived"/>
+    <property name="log_pattern"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) %clr(---){faint} %clr([%15.15t]){1} %clr(%-40.40logger{39}){cyan} %clr(:){faint} [TRACE=%X{traceId:-no-trace}] [USER=%X{userId:-anonymous}] [DURATION=%X{duration}ms] %msg%n%wex"/>
 
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- ============================================================ -->
+    <!-- CONSOLE APPENDER (Development / Debugging)                   -->
+    <!-- ============================================================ -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
         <encoder>
-            <pattern>
-                %clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) %clr(---){faint}
-                %clr([%15.15t]){1} %clr(%-40.40logger{39}){cyan} %clr(:){faint}
-                [%X{traceId:-no-trace}] %msg%n%wex
-            </pattern>
+            <pattern>${log_pattern}</pattern>
+            <charset>UTF-8</charset>
         </encoder>
     </appender>
 
-    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- ============================================================ -->
+    <!-- FILE APPENDER (Synchronous - Base appender)                 -->
+    <!-- ============================================================ -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${log_path}/application.log</file>
+        <append>true</append>
 
+        <!-- Rolling Policy: Based on Size + Time -->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${log_archive}/clinix-%d{yyyy-MM-dd}.%i.json.gz</fileNamePattern>
+            <fileNamePattern>${log_archive}/clinix-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>30</maxHistory>
             <totalSizeCap>5GB</totalSizeCap>
         </rollingPolicy>
 
+        <!-- Plain text encoder for text logs -->
+        <encoder>
+            <pattern>${log_pattern}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <!-- Threshold filter: Only log WARN and above (reduces noise) -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
+    <!-- ============================================================ -->
+    <!-- JSON FILE APPENDER (Structured logs for ELK/Datadog)        -->
+    <!-- ============================================================ -->
+    <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log_path}/application-json.log</file>
+        <append>true</append>
+
+        <!-- Rolling Policy -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log_archive}/clinix-json-%d{yyyy-MM-dd}.%i.json.gz</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+
+        <!-- Logstash JSON Encoder -->
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- Include MDC fields (traceId, userId, duration) -->
             <includeMdc>true</includeMdc>
+
+            <!-- Include logger context -->
             <includeContext>true</includeContext>
+
+            <!-- Shorten logger names for readability -->
             <shortenedLoggerNameLength>36</shortenedLoggerNameLength>
+
+            <!-- Custom field names in JSON output -->
             <fieldNames>
-                <timestamp>timestamp</timestamp>
+                <timestamp>@timestamp</timestamp>
+                <level>level</level>
                 <levelValue>[ignore]</levelValue>
+                <message>message</message>
+                <logger>logger_name</logger>
+                <thread>thread_name</thread>
+                <mdc>mdc</mdc>
+                <version>[ignore]</version>
             </fieldNames>
+
+            <!-- Suppress noisy fields -->
+            <customFields>{"service":"clinix-api","environment":"${ENVIRONMENT:-dev}"}
+            </customFields>
         </encoder>
     </appender>
 
-    <root level="info">
-        <appender-ref ref="console"/>
-        <appender-ref ref="file"/>
+    <!-- ============================================================ -->
+    <!-- ASYNC APPENDER (Non-blocking file writes)                   -->
+    <!-- ============================================================ -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- Queue size for async buffer -->
+        <queueSize>512</queueSize>
+
+        <!-- Discard TRACE level logs when queue is full (prevents blocking) -->
+        <discardingThreshold>0</discardingThreshold>
+
+        <!-- Include caller info -->
+        <includeCallerData>false</includeCallerData>
+
+        <!-- Reference to synchronous file appender -->
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <appender name="ASYNC_JSON_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>false</includeCallerData>
+        <appender-ref ref="JSON_FILE"/>
+    </appender>
+
+    <!-- ============================================================ -->
+    <!-- ERROR FILE APPENDER (Separate error log)                    -->
+    <!-- ============================================================ -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log_path}/error.log</file>
+        <append>true</append>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log_archive}/error-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${log_pattern}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <!-- Only log ERROR and FATAL -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+
+    <!-- ============================================================ -->
+    <!-- LOGGER CONFIGURATIONS (Specific packages)                   -->
+    <!-- ============================================================ -->
+
+    <!-- Your application logs: DEBUG level -->
+    <logger name="com.clinix" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="ASYNC_JSON_FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+    </logger>
+
+    <!-- Spring Framework: WARN (reduce noise) -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework.web" level="INFO"/>
+    <logger name="org.springframework.security" level="INFO"/>
+    <logger name="org.springframework.boot.actuate" level="WARN"/>
+
+    <!-- Hibernate: WARN (very verbose at DEBUG) -->
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.hibernate.SQL" level="DEBUG"/>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+
+    <!-- Database drivers: WARN -->
+    <logger name="org.postgresql" level="WARN"/>
+    <logger name="com.mysql.cj" level="WARN"/>
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+
+    <!-- Jackson (JSON serialization): WARN -->
+    <logger name="com.fasterxml.jackson" level="WARN"/>
+
+    <!-- Apache HTTP client: WARN -->
+    <logger name="org.apache.http" level="WARN"/>
+    <logger name="org.apache.httpcomponents" level="WARN"/>
+
+    <!-- Logback internal: INFO -->
+    <logger name="ch.qos.logback" level="INFO"/>
+
+    <!-- ============================================================ -->
+    <!-- ROOT LOGGER                                                   -->
+    <!-- ============================================================ -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="ASYNC_JSON_FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
     </root>
 
-    <logger name="com.clinix" level="debug"/>
+    <!-- ============================================================ -->
+    <!-- SPRING PROFILES (Environment-specific configs)               -->
+    <!-- ============================================================ -->
+
+    <!-- Development profile: More verbose logging -->
+    <springProfile name="dev">
+        <logger name="com.clinix" level="DEBUG"/>
+        <logger name="org.springframework.web" level="DEBUG"/>
+        <root level="DEBUG"/>
+    </springProfile>
+
+    <!-- Production profile: Less verbose, async only -->
+    <springProfile name="prod">
+        <logger name="com.clinix" level="INFO"/>
+        <root level="INFO"/>
+    </springProfile>
+
+    <!-- Testing profile: Capture all for debugging tests -->
+    <springProfile name="test">
+        <logger name="com.clinix" level="DEBUG"/>
+        <root level="DEBUG"/>
+    </springProfile>
+
 </configuration>

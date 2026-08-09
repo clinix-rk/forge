@@ -1,7 +1,7 @@
 package com.clinix.forge.doctors;
 
 import com.clinix.forge.core.payload.ApiResponse;
-import com.clinix.forge.core.payload.PaginatedPayload;
+import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.doctors.dto.CreateDoctorRequest;
 import com.clinix.forge.doctors.dto.DoctorResponse;
 import com.clinix.forge.doctors.dto.UpdateDoctorRequest;
@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,10 +57,7 @@ public class DoctorController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(
-                        "Doctor record has been successfully saved to the system.",
-                        savedDoctor
-                ));
+                .body(ApiResponse.success(savedDoctor));
     }
 
     /**
@@ -82,10 +80,7 @@ public class DoctorController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(
-                        "Doctor record retrieved successfully.",
-                        doctor
-                ));
+                .body(ApiResponse.success(doctor));
     }
 
     /**
@@ -100,7 +95,7 @@ public class DoctorController {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Doctor records retrieved successfully")
     })
-    public ResponseEntity<ApiResponse<PaginatedPayload<DoctorResponse>>> getDoctors(
+    public ResponseEntity<ApiResponse<java.util.List<DoctorResponse>>> getDoctors(
             @RequestParam(defaultValue = "0")
             @Min(value = 0, message = "Page number must be greater than or equal to 0.")
             int pageNo,
@@ -111,14 +106,11 @@ public class DoctorController {
             int pageSize
     ) {
         log.debug("Fetching doctors list - Page: {}, Size: {}", pageNo, pageSize);
-        PaginatedPayload<DoctorResponse> doctors = doctorService.getPaginatedDoctors(PageRequest.of(pageNo, pageSize));
+        Page<DoctorResponse> doctors = doctorService.getPaginatedDoctors(PageRequest.of(pageNo, pageSize));
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(
-                        "Doctor records retrieved successfully.",
-                        doctors
-                ));
+                .body(ApiResponse.success(doctors.getContent(), new PaginationMetadata(doctors.getNumber(), doctors.getSize(), doctors.getTotalElements(), doctors.getTotalPages(), doctors.hasNext(), doctors.hasPrevious())));
     }
 
     /**
@@ -143,10 +135,7 @@ public class DoctorController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(
-                        "Doctor record updated successfully.",
-                        updatedDoctor
-                ));
+                .body(ApiResponse.success(updatedDoctor));
     }
 
     /**
@@ -191,9 +180,6 @@ public class DoctorController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(
-                        "Doctor records matched successfully.",
-                        doctors
-                ));
+                .body(ApiResponse.success(doctors));
     }
 }

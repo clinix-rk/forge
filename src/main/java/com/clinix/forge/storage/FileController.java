@@ -1,7 +1,7 @@
 package com.clinix.forge.storage;
 
 import com.clinix.forge.core.payload.ApiResponse;
-import com.clinix.forge.core.payload.PaginatedPayload;
+import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.storage.dto.CreateFileRequest;
 import com.clinix.forge.storage.dto.FileResponse;
 import com.clinix.forge.storage.dto.UpdateFileRequest;
@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,20 +47,20 @@ public class FileController {
         FileResponse response = fileService.createFile(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("File registered successfully.", response));
+                .body(ApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(summary = "Get files (Paginated)", description = "Retrieves a paginated list of all file metadata records.")
-    public ResponseEntity<ApiResponse<PaginatedPayload<FileResponse>>> getAllFiles(
+    public ResponseEntity<ApiResponse<java.util.List<FileResponse>>> getAllFiles(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize
     ) {
         log.debug("API call: Fetching files paginated - Page: {}, Size: {}", pageNo, pageSize);
-        PaginatedPayload<FileResponse> files = fileService.getAllFiles(pageNo, pageSize);
+        Page<FileResponse> files = fileService.getAllFiles(pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Files retrieved successfully.", files));
+                .body(ApiResponse.success(files.getContent(), new PaginationMetadata(files.getNumber(), files.getSize(), files.getTotalElements(), files.getTotalPages(), files.hasNext(), files.hasPrevious())));
     }
 
     @GetMapping("/{id}")
@@ -69,7 +70,7 @@ public class FileController {
         FileResponse file = fileService.getFileById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("File retrieved successfully.", file));
+                .body(ApiResponse.success(file));
     }
 
     @PutMapping("/{id}")
@@ -82,7 +83,7 @@ public class FileController {
         FileResponse updatedFile = fileService.updateFileById(id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("File updated successfully.", updatedFile));
+                .body(ApiResponse.success(updatedFile));
     }
 
     @DeleteMapping("/{id}")
@@ -107,7 +108,7 @@ public class FileController {
         FileResponse response = fileService.uploadPatientPdf(patientId, file);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("File uploaded successfully.", response));
+                .body(ApiResponse.success(response));
     }
 
     @GetMapping("/patient/{patientId}")
@@ -117,7 +118,7 @@ public class FileController {
         FileResponse file = fileService.getFileByPatientId(patientId);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("File retrieved successfully.", file));
+                .body(ApiResponse.success(file));
     }
 
     @GetMapping("/patient/{patientId}/pdf")
@@ -137,4 +138,3 @@ public class FileController {
                 .body(data);
     }
 }
-

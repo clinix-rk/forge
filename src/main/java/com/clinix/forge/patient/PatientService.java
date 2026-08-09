@@ -1,7 +1,6 @@
 package com.clinix.forge.patient;
 
 import com.clinix.forge.core.exception.ResourceNotFoundException;
-import com.clinix.forge.core.payload.PaginatedPayload;
 import com.clinix.forge.doctors.DoctorEntity;
 import com.clinix.forge.doctors.DoctorRepository;
 import com.clinix.forge.patient.dto.CreatePatientRequest;
@@ -100,7 +99,7 @@ public class PatientService {
      * @return Paginated list of patient responses
      */
     @Transactional(readOnly = true)
-    public PaginatedPayload<PatientResponse> searchPatients(
+    public Page<PatientResponse> searchPatients(
             String name, String phoneNo, String caseNo, int pageNo, int pageSize) {
         log.debug("Searching patients - Name: {}, Phone: {}, CaseNo: {}, PageNo: {}, PageSize: {}",
                 name, phoneNo, caseNo, pageNo, pageSize);
@@ -116,11 +115,7 @@ public class PatientService {
         Page<PatientEntity> patientPage = patientRepository.searchPatients(
                 sanitizedName, sanitizedCaseNo, sanitizedPhoneNo, pageRequest);
 
-        List<PatientResponse> patientResponses = patientPage.getContent().stream()
-                .map(patientMapper::toResponse)
-                .toList();
-
-        return PaginatedPayload.of(patientResponses, patientPage);
+        return patientPage.map(patientMapper::toResponse);
     }
 
     /**

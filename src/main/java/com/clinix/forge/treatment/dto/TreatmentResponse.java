@@ -19,6 +19,9 @@ public record TreatmentResponse(
         @Schema(description = "Unique ID of the associated treatment category", example = "2")
         Long categoryId,
 
+        @Schema(description = "Display for the treatment category", example = "RCT / RCO")
+        String categoryDisplay,
+
         @Schema(description = "Unique ID of the patient undergoing treatment", example = "5")
         Long patientId,
 

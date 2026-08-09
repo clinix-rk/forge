@@ -1,7 +1,7 @@
 package com.clinix.forge.user;
 
 import com.clinix.forge.core.payload.ApiResponse;
-import com.clinix.forge.core.payload.PaginatedPayload;
+import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.user.dto.CreateUserRequest;
 import com.clinix.forge.user.dto.UpdateUserRequest;
 import com.clinix.forge.user.dto.UserResponse;
@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -42,20 +43,20 @@ public class UserController {
         UserResponse response = userService.createUser(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("User created successfully.", response));
+                .body(ApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(summary = "Get users (Paginated)", description = "Retrieves a paginated list of all users.")
-    public ResponseEntity<ApiResponse<PaginatedPayload<UserResponse>>> getAllUsers(
+    public ResponseEntity<ApiResponse<java.util.List<UserResponse>>> getAllUsers(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize
     ) {
         log.debug("API call: Fetching users paginated - Page: {}, Size: {}", pageNo, pageSize);
-        PaginatedPayload<UserResponse> users = userService.getAllUsers(pageNo, pageSize);
+        Page<UserResponse> users = userService.getAllUsers(pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Users retrieved successfully.", users));
+                .body(ApiResponse.success(users.getContent(), new PaginationMetadata(users.getNumber(), users.getSize(), users.getTotalElements(), users.getTotalPages(), users.hasNext(), users.hasPrevious())));
     }
 
     @GetMapping("/{id}")
@@ -65,7 +66,7 @@ public class UserController {
         UserResponse user = userService.getUserById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("User retrieved successfully.", user));
+                .body(ApiResponse.success(user));
     }
 
     @PutMapping("/{id}")
@@ -78,7 +79,7 @@ public class UserController {
         UserResponse updatedUser = userService.updateUserById(id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("User updated successfully.", updatedUser));
+                .body(ApiResponse.success(updatedUser));
     }
 
     @DeleteMapping("/{id}")

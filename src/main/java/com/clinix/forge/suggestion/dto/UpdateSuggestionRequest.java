@@ -2,10 +2,9 @@ package com.clinix.forge.suggestion.dto;
 
 import com.clinix.forge.suggestion.entity.SuggestionStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
@@ -15,10 +14,10 @@ public record UpdateSuggestionRequest(
         @Schema(description = "Updated date when the suggestion was made")
         LocalDate date,
 
-        @NotBlank(message = "Category is required")
-        @Size(max = 100, message = "Category must not exceed 100 characters")
-        @Schema(description = "Updated category of the suggestion", example = "Diet Plan")
-        String category,
+        @NotNull(message = "Category ID is required")
+        @Positive(message = "Category ID must be a positive number")
+        @Schema(description = "Updated unique ID of the associated treatment category", example = "2")
+        Long categoryId,
 
         @Schema(description = "Updated detailed explanation of the suggestion", example = "Maintain low sodium diet and daily 30 min walk")
         String details,

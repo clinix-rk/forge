@@ -1,7 +1,7 @@
 package com.clinix.forge.finance;
 
 import com.clinix.forge.core.payload.ApiResponse;
-import com.clinix.forge.core.payload.PaginatedPayload;
+import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.finance.dto.CreatePaymentRequest;
 import com.clinix.forge.finance.dto.PaymentResponse;
 import com.clinix.forge.finance.dto.UpdatePaymentRequest;
@@ -14,6 +14,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -44,12 +45,12 @@ public class PaymentController {
         PaymentResponse response = paymentService.createPayment(patientId, request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Successfully added payment", response));
+                .body(ApiResponse.success(response));
     }
 
     @GetMapping("/payments")
     @Operation(summary = "Get payments (Paginated)", description = "Retrieves a paginated list of all payments.")
-    public ResponseEntity<ApiResponse<PaginatedPayload<PaymentResponse>>> getAllPayments(
+    public ResponseEntity<ApiResponse<java.util.List<PaymentResponse>>> getAllPayments(
             @RequestParam(defaultValue = "0")
             @Min(value = 0, message = "Page number cannot be smaller than 0")
             int pageNo,
@@ -63,10 +64,10 @@ public class PaymentController {
             Long patientId
     ) {
         log.debug("Fetching {} payments for page no : {}", pageSize, pageNo);
-        PaginatedPayload<PaymentResponse> response = paymentService.getAllPayments(patientId, pageNo, pageSize);
+        Page<PaymentResponse> response = paymentService.getAllPayments(patientId, pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Payments retrieved successfully.", response));
+                .body(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
     @GetMapping("/payments/{id}")
@@ -82,7 +83,7 @@ public class PaymentController {
         PaymentResponse response = paymentService.getPaymentById(patientId, paymentId);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Payment retrieved successfully.", response));
+                .body(ApiResponse.success(response));
     }
 
     @PutMapping("/payments/{id}")
@@ -102,7 +103,7 @@ public class PaymentController {
         PaymentResponse response = paymentService.updatePaymentById(patientId, id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Payment updated successfully.", response));
+                .body(ApiResponse.success(response));
     }
 
     @DeleteMapping("/payments/{id}")

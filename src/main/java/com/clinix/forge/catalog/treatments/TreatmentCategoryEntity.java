@@ -40,4 +40,8 @@ public class TreatmentCategoryEntity extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TreatmentEntity> treatments = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TreatmentEntity> suggestions = new HashSet<>();
 }

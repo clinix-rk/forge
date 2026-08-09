@@ -1,13 +1,12 @@
 package com.clinix.forge.prescription;
 
-import com.clinix.forge.catalog.medicines.MedicineService;
+
 import com.clinix.forge.core.payload.ApiResponse;
-import com.clinix.forge.core.payload.PaginatedPayload;
+import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.core.pdf.PdfResponseUtil;
 import com.clinix.forge.prescription.dto.CreatePrescriptionRequest;
 import com.clinix.forge.prescription.dto.PrescriptionResponse;
 import com.clinix.forge.prescription.dto.UpdatePrescriptionRequest;
-import com.clinix.forge.prescription.services.PrescriptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -15,6 +14,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.*;
 public class PrescriptionController {
 
     private final PrescriptionService prescriptionService;
-    private final MedicineService medicineService;
 
     @PostMapping
     @Operation(summary = "Create a prescription", description = "Creates a new patient prescription.")
@@ -38,34 +37,37 @@ public class PrescriptionController {
             @RequestBody @Valid CreatePrescriptionRequest request
     ) {
         log.debug("API call: Create prescription");
-        PrescriptionResponse response = prescriptionService.createPrescription(request);
+        PrescriptionResponse response = prescriptionService.createPrescription(patientId, request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Prescription created successfully.", response));
+                .body(ApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(summary = "Get prescriptions (Paginated)", description = "Retrieves a paginated list of all prescriptions.")
-    public ResponseEntity<ApiResponse<PaginatedPayload<PrescriptionResponse>>> getAllPrescriptions(
+    public ResponseEntity<ApiResponse<java.util.List<PrescriptionResponse>>> getAllPrescriptions(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize,
-            @RequestParam(required = false) Long patientId
+            @PathVariable(required = false) Long patientId
     ) {
         log.debug("API call: Fetching prescriptions paginated - Page: {}, Size: {}, PatientId: {}", pageNo, pageSize, patientId);
-        PaginatedPayload<PrescriptionResponse> response = prescriptionService.getAllPrescriptions(patientId, pageNo, pageSize);
+        Page<PrescriptionResponse> response = prescriptionService.getAllPrescriptions(patientId, pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Prescriptions retrieved successfully.", response));
+                .body(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get prescription by ID", description = "Retrieves a prescription's details by ID.")
-    public ResponseEntity<ApiResponse<PrescriptionResponse>> getPrescriptionById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<PrescriptionResponse>> getPrescriptionById(
+            @PathVariable Long patientId,
+            @PathVariable Long id
+    ) {
         log.debug("API call: Fetching prescription with ID: {}", id);
-        PrescriptionResponse response = prescriptionService.getPrescriptionById(id);
+        PrescriptionResponse response = prescriptionService.getPrescriptionById(patientId, id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Prescription retrieved successfully.", response));
+                .body(ApiResponse.success(response));
     }
 
     @PutMapping("/{id}")
@@ -78,7 +80,7 @@ public class PrescriptionController {
         PrescriptionResponse response = prescriptionService.updatePrescriptionById(id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Prescription updated successfully.", response));
+                .body(ApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")

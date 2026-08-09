@@ -16,6 +16,10 @@ public record PrescriptionMedicineRequest(
         @Schema(description = "Unique ID of the dosage pattern", example = "2")
         Long dosageId,
 
+        @Positive(message = "Instruction ID must be a positive number")
+        @Schema(description = "Unique ID of the instruction", example = "3")
+        Long instructionId,
+
         @NotNull(message = "Quantity is required")
         @Positive(message = "Quantity must be a positive number")
         @Schema(description = "Quantity of medicine units to prescribe", example = "10")

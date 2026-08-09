@@ -5,8 +5,6 @@ import com.clinix.forge.catalog.medicines.dto.MedicineResponse;
 import com.clinix.forge.catalog.medicines.dto.UpdateMedicineRequest;
 import com.clinix.forge.core.exception.DuplicateResourceException;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
-import com.clinix.forge.core.payload.PaginatedPayload;
-import com.clinix.forge.prescription.PrescriptionMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -15,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
-
 @Slf4j
 @Service
 @Validated
@@ -24,7 +20,7 @@ import java.util.List;
 public class MedicineService {
 
     private final MedicineRepository medicineRepository;
-    private final PrescriptionMapper prescriptionMapper;
+    private final MedicineMapper medicineMapper;
 
     @Transactional(rollbackFor = Exception.class)
     public MedicineResponse createMedicine(CreateMedicineRequest request) {
@@ -34,23 +30,18 @@ public class MedicineService {
             throw new DuplicateResourceException("Medicine '" + request.name() + "' of type '" + request.type() + "' already exists");
         }
 
-        MedicineEntity entity = prescriptionMapper.toMedicineEntity(request);
+        MedicineEntity entity = medicineMapper.toMedicineEntity(request);
         MedicineEntity saved = medicineRepository.save(entity);
         log.info("Medicine created with ID: {}", saved.getId());
-        return prescriptionMapper.toMedicineResponse(saved);
+        return medicineMapper.toMedicineResponse(saved);
     }
 
     @Transactional(readOnly = true)
-    public PaginatedPayload<MedicineResponse> getAllMedicines(int pageNo, int pageSize) {
+    public Page<MedicineResponse> getAllMedicines(int pageNo, int pageSize) {
         log.debug("Fetching medicines - PageNo: {}, PageSize: {}", pageNo, pageSize);
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
         Page<MedicineEntity> page = medicineRepository.findAll(pageRequest);
-
-        List<MedicineResponse> responses = page.getContent().stream()
-                .map(prescriptionMapper::toMedicineResponse)
-                .toList();
-
-        return PaginatedPayload.of(responses, page);
+        return page.map(medicineMapper::toMedicineResponse);
     }
 
     @Transactional(readOnly = true)
@@ -58,7 +49,7 @@ public class MedicineService {
         log.debug("Fetching medicine with ID: {}", id);
         MedicineEntity entity = medicineRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Medicine not found with ID: " + id));
-        return prescriptionMapper.toMedicineResponse(entity);
+        return medicineMapper.toMedicineResponse(entity);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -72,10 +63,10 @@ public class MedicineService {
             throw new DuplicateResourceException("Medicine '" + request.name() + "' of type '" + request.type() + "' already exists");
         }
 
-        prescriptionMapper.updateMedicineFromRequest(request, entity);
+        medicineMapper.updateMedicineFromRequest(request, entity);
         MedicineEntity updated = medicineRepository.save(entity);
         log.info("Medicine updated with ID: {}", updated.getId());
-        return prescriptionMapper.toMedicineResponse(updated);
+        return medicineMapper.toMedicineResponse(updated);
     }
 
     @Transactional(rollbackFor = Exception.class)

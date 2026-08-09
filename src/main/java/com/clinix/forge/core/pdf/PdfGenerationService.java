@@ -1,6 +1,5 @@
 package com.clinix.forge.core.pdf;
 
-import com.openhtmltopdf.extend.FSSupplier;
 import com.openhtmltopdf.outputdevice.helper.BaseRendererBuilder.FontStyle;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import jakarta.annotation.PostConstruct;

@@ -26,5 +26,17 @@ public interface PaymentMapper {
     void updateEntityFromRequest(UpdatePaymentRequest request, @MappingTarget PaymentEntity entity);
 
     @Mapping(target = "treatmentId", source = "treatment.id")
+    @Mapping(target = "receiptNo", source = "entity", qualifiedByName = "generateReceiptNo")
+    @Mapping(target = "treatmentDetail", source = "treatment.details")
     PaymentResponse toResponse(PaymentEntity entity);
+
+    @Named("generateReceiptNo")
+    default String generateReceiptNo(PaymentEntity entity) {
+        String paddedSerial = String.format("%05d", entity.getSerial());
+        return String.format("%s/%s%s",
+                entity.getFinancialYear(),
+                entity.getDoctorIdentityCharacter(),
+                paddedSerial
+        );
+    }
 }
