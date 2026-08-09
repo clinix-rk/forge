@@ -24,8 +24,9 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
+        
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-
-  # publish:
-  #   needs: build
+      
+    - name: Publish to GHCR
+      run: mvn -B jib:build --file pom.xml -Djib.to.auth.username=${{ github.actor }} -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
