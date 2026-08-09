@@ -30,9 +30,10 @@
 		<java.version>21</java.version>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
-		<maven.compiler.release></maven.compiler.release>
+		<maven.compiler.release>21</maven.compiler.release>
 		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
 		<lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+		<start-class>com.clinix.forge.ForgeApplication</start-class>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -154,6 +155,26 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+			  <groupId>com.google.cloud.tools</groupId>
+			  <artifactId>jib-maven-plugin</artifactId>
+			  <version>3.4.0</version>
+			  <configuration>
+			    <from>
+			      <image>eclipse-temurin:21-jre-alpine</image>
+			    </from>
+			    <to>
+			      <image>myapp-forge:latest</image>
+			    </to>
+			    <container>
+			      <mainClass>com.clinix.forge.ForgeApplication</mainClass>
+			      <jvmFlags>
+			        <jvmFlag>-Xmx512m</jvmFlag>
+			        <jvmFlag>-XX:+UseG1GC</jvmFlag>
+			      </jvmFlags>
+			    </container>
+			  </configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
