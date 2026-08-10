@@ -206,3 +206,8 @@ README.html
 
 # Uploads
 /uploads/
+
+# environment files
+.env
+.env.prod
+.env.dev
