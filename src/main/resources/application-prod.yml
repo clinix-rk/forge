@@ -16,7 +16,11 @@ spring:
         properties:
             hibernate:
                 format_sql: false
-        defer-datasource-initialization: true
+        defer-datasource-initialization: false
+
+    sql:
+        init:
+            mode: never
 
     flyway:
         enabled: true
