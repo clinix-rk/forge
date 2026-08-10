@@ -163,11 +163,14 @@
 			    <artifactId>jib-maven-plugin</artifactId>
 			    <version>3.4.0</version>
 			    <configuration>
+			        <from>
+			            <image>eclipse-temurin:21-jre-alpine</image>
+			        </from>
 			        <to>
-			            <image>ghcr.io/${{ github.repository_owner }}/forge</image>
+			            <image>forge</image>
 			        </to>
 			        <container>
-			            <mainClass>com.yourorg.Application</mainClass>
+			            <mainClass>com.clinix.forge.ForgeApplication</mainClass>
 			            <ports>
 			                <port>8080</port>
 			            </ports>
