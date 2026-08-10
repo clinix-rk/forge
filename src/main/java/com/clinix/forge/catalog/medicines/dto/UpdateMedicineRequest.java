@@ -14,11 +14,6 @@ public record UpdateMedicineRequest(
         @NotBlank(message = "Medicine type is required")
         @Size(max = 50, message = "Medicine type must not exceed 50 characters")
         @Schema(description = "Updated type/form of the medicine (e.g., Tablet, Capsule, Syrup)", example = "Tablet")
-        String type,
-
-        @NotBlank(message = "Instruction is required")
-        @Size(max = 255, message = "Instruction must not exceed 255 characters")
-        @Schema(description = "Updated administration instructions for this medicine", example = "Take after food with warm water")
-        String instruction
+        String type
 ) {
 }

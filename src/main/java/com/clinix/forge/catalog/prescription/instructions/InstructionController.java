@@ -28,7 +28,7 @@ public class InstructionController {
 
     private final InstructionService instructionService;
 
-    @PostMapping("/instructions")
+    @PostMapping("/")
     @Operation(summary = "Add a drug instruction pattern", description = "Creates a new drug dosage pattern.")
     public ResponseEntity<ApiResponse<InstructionResponse>> createDrugInstruction(
             @RequestBody @Valid CreateInstructionRequest request
@@ -40,7 +40,7 @@ public class InstructionController {
                 .body(ApiResponse.success(response));
     }
 
-    @GetMapping("/instructions")
+    @GetMapping("/")
     @Operation(summary = "Get drug instructions (Paginated)", description = "Retrieves a paginated list of all drug dosage patterns.")
     public ResponseEntity<ApiResponse<java.util.List<InstructionResponse>>> getAllDrugInstructions(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
@@ -53,7 +53,7 @@ public class InstructionController {
                 .body(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
-    @GetMapping("/instructions/{id}")
+    @GetMapping("/{id}")
     @Operation(summary = "Get drug instruction by ID", description = "Retrieves a drug dosage pattern's details by ID.")
     public ResponseEntity<ApiResponse<InstructionResponse>> getDrugInstructionById(@PathVariable Long id) {
         log.debug("API call: Fetching instruction with ID: {}", id);
@@ -63,7 +63,7 @@ public class InstructionController {
                 .body(ApiResponse.success(response));
     }
 
-    @PutMapping("/instructions/{id}")
+    @PutMapping("/{id}")
     @Operation(summary = "Update drug instruction by ID", description = "Updates an existing drug dosage pattern details.")
     public ResponseEntity<ApiResponse<InstructionResponse>> updateDrugInstructionById(
             @PathVariable Long id,
@@ -76,7 +76,7 @@ public class InstructionController {
                 .body(ApiResponse.success(response));
     }
 
-    @DeleteMapping("/instructions/{id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "Delete drug instruction by ID", description = "Deletes a drug dosage pattern based on ID.")
     public ResponseEntity<Void> deleteDrugInstructionById(@PathVariable Long id) {
         log.debug("API call: Deleting instruction with ID: {}", id);

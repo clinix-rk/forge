@@ -21,6 +21,10 @@ spring:
         enabled: true
         clean-disabled: true # Failsafe constraint against programmatic truncation of tables
 
+    docker:
+        compose:
+            enabled: false
+
 springdoc:
     api-docs:
         enabled: false # Closes information leakage channels regarding infrastructure designs
