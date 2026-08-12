@@ -54,8 +54,8 @@ public class PatientService {
                     return new ResourceNotFoundException("Doctor with id " + request.doctorId() + " not found");
                 });
 
-        long totalCasesForDoctor = patientRepository.findMaxSerialByDoctorId(request.doctorId()).orElse(0);
-        Long newSerial = totalCasesForDoctor + 1;
+        Integer totalCasesForDoctor = patientRepository.findMaxSerialByDoctorId(request.doctorId()).orElse(0);
+        Integer newSerial = totalCasesForDoctor + 1;
 
         String generatedCaseNo = PatientUtility.generateCaseNo(doctor.getCaseNoPrefix(), newSerial);
         log.debug("Generated case number: {} for new patient serial: {}", generatedCaseNo, newSerial);

@@ -19,7 +19,7 @@ public final class PatientUtility {
      * @param serial the patient serial number
      * @return formatted case number
      */
-    public static String generateCaseNo(String prefix, Long serial) {
+    public static String generateCaseNo(String prefix, Integer serial) {
         if (!StringUtils.hasText(prefix)) {
             throw new IllegalArgumentException("Doctor case number prefix cannot be null or empty");
         }

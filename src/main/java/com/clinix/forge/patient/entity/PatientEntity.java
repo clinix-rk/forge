@@ -27,7 +27,7 @@ public class PatientEntity extends BaseEntity {
     private String caseNo;
 
     @Column(nullable = false)
-    private Long serial;
+    private Integer serial;
 
     @Column(length = 50, nullable = false)
     private String name;
