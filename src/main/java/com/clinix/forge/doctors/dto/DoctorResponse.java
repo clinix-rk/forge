@@ -15,9 +15,6 @@ public record DoctorResponse(
         @Schema(description = "Short prefix used for patient case numbers (e.g., R for Rut Koticha)", example = "RK")
         String caseNoPrefix,
 
-        @Schema(description = "Total number of patients assigned to this doctor", example = "12")
-        Integer totalPatients,
-
         @Schema(description = "Timestamp indicating when the doctor profile was first created")
         Instant createdAt,
 

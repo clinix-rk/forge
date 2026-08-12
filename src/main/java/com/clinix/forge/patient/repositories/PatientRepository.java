@@ -14,6 +14,9 @@ public interface PatientRepository extends JpaRepository<PatientEntity, Long> {
 
     Optional<PatientEntity> findByCaseNo(String caseNo);
 
+    @Query("SELECT p.serial FROM PatientEntity p WHERE p.doctor.id = :doctorId ORDER BY p.serial DESC LIMIT 1")
+    Optional<Integer> findMaxSerialByDoctorId(@Param("doctorId") Long doctorId);
+
     @Query("SELECT DISTINCT p FROM PatientEntity p LEFT JOIN p.phoneNumbers ph WHERE " +
             "(CAST(:name AS string) IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:name AS string), '%'))) AND " +
             "(CAST(:caseNo AS string) IS NULL OR LOWER(p.caseNo) LIKE LOWER(CONCAT('%', CAST(:caseNo AS string), '%'))) AND " +

@@ -54,10 +54,8 @@ public class PatientService {
                     return new ResourceNotFoundException("Doctor with id " + request.doctorId() + " not found");
                 });
 
-        // Concurrency increment of doctor's total patients count
-        int newSerial = doctor.getTotalPatients() + 1;
-        doctor.setTotalPatients(newSerial);
-        doctorRepository.save(doctor);
+        long totalCasesForDoctor = patientRepository.findMaxSerialByDoctorId(request.doctorId()).orElse(0);
+        Long newSerial = totalCasesForDoctor + 1;
 
         String generatedCaseNo = PatientUtility.generateCaseNo(doctor.getCaseNoPrefix(), newSerial);
         log.debug("Generated case number: {} for new patient serial: {}", generatedCaseNo, newSerial);
@@ -278,4 +276,3 @@ public class PatientService {
         return resolved;
     }
 }
-

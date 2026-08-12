@@ -4,7 +4,7 @@ server:
 
 spring:
     datasource:
-        url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:clinix_dev}
+        url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:clinix_datastore}
         username: ${DB_USER:clinix_application}
         password: ${DB_PASSWORD:password}
 
