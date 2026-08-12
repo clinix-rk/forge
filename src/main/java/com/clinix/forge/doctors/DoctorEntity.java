@@ -23,10 +23,6 @@ public class DoctorEntity extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(name = "total_patients", nullable = false)
-    @Builder.Default
-    private Integer totalPatients = 0;
-
     @Builder.Default
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PatientEntity> patients = new HashSet<>();
