@@ -28,6 +28,7 @@ public interface PaymentMapper {
     @Mapping(target = "treatmentId", source = "treatment.id")
     @Mapping(target = "receiptNo", source = "entity", qualifiedByName = "generateReceiptNo")
     @Mapping(target = "treatmentDetail", source = "treatment.details")
+    @Mapping(target = "date", source = "treatment.date")
     PaymentResponse toResponse(PaymentEntity entity);
 
     @Named("generateReceiptNo")

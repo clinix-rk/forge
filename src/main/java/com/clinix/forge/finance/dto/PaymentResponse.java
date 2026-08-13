@@ -4,6 +4,7 @@ import com.clinix.forge.finance.entity.PaymentMethod;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Schema(description = "Represents payment transaction details in the system")
 public record PaymentResponse(
@@ -18,6 +19,9 @@ public record PaymentResponse(
 
         @Schema(description = "Detail provided in the associated treatment", example = "Treatment details")
         String treatmentDetail,
+
+        @Schema(description = "Date of the treatment for which receipt was generated", example = "2000-01-01")
+        LocalDate date,
 
         @Schema(description = "The amount paid", example = "1500.00")
         Double amount,
