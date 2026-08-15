@@ -28,7 +28,7 @@ public class DosageController {
 
     private final DosageService dosageService;
 
-    @PostMapping("/dosages")
+    @PostMapping
     @Operation(summary = "Add a drug dosage pattern", description = "Creates a new drug dosage pattern.")
     public ResponseEntity<ApiResponse<DrugDosageResponse>> createDrugDosage(
             @RequestBody @Valid CreateDrugDosageRequest request
@@ -40,7 +40,7 @@ public class DosageController {
                 .body(ApiResponse.success(response));
     }
 
-    @GetMapping("/dosages")
+    @GetMapping
     @Operation(summary = "Get drug dosages (Paginated)", description = "Retrieves a paginated list of all drug dosage patterns.")
     public ResponseEntity<ApiResponse<java.util.List<DrugDosageResponse>>> getAllDrugDosages(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
@@ -53,7 +53,7 @@ public class DosageController {
                 .body(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
-    @GetMapping("/dosages/{id}")
+    @GetMapping("/{id}")
     @Operation(summary = "Get drug dosage by ID", description = "Retrieves a drug dosage pattern's details by ID.")
     public ResponseEntity<ApiResponse<DrugDosageResponse>> getDrugDosageById(@PathVariable Long id) {
         log.debug("API call: Fetching dosage with ID: {}", id);
@@ -63,7 +63,7 @@ public class DosageController {
                 .body(ApiResponse.success(response));
     }
 
-    @PutMapping("/dosages/{id}")
+    @PutMapping("/{id}")
     @Operation(summary = "Update drug dosage by ID", description = "Updates an existing drug dosage pattern details.")
     public ResponseEntity<ApiResponse<DrugDosageResponse>> updateDrugDosageById(
             @PathVariable Long id,
@@ -76,7 +76,7 @@ public class DosageController {
                 .body(ApiResponse.success(response));
     }
 
-    @DeleteMapping("/dosages/{id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "Delete drug dosage by ID", description = "Deletes a drug dosage pattern based on ID.")
     public ResponseEntity<Void> deleteDrugDosageById(@PathVariable Long id) {
         log.debug("API call: Deleting dosage with ID: {}", id);

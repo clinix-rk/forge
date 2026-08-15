@@ -28,7 +28,7 @@ public class InstructionController {
 
     private final InstructionService instructionService;
 
-    @PostMapping("/")
+    @PostMapping
     @Operation(summary = "Add a drug instruction pattern", description = "Creates a new drug dosage pattern.")
     public ResponseEntity<ApiResponse<InstructionResponse>> createDrugInstruction(
             @RequestBody @Valid CreateInstructionRequest request
@@ -40,7 +40,7 @@ public class InstructionController {
                 .body(ApiResponse.success(response));
     }
 
-    @GetMapping("/")
+    @GetMapping
     @Operation(summary = "Get drug instructions (Paginated)", description = "Retrieves a paginated list of all drug dosage patterns.")
     public ResponseEntity<ApiResponse<java.util.List<InstructionResponse>>> getAllDrugInstructions(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,

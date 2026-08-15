@@ -5,6 +5,8 @@ import com.clinix.forge.catalog.medicines.MedicineEntity;
 import com.clinix.forge.catalog.medicines.MedicineRepository;
 import com.clinix.forge.catalog.prescription.dosages.DosageEntity;
 import com.clinix.forge.catalog.prescription.dosages.DosageRepository;
+import com.clinix.forge.catalog.prescription.instructions.InstructionEntity;
+import com.clinix.forge.catalog.prescription.instructions.InstructionRepository;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
 import com.clinix.forge.core.pdf.PdfGenerationService;
 import com.clinix.forge.core.pdf.dto.PrescriptionMedicineItem;
@@ -45,6 +47,7 @@ public class PrescriptionService {
     private final PatientRepository patientRepository;
     private final MedicineRepository medicineRepository;
     private final DosageRepository dosageRepository;
+    private final InstructionRepository instructionRepository;
 
     private final PdfGenerationService pdfGenerationService;
     private final PrescriptionMapper prescriptionMapper;
@@ -68,10 +71,15 @@ public class PrescriptionService {
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Drug dosage not found with ID: " + item.dosageId()));
 
+            InstructionEntity instruction = instructionRepository.findById(item.instructionId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Drug dosage not found with ID: " + item.instructionId()));
+
             PrescriptionMedicineEntity entity = prescriptionMapper.toPrescriptionMedicineEntity(item);
             entity.setPrescription(prescription);
             entity.setMedicine(medicine);
             entity.setDosage(dosage);
+            entity.setInstruction(instruction);
             result.add(entity);
         }
         return result;
