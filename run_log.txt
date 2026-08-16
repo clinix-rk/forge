@@ -5674,7 +5674,7 @@ Caused by: org.postgresql.util.PSQLException: ERROR: relation "doctors" does not
 2026-08-08 00:36:00.688 DEBUG --- [nio-8080-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : [TRACE=8f2c9d07-e7e0-4473-be82-82bff62d45e3] [USER=anonymous] [DURATION=ms] Mapped to com.clinix.forge.prescription.PrescriptionController#getPrescriptionById(Long)
 2026-08-08 00:36:00.693 INFO  --- [nio-8080-exec-2] c.c.forge.core.logging.TraceIdFilter     : [TRACE=5124b0bf-7606-4ca6-a931-9625569309d1] [USER=anonymous] [DURATION=ms] Incoming request: GET /api/v1/0/finance/payments | Method: GET | IP: 0:0:0:0:0:0:0:1
 2026-08-08 00:36:00.694 DEBUG --- [nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : [TRACE=5124b0bf-7606-4ca6-a931-9625569309d1] [USER=anonymous] [DURATION=ms] GET "/api/v1/0/finance/payments?pageNo=0&pageSize=10", parameters={masked}
-2026-08-08 00:36:00.697 DEBUG --- [nio-8080-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : [TRACE=5124b0bf-7606-4ca6-a931-9625569309d1] [USER=anonymous] [DURATION=ms] Mapped to com.clinix.forge.finance.PaymentController#getAllPayments(int, int, Long)
+2026-08-08 00:36:00.697 DEBUG --- [nio-8080-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : [TRACE=5124b0bf-7606-4ca6-a931-9625569309d1] [USER=anonymous] [DURATION=ms] Mapped to com.clinix.forge.payments.PaymentController#getAllPayments(int, int, Long)
 2026-08-08 00:36:00.734 DEBUG --- [nio-8080-exec-2] c.c.forge.core.logging.LoggingAspect     : [TRACE=5124b0bf-7606-4ca6-a931-9625569309d1] [USER=anonymous] [DURATION=ms] Entering method [PaymentController.getAllPayments] with arguments: [0, 10, 0]
 2026-08-08 00:36:00.748 DEBUG --- [nio-8080-exec-2] c.c.forge.finance.PaymentController      : [TRACE=5124b0bf-7606-4ca6-a931-9625569309d1] [USER=anonymous] [DURATION=ms] Fetching 10 payments for page no : 0
 2026-08-08 00:36:00.753 DEBUG --- [nio-8080-exec-2] c.c.forge.core.logging.LoggingAspect     : [TRACE=5124b0bf-7606-4ca6-a931-9625569309d1] [USER=anonymous] [DURATION=ms] Entering method [PaymentService.getAllPayments] with arguments: [0, 0, 10]
@@ -5889,7 +5889,7 @@ org.springframework.dao.InvalidDataAccessResourceUsageException: JDBC exception 
 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
 	at jdk.proxy4/jdk.proxy4.$Proxy195.findAllByPatientId(Unknown Source)
-	at com.clinix.forge.finance.service.PaymentService.getAllPayments(PaymentService.java:62)
+	at com.clinix.forge.payments.PaymentService.getAllPayments(PaymentService.java:62)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
@@ -5912,8 +5912,8 @@ org.springframework.dao.InvalidDataAccessResourceUsageException: JDBC exception 
 	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:96)
 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
 	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
-	at com.clinix.forge.finance.service.PaymentService$$SpringCGLIB$$0.getAllPayments(<generated>)
-	at com.clinix.forge.finance.PaymentController.getAllPayments(PaymentController.java:67)
+	at com.clinix.forge.payments.PaymentService$$SpringCGLIB$$0.getAllPayments(<generated>)
+	at com.clinix.forge.payments.PaymentController.getAllPayments(PaymentController.java:67)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
@@ -5932,7 +5932,7 @@ org.springframework.dao.InvalidDataAccessResourceUsageException: JDBC exception 
 	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:96)
 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
 	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
-	at com.clinix.forge.finance.PaymentController$$SpringCGLIB$$0.getAllPayments(<generated>)
+	at com.clinix.forge.payments.PaymentController$$SpringCGLIB$$0.getAllPayments(<generated>)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
@@ -7522,7 +7522,7 @@ Caused by: java.lang.NumberFormatException: For input string: "medicines"
 2026-08-08 03:28:36.930 INFO  --- [nio-8080-exec-9] c.c.forge.core.logging.TraceIdFilter     : [TRACE=86747748-1024-49a9-a234-99b098049019] [USER=anonymous] [DURATION=ms] Request completed successfully
 2026-08-08 03:28:36.951 INFO  --- [nio-8080-exec-8] c.c.forge.core.logging.TraceIdFilter     : [TRACE=0ccafc1f-ec27-408d-b1d4-c71b6aa0927c] [USER=anonymous] [DURATION=ms] Incoming request: GET /api/v1/0/finance/payments | Method: GET | IP: 0:0:0:0:0:0:0:1
 2026-08-08 03:28:36.951 DEBUG --- [nio-8080-exec-8] o.s.web.servlet.DispatcherServlet        : [TRACE=0ccafc1f-ec27-408d-b1d4-c71b6aa0927c] [USER=anonymous] [DURATION=ms] GET "/api/v1/0/finance/payments?pageNo=0&pageSize=10", parameters={masked}
-2026-08-08 03:28:36.952 DEBUG --- [nio-8080-exec-8] s.w.s.m.m.a.RequestMappingHandlerMapping : [TRACE=0ccafc1f-ec27-408d-b1d4-c71b6aa0927c] [USER=anonymous] [DURATION=ms] Mapped to com.clinix.forge.finance.PaymentController#getAllPayments(int, int, Long)
+2026-08-08 03:28:36.952 DEBUG --- [nio-8080-exec-8] s.w.s.m.m.a.RequestMappingHandlerMapping : [TRACE=0ccafc1f-ec27-408d-b1d4-c71b6aa0927c] [USER=anonymous] [DURATION=ms] Mapped to com.clinix.forge.payments.PaymentController#getAllPayments(int, int, Long)
 2026-08-08 03:28:36.956 DEBUG --- [nio-8080-exec-8] c.c.forge.core.logging.LoggingAspect     : [TRACE=0ccafc1f-ec27-408d-b1d4-c71b6aa0927c] [USER=anonymous] [DURATION=ms] Entering method [PaymentController.getAllPayments] with arguments: [0, 10, 0]
 2026-08-08 03:28:36.970 DEBUG --- [nio-8080-exec-8] c.c.forge.finance.PaymentController      : [TRACE=0ccafc1f-ec27-408d-b1d4-c71b6aa0927c] [USER=anonymous] [DURATION=ms] Fetching 10 payments for page no : 0
 2026-08-08 03:28:36.971 DEBUG --- [nio-8080-exec-8] c.c.forge.core.logging.LoggingAspect     : [TRACE=0ccafc1f-ec27-408d-b1d4-c71b6aa0927c] [USER=anonymous] [DURATION=ms] Entering method [PaymentService.getAllPayments] with arguments: [0, 0, 10]
@@ -7591,7 +7591,7 @@ org.springframework.dao.InvalidDataAccessResourceUsageException: JDBC exception 
 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
 	at jdk.proxy4/jdk.proxy4.$Proxy195.findAllByPatientId(Unknown Source)
-	at com.clinix.forge.finance.service.PaymentService.getAllPayments(PaymentService.java:62)
+	at com.clinix.forge.payments.PaymentService.getAllPayments(PaymentService.java:62)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
@@ -7614,8 +7614,8 @@ org.springframework.dao.InvalidDataAccessResourceUsageException: JDBC exception 
 	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:96)
 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
 	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
-	at com.clinix.forge.finance.service.PaymentService$$SpringCGLIB$$0.getAllPayments(<generated>)
-	at com.clinix.forge.finance.PaymentController.getAllPayments(PaymentController.java:67)
+	at com.clinix.forge.payments.PaymentService$$SpringCGLIB$$0.getAllPayments(<generated>)
+	at com.clinix.forge.payments.PaymentController.getAllPayments(PaymentController.java:67)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
@@ -7634,7 +7634,7 @@ org.springframework.dao.InvalidDataAccessResourceUsageException: JDBC exception 
 	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:96)
 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
 	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
-	at com.clinix.forge.finance.PaymentController$$SpringCGLIB$$0.getAllPayments(<generated>)
+	at com.clinix.forge.payments.PaymentController$$SpringCGLIB$$0.getAllPayments(<generated>)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)

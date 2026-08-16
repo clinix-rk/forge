@@ -44,7 +44,11 @@ public class PdfGenerationService {
             PdfRendererBuilder builder = new PdfRendererBuilder();
 
             builder.useFastMode();
-            builder.withW3cDocument(w3cDoc, "/");
+
+            ClassPathResource staticDir = new ClassPathResource("static/");
+            String baseUri = staticDir.getURL().toString();
+
+            builder.withW3cDocument(w3cDoc, baseUri);
 
             // Supplies the cached font bytes via an in-memory stream, bypassing disk I/O
             builder.useFont(

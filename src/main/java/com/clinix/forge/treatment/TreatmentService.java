@@ -3,11 +3,11 @@ package com.clinix.forge.treatment;
 import com.clinix.forge.catalog.treatments.TreatmentCategoryEntity;
 import com.clinix.forge.catalog.treatments.TreatmentCategoryRepository;
 import com.clinix.forge.core.exception.ResourceNotFoundException;
-import com.clinix.forge.finance.PaymentRepository;
-import com.clinix.forge.finance.entity.PaymentEntity;
-import com.clinix.forge.finance.entity.PaymentMethod;
 import com.clinix.forge.patient.entity.PatientEntity;
 import com.clinix.forge.patient.repositories.PatientRepository;
+import com.clinix.forge.payments.PaymentRepository;
+import com.clinix.forge.payments.entity.PaymentEntity;
+import com.clinix.forge.payments.entity.PaymentMethod;
 import com.clinix.forge.treatment.dto.CreateTreatmentRequest;
 import com.clinix.forge.treatment.dto.TreatmentResponse;
 import com.clinix.forge.treatment.dto.UpdateTreatmentRequest;
@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -76,7 +77,9 @@ public class TreatmentService {
                 saved,
                 0.0,
                 PaymentMethod.CASH,
-                ""
+                "",
+                saved.getDetails(),
+                saved.getDate()
         );
 
         paymentRepository.save(dummyPayment);
@@ -87,14 +90,9 @@ public class TreatmentService {
     }
 
     @Transactional(readOnly = true)
-    public Page<TreatmentResponse> getAllTreatments(int pageNo, int pageSize) {
-        return getAllTreatments(null, pageNo, pageSize);
-    }
-
-    @Transactional(readOnly = true)
     public Page<TreatmentResponse> getAllTreatments(Long patientId, int pageNo, int pageSize) {
         log.debug("Fetching treatments - PatientId: {}, PageNo: {}, PageSize: {}", patientId, pageNo, pageSize);
-        PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
+        PageRequest pageRequest = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<TreatmentEntity> page = (patientId != null)
                 ? treatmentRepository.findByPatientId(patientId, pageRequest)
                 : treatmentRepository.findAll(pageRequest);

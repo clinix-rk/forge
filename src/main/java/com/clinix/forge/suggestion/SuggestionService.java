@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -52,14 +53,9 @@ public class SuggestionService {
     }
 
     @Transactional(readOnly = true)
-    public Page<SuggestionResponse> getAllSuggestions(int pageNo, int pageSize) {
-        return getAllSuggestions(null, pageNo, pageSize);
-    }
-
-    @Transactional(readOnly = true)
     public Page<SuggestionResponse> getAllSuggestions(Long patientId, int pageNo, int pageSize) {
         log.debug("Fetching suggestions - PatientId: {}, PageNo: {}, PageSize: {}", patientId, pageNo, pageSize);
-        PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
+        PageRequest pageRequest = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<SuggestionEntity> suggestionPage = (patientId != null)
                 ? suggestionRepository.findByPatientId(patientId, pageRequest)
                 : suggestionRepository.findAll(pageRequest);

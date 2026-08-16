@@ -1,4 +1,4 @@
-package com.clinix.forge.finance.entity;
+package com.clinix.forge.payments.entity;
 
 import com.clinix.forge.core.entity.BaseEntity;
 import com.clinix.forge.patient.entity.PatientEntity;
@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(
@@ -47,4 +49,10 @@ public class PaymentEntity extends BaseEntity {
 
     @Column(nullable = false, length = 255)
     private String reference = "";
+
+    @Column(columnDefinition = "TEXT", name = "treatment_details")
+    private String treatmentDetails;
+
+    @Column(nullable = false, name = "received_date")
+    private LocalDate receivedDate;
 }

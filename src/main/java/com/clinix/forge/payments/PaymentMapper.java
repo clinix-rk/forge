@@ -1,9 +1,9 @@
-package com.clinix.forge.finance;
+package com.clinix.forge.payments;
 
-import com.clinix.forge.finance.dto.CreatePaymentRequest;
-import com.clinix.forge.finance.dto.PaymentResponse;
-import com.clinix.forge.finance.dto.UpdatePaymentRequest;
-import com.clinix.forge.finance.entity.PaymentEntity;
+import com.clinix.forge.payments.dto.CreatePaymentRequest;
+import com.clinix.forge.payments.dto.PaymentResponse;
+import com.clinix.forge.payments.dto.UpdatePaymentRequest;
+import com.clinix.forge.payments.entity.PaymentEntity;
 import org.mapstruct.*;
 
 @Mapper(
@@ -27,8 +27,6 @@ public interface PaymentMapper {
 
     @Mapping(target = "treatmentId", source = "treatment.id")
     @Mapping(target = "receiptNo", source = "entity", qualifiedByName = "generateReceiptNo")
-    @Mapping(target = "treatmentDetail", source = "treatment.details")
-    @Mapping(target = "date", source = "treatment.date")
     PaymentResponse toResponse(PaymentEntity entity);
 
     @Named("generateReceiptNo")

@@ -1,10 +1,13 @@
 package com.clinix.forge.core.pdf.dto;
 
-import java.util.List;
-
 public record ReceiptPdfData(
-        String doctorName,
-        List<ReceiptLineItem> lines,
-        Double total
+        String receiptNo,
+        String date,
+        String patientName,
+        String treatmentDetail,
+        String amount,
+        String amountInWords,
+        String method,
+        Boolean printStamp
 ) {
 }

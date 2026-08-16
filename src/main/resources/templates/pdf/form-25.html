@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Form No. 25</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 15mm;
+            @bottom-right {
+                content: "Page " counter(page) " of " counter(pages);
+                font-family: Helvetica, Arial, sans-serif;
+                font-size: 8pt;
+                color: #555;
+            }
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 9pt;
+            color: #111;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header-row-1 {
+            font-size: 14pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .header-row-2 {
+            font-size: 10pt;
+            font-weight: bold;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .header-row-3 {
+            font-size: 10pt;
+            font-style: italic;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+
+        th, td {
+            border: 0.5px solid #444;
+            padding: 6px 4px;
+            word-wrap: break-word;
+        }
+
+        /* Force all table headers to be center aligned */
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            text-align: center !important;
+            font-size: 8.5pt;
+            vertical-align: middle;
+        }
+
+        td {
+            font-size: 8.5pt;
+            vertical-align: middle;
+        }
+
+        /* Column Specific Rules */
+        .col-case {
+            width: 9%;
+        }
+
+        td.col-case {
+            text-align: center;
+        }
+
+        .col-date {
+            width: 15%;
+        }
+
+        td.col-date {
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .col-name {
+            width: 22%;
+        }
+
+        td.col-name {
+            text-align: left;
+        }
+
+        .col-service {
+            width: 27%;
+        }
+
+        td.col-service {
+            text-align: left;
+        }
+
+        .col-fees {
+            width: 12%;
+        }
+
+        td.col-fees {
+            text-align: right;
+        }
+
+        .col-rcpt-date {
+            width: 15%;
+        }
+
+        td.col-rcpt-date {
+            text-align: center;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-container">
+    <div class="header-row-1">FORM NO 25</div>
+    <div class="header-row-2">Rule 46, Income Tax Rules - 2026</div>
+    <div class="header-row-3">Form of daily case register</div>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th class="col-case">Case No</th>
+        <th class="col-date">Date</th>
+        <th class="col-name">Name of the Patient</th>
+        <th class="col-service">Nature of professional Service Rendered</th>
+        <th class="col-fees">Fees Received</th>
+        <th class="col-rcpt-date">Date of Receipt of Fees</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="entry : ${caseEntries}">
+        <td class="col-case" th:text="${entry.caseNo}">C-101</td>
+        <td class="col-date" th:text="${entry.date}">2026-08-01</td>
+        <td class="col-name" th:text="${entry.patientName}">John Doe</td>
+        <td class="col-service" th:text="${entry.serviceRendered}">General Consultation</td>
+        <td class="col-fees"
+            th:text="${#numbers.formatDecimal(entry.feesReceived, 1, 'POINT', 2, 'POINT')}">500.00
+        </td>
+        <td class="col-rcpt-date" th:text="${entry.receiptDate}">2026-08-01</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

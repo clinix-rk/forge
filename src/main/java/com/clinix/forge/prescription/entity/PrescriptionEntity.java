@@ -33,5 +33,6 @@ public class PrescriptionEntity extends BaseEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "prescription", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id ASC")
     private Set<PrescriptionMedicineEntity> prescriptionMedicines = new HashSet<>();
 }

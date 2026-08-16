@@ -5,10 +5,12 @@ import com.clinix.forge.core.payload.ApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.core.pdf.PdfResponseUtil;
 import com.clinix.forge.prescription.dto.CreatePrescriptionRequest;
+import com.clinix.forge.prescription.dto.PdfData;
 import com.clinix.forge.prescription.dto.PrescriptionResponse;
 import com.clinix.forge.prescription.dto.UpdatePrescriptionRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -19,11 +21,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/{patientId}/prescriptions")
+@RequestMapping("/patients/{patientId}/prescriptions")
 @RequiredArgsConstructor
 @Tag(name = "Prescription Management", description = "Endpoints for managing prescriptions, medicines, and drug dosages")
 public class PrescriptionController {
@@ -91,14 +94,32 @@ public class PrescriptionController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}/pdf")
+    @PostMapping("/{id}/pdf")
     @Operation(
             summary = "Generate Prescription Print-Fill PDF",
             description = "Generates a content-only PDF for printing on the pre-printed Aditya Dental Clinic letterhead pad. The physical paper provides the header, watermark, footer, and QR code."
     )
-    public ResponseEntity<byte[]> getPrescriptionPdf(@PathVariable Long id) {
-        log.info("API call: Generate prescription PDF for ID: {}", id);
-        byte[] pdf = prescriptionService.generatePrescriptionPdf(id);
-        return PdfResponseUtil.inline(pdf, "prescription-" + id + ".pdf");
+    public ResponseEntity<byte[]> getPrescriptionPdf(
+            @PathVariable Long id,
+            @RequestParam String referralType,
+            @Nullable @RequestBody PdfData data) {
+
+        log.info("API call: Generate prescription PDF for ID: {}, referralType: {}", id, referralType);
+
+        // Enforce conditional requirement
+        if (isDataRequired(referralType) && data == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Request body 'data' is required when referralType is 'extended' or 'standard'."
+            );
+        }
+
+        byte[] pdf = prescriptionService.generatePrescriptionPdf(id, referralType, data);
+
+        return PdfResponseUtil.inline(pdf, "prescription.pdf");
+    }
+
+    private boolean isDataRequired(String referralType) {
+        return "extended".equalsIgnoreCase(referralType) || "standard".equalsIgnoreCase(referralType);
     }
 }

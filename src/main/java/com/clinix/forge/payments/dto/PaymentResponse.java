@@ -1,6 +1,6 @@
-package com.clinix.forge.finance.dto;
+package com.clinix.forge.payments.dto;
 
-import com.clinix.forge.finance.entity.PaymentMethod;
+import com.clinix.forge.payments.entity.PaymentMethod;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
@@ -20,6 +20,9 @@ public record PaymentResponse(
         @Schema(description = "Detail provided in the associated treatment", example = "Treatment details")
         String treatmentDetail,
 
+        @Schema(description = "Treatment details shown on the receipt / Form 3C", example = "Root canal therapy")
+        String treatmentDetails,
+
         @Schema(description = "Date of the treatment for which receipt was generated", example = "2000-01-01")
         LocalDate date,
 
@@ -31,6 +34,9 @@ public record PaymentResponse(
 
         @Schema(description = "Transaction reference or check number", example = "TXN987654321")
         String reference,
+
+        @Schema(description = "Date the payment was received", example = "2026-06-12")
+        LocalDate receivedDate,
 
         @Schema(description = "Timestamp when the payment record was created")
         Instant createdAt,

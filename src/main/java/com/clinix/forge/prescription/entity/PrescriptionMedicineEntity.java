@@ -15,6 +15,12 @@ import lombok.*;
         name = "prescription_medicines",
         indexes = {
                 @Index(name = "idx_presc_med", columnList = "prescription_id, medicine_id")
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_prescription_medicine",
+                        columnNames = {"prescription_id", "medicine_id"}
+                )
         }
 )
 @Getter
@@ -32,8 +38,8 @@ public class PrescriptionMedicineEntity extends BaseEntity {
     @JoinColumn(name = "medicine_id", nullable = false)
     private MedicineEntity medicine;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "dosage_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dosage_id")
     private DosageEntity dosage;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -7,12 +7,12 @@
         @page {
             size: A4;
             margin-top: 40mm;
-            margin-bottom: 40mm;
-            margin-left: 15mm;
+            margin-bottom: 20mm;
+            margin-left: 40.4mm;
             margin-right: 15mm;
         }
 
-        * {
+        body, p {
             margin: 0;
             padding: 0;
         }
@@ -27,6 +27,7 @@
 
         /* --- HEADER SECTION --- */
         .header-container {
+            margin-top: 25.4mm;
             margin-bottom: 12px;
         }
 
@@ -37,48 +38,24 @@
 
         .patient-name-line {
             float: left;
-            font-size: 11pt;
         }
 
-        .patient-name-line .label {
+        .date-line {
+            float: right;
+        }
+
+        .label {
             font-weight: bold;
             color: #333333;
         }
 
         .patient-name-line .value {
             font-weight: bold;
-            color: #1a1a1a;
-        }
-
-        .date-line {
-            float: right;
-            font-size: 11pt;
-        }
-
-        .date-line .label {
-            font-weight: bold;
-            color: #333333;
-        }
-
-        .date-line .value {
-            font-weight: normal;
-            color: #1a1a1a;
         }
 
         .age-gender-line {
             clear: both;
-            font-size: 11pt;
             margin-bottom: 8px;
-        }
-
-        .age-gender-line .label {
-            font-weight: bold;
-            color: #333333;
-        }
-
-        .age-gender-line .value {
-            font-weight: normal;
-            color: #1a1a1a;
         }
 
         /* --- RX SYMBOL --- */
@@ -87,8 +64,9 @@
             font-size: 24pt;
             font-weight: bold;
             color: #000000;
-            margin: 8px 0 10px 0;
-            line-height: 1;
+            line-height: 1.2;
+            margin-top: 22pt;
+            margin-bottom: 22pt;
         }
 
         /* --- INDENTED CONTENT SECTION --- */
@@ -106,57 +84,38 @@
             page-break-inside: avoid;
         }
 
-        .medicine-header {
-            margin-bottom: 3px;
-            overflow: hidden;
-        }
-
-        .medicine-name {
-            float: left;
+        .medicine-line-one {
             font-size: 11.5pt;
             font-weight: bold;
-            color: #1a1a1a;
+            margin-bottom: 3px;
         }
 
-        .medicine-quantity {
-            float: right;
-            font-size: 11pt;
-            font-weight: bold;
-            color: #1a1a1a;
-        }
-
-        .medicine-dosage-detail {
-            clear: both;
-            margin-left: 15px;
-            font-size: 11pt;
+        .medicine-line-two {
             color: #333333;
             line-height: 1.4;
+            margin-left: 15px;
         }
 
-        .dosage-value {
-            font-weight: normal;
+        /* --- REFERRAL SECTION AT BOTTOM (ABSOLUTE / FIXED SPACING) --- */
+        .referral-bottom-container {
+            position: fixed;
+            bottom: 18.1mm;
+            left: 0;
+            right: 0;
+            page-break-inside: avoid;
         }
 
-        .instruction-value {
-            font-weight: normal;
+        .referral-block {
+            text-align: justify-all;
         }
 
-        /* --- DETAILS/NOTES SECTION --- */
-        .details-block {
-            margin-top: 12px;
-            white-space: pre-wrap;
-            font-size: 11pt;
-            color: #222222;
-            line-height: 1.5;
-            word-wrap: break-word;
+        .referral-block p {
+            margin-bottom: 8px;
+            text-align: justify;
         }
 
-        /* --- PRINT OPTIMIZATION --- */
-        @media print {
-            body {
-                margin: 0;
-                padding: 0;
-            }
+        .referral-block p:last-child {
+            margin-bottom: 0;
         }
     </style>
 </head>
@@ -171,13 +130,15 @@
         </div>
         <div class="date-line">
             <span class="label">Date:</span>
-            <span class="value" th:text="${rx.date}">20/06/2026</span>
+            <span th:text="${rx.date}">20/06/2026</span>
         </div>
     </div>
 
     <div class="age-gender-line">
         <span class="label">Age/Gender:</span>
-        <span class="value" th:text="${rx.ageGender}">34 yrs / Male</span>
+        <span>
+            <span th:text="${rx.age}">34 yrs</span> / <span th:text="${rx.gender}">Male</span>
+        </span>
     </div>
 </div>
 
@@ -186,23 +147,40 @@
 
 <!-- INDENTED CONTENT -->
 <div class="content-indented">
-
     <!-- MEDICINES LIST -->
-    <div class="medicines-list" th:if="${rx.medicines != null and !rx.medicines.isEmpty()}">
+    <div class="medicines-list" th:if="${not #lists.isEmpty(rx.medicines)}">
         <div class="medicine-item" th:each="med : ${rx.medicines}">
-            <div class="medicine-header">
-                <span class="medicine-name" th:text="${med.medicineName}">Amoxicillin 500mg</span>
-                <span class="medicine-quantity" th:text="${med.quantity}">10</span>
+            <div class="medicine-line-one">
+                <span th:text="${med.medicineName}">Amoxicillin 500mg</span>
+                <span>(<span th:text="${med.quantity}">10</span>)</span>
             </div>
-            <div class="medicine-dosage-detail">
-                <span class="dosage-value" th:text="${med.dosage}">1-0-1</span>
-                <span>
-                    (<span class="instruction-value" th:text="${med.instruction}">After food</span>)
-                </span>
+            <div class="medicine-line-two">
+                <span th:text="${med.dosage}">1-0-1</span>
+                (<span th:text="${med.instruction}">After food</span>)
             </div>
         </div>
     </div>
+</div>
 
+<!-- REFERRAL SECTION AT BOTTOM -->
+<div class="referral-bottom-container"
+     th:if="${referralType == 'standard' or referralType == 'extended'}">
+    <div class="referral-block">
+        <p>
+            Respected Dr. <span th:text="${rx.doctorName ?: ''}"></span>
+        </p>
+        <p>
+            Referring <span th:text="${rx.patientName}">Patient Name</span> for preoperative
+            assessment and opinion as dental procedure <span th:text="${rx.treatmentDetail}">Treatment Name</span>
+            has been planned.
+        </p>
+        <p>
+            <span th:text="${rx.gender != null ? (rx.gender.equalsIgnoreCase('MALE') ? 'He' : (rx.gender.equalsIgnoreCase('FEMALE') ? 'She' : 'He/She')) : 'He/She'}">He/She</span>
+            <span th:if="${referralType == 'standard'}">is under your medical treatment, please give your opinion.</span>
+            <span th:if="${referralType == 'extended'}">is on blood thinner medicines. Please give your opinion on temporary discontinuation of blood thinner medicine also.</span>
+        </p>
+        <p>Thanking you,<br/><br/>For Aditya Dental Clinic.</p>
+    </div>
 </div>
 
 </body>

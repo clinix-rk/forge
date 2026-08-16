@@ -1,12 +1,11 @@
-package com.clinix.forge.finance;
+package com.clinix.forge.payments;
 
 import com.clinix.forge.core.payload.ApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
-import com.clinix.forge.finance.dto.CreatePaymentRequest;
-import com.clinix.forge.finance.dto.PaymentResponse;
-import com.clinix.forge.finance.dto.UpdatePaymentRequest;
-import com.clinix.forge.finance.service.Form3CPdfService;
-import com.clinix.forge.finance.service.PaymentService;
+import com.clinix.forge.core.pdf.PdfResponseUtil;
+import com.clinix.forge.payments.dto.CreatePaymentRequest;
+import com.clinix.forge.payments.dto.PaymentResponse;
+import com.clinix.forge.payments.dto.UpdatePaymentRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,15 +22,14 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/{patientId}/finance")
+@RequestMapping("/patients/{patientId}/payments")
 @RequiredArgsConstructor
-@Tag(name = "Finance Management", description = "Endpoints for managing receipts and payments")
+@Tag(name = "Payments Management", description = "Endpoints for managing receipts and payments")
 public class PaymentController {
 
     private final PaymentService paymentService;
-    private final Form3CPdfService form3CPdfService;
 
-    @PostMapping("/payments")
+    @PostMapping
     @Operation(summary = "Add a payment", description = "Adds a new payment record to related to a patient")
     public ResponseEntity<ApiResponse<PaymentResponse>> createPayment(
             @PathVariable
@@ -48,7 +46,7 @@ public class PaymentController {
                 .body(ApiResponse.success(response));
     }
 
-    @GetMapping("/payments")
+    @GetMapping
     @Operation(summary = "Get payments (Paginated)", description = "Retrieves a paginated list of all payments.")
     public ResponseEntity<ApiResponse<java.util.List<PaymentResponse>>> getAllPayments(
             @RequestParam(defaultValue = "0")
@@ -70,7 +68,7 @@ public class PaymentController {
                 .body(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
-    @GetMapping("/payments/{id}")
+    @GetMapping("/{id}")
     @Operation(summary = "Get payment information using the payment id", description = "Returns payment details for payment with given id")
     public ResponseEntity<ApiResponse<PaymentResponse>> getPaymentById(
             @PathVariable
@@ -86,7 +84,7 @@ public class PaymentController {
                 .body(ApiResponse.success(response));
     }
 
-    @PutMapping("/payments/{id}")
+    @PutMapping("/{id}")
     @Operation(summary = "Update payment by ID", description = "Updates an existing payment details.")
     public ResponseEntity<ApiResponse<PaymentResponse>> updatePaymentById(
             @PathVariable
@@ -106,7 +104,7 @@ public class PaymentController {
                 .body(ApiResponse.success(response));
     }
 
-    @DeleteMapping("/payments/{id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "Delete payment by ID", description = "Deletes a payment record based on ID.")
     public ResponseEntity<Void> deletePaymentById(
             @PathVariable Long id,
@@ -115,5 +113,18 @@ public class PaymentController {
         log.debug("Deleting payment id : {}", id);
         paymentService.deletePaymentById(patientId, id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/pdf")
+    @Operation(summary = "Get receipt of payment by Id", description = "Generates PDF for a single receipt entry.")
+    public ResponseEntity<byte[]> getSingleReceiptPdf(
+            @PathVariable Long patientId,
+            @PathVariable Long id
+    ) {
+        log.debug("Api Request: Generate receipt for single payment {}", id);
+
+        byte[] pdf = paymentService.generateSinglePaymentReceipt(patientId, id);
+
+        return PdfResponseUtil.inline(pdf, "prescription.pdf");
     }
 }

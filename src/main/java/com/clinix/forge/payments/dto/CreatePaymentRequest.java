@@ -1,6 +1,6 @@
-package com.clinix.forge.finance.dto;
+package com.clinix.forge.payments.dto;
 
-import com.clinix.forge.finance.entity.PaymentMethod;
+import com.clinix.forge.payments.entity.PaymentMethod;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
