@@ -24,9 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.thymeleaf.context.Context;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 @Slf4j
@@ -122,9 +119,7 @@ public class PaymentService {
         String receiptNo = paymentMapper.generateReceiptNo(entity);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        String dateStr = entity.getTreatment().getCreatedAt() != null
-                ? LocalDateTime.ofInstant(entity.getTreatment().getCreatedAt(), ZoneId.systemDefault()).format(formatter)
-                : LocalDate.now().format(formatter);
+        String dateStr = entity.getTreatment().getDate().format(formatter);
 
         boolean printStamp = entity.getMethod() == PaymentMethod.CASH && entity.getAmount().longValue() >= 5000;
 

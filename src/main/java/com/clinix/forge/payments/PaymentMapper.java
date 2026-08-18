@@ -26,6 +26,7 @@ public interface PaymentMapper {
     void updateEntityFromRequest(UpdatePaymentRequest request, @MappingTarget PaymentEntity entity);
 
     @Mapping(target = "treatmentId", source = "treatment.id")
+    @Mapping(target = "date", source = "treatment.date")
     @Mapping(target = "receiptNo", source = "entity", qualifiedByName = "generateReceiptNo")
     PaymentResponse toResponse(PaymentEntity entity);
 

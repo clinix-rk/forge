@@ -177,12 +177,14 @@
 
     <!-- Body Text Section -->
     <div class="body-text">
-        Received with thanks from <span class="highlight"
-                                        th:text="${receipt.patientName}">[Patient Name]</span>
-        for <span class="highlight" th:text="${receipt.treatmentDetail}">[Treatment Detail]</span>
-        the sum of Rs. <span class="highlight" th:text="${receipt.amount}">0.00</span>/-
-        Rupees <span class="highlight" th:text="${receipt.amountInWords}">[Amount in Words]</span>
-        only by <span class="highlight" th:text="${receipt.method}">Cash/Cheque</span>.
+        Received with thanks the sum of Rs. <span class="highlight"
+                                                  th:text="${receipt.amount}">0.00</span>/-
+        (Rupees <span class="highlight" th:text="${receipt.amountInWords}">[Amount in Words]</span>
+        only)
+        from <span class="highlight" th:text="${receipt.patientName}">[Patient Name]</span>
+        for treatment <span class="highlight" th:text="${receipt.treatmentDetail}">[Treatment Detail]</span>,
+        paid <span class="highlight"
+                   th:text="${receipt.method == 'CASH' ? 'in cash' : (receipt.method == 'CHEQUE' ? 'by cheque' : 'Online')}">in cash</span>.
     </div>
 
     <!-- Footer Section -->
