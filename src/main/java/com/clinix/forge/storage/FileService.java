@@ -104,7 +104,13 @@ public class FileService {
             log.warn("File not found for deletion with ID: {}", id);
             throw new ResourceNotFoundException("File not found with ID: " + id);
         }
+        FileEntity fileEntity = fileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("File not found with ID: " + id));
+
+        diskStorageService.delete(fileEntity.getLocation());
+
         fileRepository.deleteById(id);
+
         log.info("File deleted successfully: {}", id);
     }
 
