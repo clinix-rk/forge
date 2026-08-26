@@ -211,3 +211,6 @@ README.html
 .env
 .env.prod
 .env.dev
+
+# AI related files
+.gemini/
