@@ -6,11 +6,10 @@
     <style>
         @page {
             size: A4;
-            margin-top: 40mm;
-            margin-bottom: 20mm;
-            margin-left: 40.4mm;
-            margin-right: 15mm;
+            margin: 27.3mm 15mm 20mm 27.7mm;
         }
+
+        /* top -12.7mm (0.5in up), left -12.7mm (0.5in) so header shifts left safely inside the content-box clip boundary */
 
         body, p {
             margin: 0;
@@ -25,12 +24,13 @@
             background: transparent;
         }
 
-        /* --- HEADER SECTION --- */
+        /* Header */
         .header-container {
             margin-top: 25.4mm;
             margin-bottom: 12px;
         }
 
+        /* left shift now comes from the reduced @page left margin, not a negative margin here */
         .header-line {
             margin-bottom: 5px;
             overflow: hidden;
@@ -44,13 +44,12 @@
             float: right;
         }
 
-        .label {
+        .label, .patient-name-line .value {
             font-weight: bold;
-            color: #333333;
         }
 
-        .patient-name-line .value {
-            font-weight: bold;
+        .label {
+            color: #333333;
         }
 
         .age-gender-line {
@@ -58,23 +57,21 @@
             margin-bottom: 8px;
         }
 
-        /* --- RX SYMBOL --- */
+        /* Rx symbol */
         .rx-symbol {
             font-family: 'NotoSerif', sans-serif;
             font-size: 24pt;
             font-weight: bold;
-            color: #000000;
             line-height: 1.2;
-            margin-top: 22pt;
-            margin-bottom: 22pt;
+            margin: 22pt 0 22pt 48px; /* 48px (0.5in @96dpi) cancels the @page left-margin shift, keeping ℞ in its original spot */
         }
 
-        /* --- INDENTED CONTENT SECTION --- */
+        /* Indented body content */
         .content-indented {
-            margin-left: 25px;
+            margin-left: 73px;
         }
 
-        /* --- MEDICINES SECTION --- */
+        /* original 25px + 48px (0.5in @96dpi) to cancel the @page left-margin shift */
         .medicines-list {
             margin-bottom: 15px;
         }
@@ -96,17 +93,13 @@
             margin-left: 15px;
         }
 
-        /* --- REFERRAL SECTION AT BOTTOM (ABSOLUTE / FIXED SPACING) --- */
+        /* Referral block, pinned to bottom */
         .referral-bottom-container {
             position: fixed;
-            bottom: 18.1mm;
+            bottom: 30.8mm; /* raised 12.7mm (0.5in) to match layout shift */
             left: 0;
             right: 0;
             page-break-inside: avoid;
-        }
-
-        .referral-block {
-            text-align: justify-all;
         }
 
         .referral-block p {
@@ -121,7 +114,6 @@
 </head>
 <body>
 
-<!-- HEADER SECTION -->
 <div class="header-container">
     <div class="header-line">
         <div class="patient-name-line">
@@ -133,26 +125,20 @@
             <span th:text="${rx.date}">20/06/2026</span>
         </div>
     </div>
-
     <div class="age-gender-line">
         <span class="label">Age/Gender:</span>
-        <span>
-            <span th:text="${rx.age}">34 yrs</span> / <span th:text="${rx.gender}">Male</span>
-        </span>
+        <span th:text="${rx.age}">34 yrs</span> / <span th:text="${rx.gender}">Male</span>
     </div>
 </div>
 
-<!-- RX SYMBOL -->
 <div class="rx-symbol">℞</div>
 
-<!-- INDENTED CONTENT -->
 <div class="content-indented">
-    <!-- MEDICINES LIST -->
     <div class="medicines-list" th:if="${not #lists.isEmpty(rx.medicines)}">
         <div class="medicine-item" th:each="med : ${rx.medicines}">
             <div class="medicine-line-one">
                 <span th:text="${med.medicineName}">Amoxicillin 500mg</span>
-                <span>(<span th:text="${med.quantity}">10</span>)</span>
+                (<span th:text="${med.quantity}">10</span>)
             </div>
             <div class="medicine-line-two">
                 <span th:text="${med.dosage}">1-0-1</span>
@@ -162,13 +148,10 @@
     </div>
 </div>
 
-<!-- REFERRAL SECTION AT BOTTOM -->
 <div class="referral-bottom-container"
      th:if="${referralType == 'standard' or referralType == 'extended'}">
     <div class="referral-block">
-        <p>
-            Respected Dr. <span th:text="${rx.doctorName ?: ''}"></span>
-        </p>
+        <p>Respected Dr. <span th:text="${rx.doctorName ?: ''}"></span></p>
         <p>
             Referring <span th:text="${rx.patientName}">Patient Name</span> for preoperative
             assessment and opinion as dental procedure <span th:text="${rx.treatmentDetail}">Treatment Name</span>
