@@ -4,17 +4,9 @@
     <meta charset="UTF-8"/>
     <title>Prescription Content</title>
     <style>
-        @page {
-            size: A4;
-            margin: 27.3mm 15mm 20mm 27.7mm;
-        }
+        @page { size: A4; margin: 27.3mm 15mm 20mm 27.7mm; } /* top -12.7mm (0.5in up), left -12.7mm (0.5in) so header shifts left safely inside the content-box clip boundary */
 
-        /* top -12.7mm (0.5in up), left -12.7mm (0.5in) so header shifts left safely inside the content-box clip boundary */
-
-        body, p {
-            margin: 0;
-            padding: 0;
-        }
+        body, p { margin: 0; padding: 0; }
 
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -25,91 +17,40 @@
         }
 
         /* Header */
-        .header-container {
-            margin-top: 25.4mm;
-            margin-bottom: 12px;
-        }
-
-        /* left shift now comes from the reduced @page left margin, not a negative margin here */
-        .header-line {
-            margin-bottom: 5px;
-            overflow: hidden;
-        }
-
-        .patient-name-line {
-            float: left;
-        }
-
-        .date-line {
-            float: right;
-        }
-
-        .label, .patient-name-line .value {
-            font-weight: bold;
-        }
-
-        .label {
-            color: #333333;
-        }
-
-        .age-gender-line {
-            clear: both;
-            margin-bottom: 8px;
-        }
+        .header-container { margin-top: 25.4mm; margin-bottom: 12px; font-size: 20pt; } /* left shift comes from the reduced @page left margin, not a negative margin here */
+        .header-line { margin-bottom: 5px; overflow: hidden; }
+        .patient-name-line { float: left; }
+        .date-line { float: right; }
+        .label, .patient-name-line .value { font-weight: bold; }
+        .label { color: #333333; }
+        .age-gender-line { clear: both; margin-bottom: 8px; }
 
         /* Rx symbol */
         .rx-symbol {
             font-family: 'NotoSerif', sans-serif;
-            font-size: 24pt;
+            font-size: 26pt;
             font-weight: bold;
             line-height: 1.2;
             margin: 22pt 0 22pt 48px; /* 48px (0.5in @96dpi) cancels the @page left-margin shift, keeping ℞ in its original spot */
         }
 
         /* Indented body content */
-        .content-indented {
-            margin-left: 73px;
-        }
-
-        /* original 25px + 48px (0.5in @96dpi) to cancel the @page left-margin shift */
-        .medicines-list {
-            margin-bottom: 15px;
-        }
-
-        .medicine-item {
-            margin-bottom: 12px;
-            page-break-inside: avoid;
-        }
-
-        .medicine-line-one {
-            font-size: 11.5pt;
-            font-weight: bold;
-            margin-bottom: 3px;
-        }
-
-        .medicine-line-two {
-            color: #333333;
-            line-height: 1.4;
-            margin-left: 15px;
-        }
+        .content-indented { margin-left: 73px; } /* original 25px + 48px (0.5in @96dpi) to cancel the @page left-margin shift */
+        .medicines-list { margin-bottom: 15px; }
+        .medicine-item { margin-bottom: 12px; page-break-inside: avoid; }
+        .medicine-line-one { font-size: 13.5pt; font-weight: bold; margin-bottom: 3px; }
+        .medicine-line-two { color: #333333; line-height: 1.4; margin-left: 15px; }
 
         /* Referral block, pinned to bottom */
         .referral-bottom-container {
             position: fixed;
             bottom: 30.8mm; /* raised 12.7mm (0.5in) to match layout shift */
-            left: 0;
+            left: 48px; /* cancels the @page left-margin shift, keeping referral text in its original spot */
             right: 0;
             page-break-inside: avoid;
         }
-
-        .referral-block p {
-            margin-bottom: 8px;
-            text-align: justify;
-        }
-
-        .referral-block p:last-child {
-            margin-bottom: 0;
-        }
+        .referral-block p { margin-bottom: 8px; text-align: justify; }
+        .referral-block p:last-child { margin-bottom: 0; }
     </style>
 </head>
 <body>
@@ -148,8 +89,7 @@
     </div>
 </div>
 
-<div class="referral-bottom-container"
-     th:if="${referralType == 'standard' or referralType == 'extended'}">
+<div class="referral-bottom-container" th:if="${referralType == 'standard' or referralType == 'extended'}">
     <div class="referral-block">
         <p>Respected Dr. <span th:text="${rx.doctorName ?: ''}"></span></p>
         <p>
