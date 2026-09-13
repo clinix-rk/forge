@@ -34,6 +34,9 @@ public class PrescriptionMedicineEntity extends BaseEntity {
     @JoinColumn(name = "prescription_id", nullable = false)
     private PrescriptionEntity prescription;
 
+    @Column(nullable = false, name = "serial_no")
+    private Long serialNo;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "medicine_id", nullable = false)
     private MedicineEntity medicine;

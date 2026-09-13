@@ -253,6 +253,9 @@ public class PrescriptionService {
                 : LocalDate.now().format(formatter);
 
         List<PrescriptionMedicineItem> medicines = prescription.getPrescriptionMedicines().stream()
+                .sorted(Comparator.comparing(
+                        PrescriptionMedicineEntity::getSerialNo,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
                 .map(pm -> {
                     String medicineName = pm.getMedicine() != null ? pm.getMedicine().getName() : "Unknown";
                     String dosage = pm.getDosage() != null ? pm.getDosage().getDosage() : "—";

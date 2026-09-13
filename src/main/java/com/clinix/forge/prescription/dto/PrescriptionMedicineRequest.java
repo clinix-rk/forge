@@ -6,6 +6,11 @@ import jakarta.validation.constraints.Positive;
 
 @Schema(description = "Request payload representing a medicine item, its dosage and quantity within a prescription")
 public record PrescriptionMedicineRequest(
+        @NotNull(message = "Serial No is required")
+        @Positive(message = "Serial No must be a positive number")
+        @Schema(description = "Serial No of the medicine to prescribe", example = "1")
+        Long serialNo,
+
         @NotNull(message = "Medicine ID is required")
         @Positive(message = "Medicine ID must be a positive number")
         @Schema(description = "Unique ID of the medicine to prescribe", example = "1")
