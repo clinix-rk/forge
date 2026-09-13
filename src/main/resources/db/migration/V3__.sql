@@ -2,27 +2,58 @@
 ALTER TABLE prescription_medicines
     ALTER COLUMN dosage_id DROP NOT NULL;
 
--- Step 2: Add unique constraint on prescription_id and medicine_id
-ALTER TABLE prescription_medicines
-    ADD CONSTRAINT uk_prescription_medicine UNIQUE (prescription_id, medicine_id);
+-- Step 2: Add unique constraint on prescription_id and medicine_id (guarded)
+DO
+$$
+    BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'uk_prescription_medicine') THEN
+            ALTER TABLE prescription_medicines
+                ADD CONSTRAINT uk_prescription_medicine UNIQUE (prescription_id, medicine_id);
+        END IF;
+    END
+$$;
 
 -- Step 3: Add new payments columns as NULLABLE first (cannot add NOT NULL to a populated table without a default)
 ALTER TABLE payments
-    ADD COLUMN treatment_details TEXT;
+    ADD COLUMN IF NOT EXISTS treatment_details TEXT;
 
 ALTER TABLE payments
-    ADD COLUMN received_date DATE;
+    ADD COLUMN IF NOT EXISTS received_date DATE;
 
 -- Step 4: Backfill from the related treatments table via join
 UPDATE payments p
 SET received_date     = t.date,
     treatment_details = t.details
 FROM treatments t
-WHERE p.treatment_id = t.id;
+WHERE p.treatment_id = t.id
+  AND (p.received_date IS NULL OR p.treatment_details IS NULL);
+
 
 -- Step 5: Now that every row is populated, enforce NOT NULL constaints
-ALTER TABLE payments
-    ALTER COLUMN received_date SET NOT NULL;
+DO
+$$
+    BEGIN
+        IF EXISTS (SELECT 1
+                   FROM information_schema.columns
+                   WHERE table_name = 'payments'
+                     AND column_name = 'received_date'
+                     AND is_nullable = 'YES') THEN
+            ALTER TABLE payments
+                ALTER COLUMN received_date SET NOT NULL;
+        END IF;
+    END
+$$;
 
-ALTER TABLE payments
-    ALTER COLUMN treatment_details SET NOT NULL;
+DO
+$$
+    BEGIN
+        IF EXISTS (SELECT 1
+                   FROM information_schema.columns
+                   WHERE table_name = 'payments'
+                     AND column_name = 'treatment_details'
+                     AND is_nullable = 'YES') THEN
+            ALTER TABLE payments
+                ALTER COLUMN treatment_details SET NOT NULL;
+        END IF;
+    END
+$$;
