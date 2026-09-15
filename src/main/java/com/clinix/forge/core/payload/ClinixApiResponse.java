@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record ApiResponse<T>(
+public record ClinixApiResponse<T>(
         @Schema(
                 description = "Boolean value describing whether the response is success or failure",
                 example = "true"
@@ -41,8 +41,8 @@ public record ApiResponse<T>(
         Instant timestamp
 ) {
     // Non-paginated success
-    public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>(
+    public static <T> ClinixApiResponse<T> success(T data) {
+        return new ClinixApiResponse<>(
                 true,
                 200,
                 "Request successful",
@@ -54,8 +54,8 @@ public record ApiResponse<T>(
     }
 
     // Paginated success
-    public static <T> ApiResponse<T> success(T data, PaginationMetadata pagination) {
-        return new ApiResponse<>(
+    public static <T> ClinixApiResponse<T> success(T data, PaginationMetadata pagination) {
+        return new ClinixApiResponse<>(
                 true,
                 200,
                 "Request successful",
@@ -67,8 +67,8 @@ public record ApiResponse<T>(
     }
 
     // Validation errors (400)
-    public static <T> ApiResponse<T> validationError(List<ApiError> errors) {
-        return new ApiResponse<>(
+    public static <T> ClinixApiResponse<T> validationError(List<ApiError> errors) {
+        return new ClinixApiResponse<>(
                 false,
                 400,
                 "Validation failed",
@@ -80,12 +80,12 @@ public record ApiResponse<T>(
     }
 
     // Business/domain error (4xx range)
-    public static <T> ApiResponse<T> error(
+    public static <T> ClinixApiResponse<T> error(
             int statusCode,
             String code,
             String message
     ) {
-        return new ApiResponse<>(
+        return new ClinixApiResponse<>(
                 false,
                 statusCode,
                 message,
@@ -97,8 +97,8 @@ public record ApiResponse<T>(
     }
 
     // Server error (500)
-    public static <T> ApiResponse<T> serverError() {
-        return new ApiResponse<>(
+    public static <T> ClinixApiResponse<T> serverError() {
+        return new ClinixApiResponse<>(
                 false,
                 500,
                 "Internal server error",

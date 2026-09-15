@@ -1,6 +1,6 @@
 package com.clinix.forge.payments;
 
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.core.pdf.PdfResponseUtil;
 import com.clinix.forge.payments.dto.CreatePaymentRequest;
@@ -19,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @Validated
 @RestController
@@ -31,7 +33,7 @@ public class PaymentController {
 
     @PostMapping
     @Operation(summary = "Add a payment", description = "Adds a new payment record to related to a patient")
-    public ResponseEntity<ApiResponse<PaymentResponse>> createPayment(
+    public ResponseEntity<ClinixApiResponse<PaymentResponse>> createPayment(
             @PathVariable
             Long patientId,
 
@@ -43,12 +45,12 @@ public class PaymentController {
         PaymentResponse response = paymentService.createPayment(patientId, request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(summary = "Get payments (Paginated)", description = "Retrieves a paginated list of all payments.")
-    public ResponseEntity<ApiResponse<java.util.List<PaymentResponse>>> getAllPayments(
+    public ResponseEntity<ClinixApiResponse<List<PaymentResponse>>> getAllPayments(
             @RequestParam(defaultValue = "0")
             @Min(value = 0, message = "Page number cannot be smaller than 0")
             int pageNo,
@@ -65,12 +67,12 @@ public class PaymentController {
         Page<PaymentResponse> response = paymentService.getAllPayments(patientId, pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
+                .body(ClinixApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get payment information using the payment id", description = "Returns payment details for payment with given id")
-    public ResponseEntity<ApiResponse<PaymentResponse>> getPaymentById(
+    public ResponseEntity<ClinixApiResponse<PaymentResponse>> getPaymentById(
             @PathVariable
             Long patientId,
 
@@ -81,12 +83,12 @@ public class PaymentController {
         PaymentResponse response = paymentService.getPaymentById(patientId, paymentId);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update payment by ID", description = "Updates an existing payment details.")
-    public ResponseEntity<ApiResponse<PaymentResponse>> updatePaymentById(
+    public ResponseEntity<ClinixApiResponse<PaymentResponse>> updatePaymentById(
             @PathVariable
             Long id,
 
@@ -101,7 +103,7 @@ public class PaymentController {
         PaymentResponse response = paymentService.updatePaymentById(patientId, id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")

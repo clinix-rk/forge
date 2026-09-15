@@ -3,7 +3,7 @@ package com.clinix.forge.catalog.treatments;
 import com.clinix.forge.catalog.treatments.dto.CreateTreatmentCategoryRequest;
 import com.clinix.forge.catalog.treatments.dto.TreatmentCategoryResponse;
 import com.clinix.forge.catalog.treatments.dto.UpdateTreatmentCategoryRequest;
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -35,7 +35,7 @@ public class TreatmentCategoryController {
             summary = "Create a treatment",
             description = "Creates a new patient treatment record."
     )
-    public ResponseEntity<ApiResponse<TreatmentCategoryResponse>> createTreatmentCategory(
+    public ResponseEntity<ClinixApiResponse<TreatmentCategoryResponse>> createTreatmentCategory(
             @Valid
             @NotNull(message = "Request body cannot be null.")
             @RequestBody
@@ -47,7 +47,7 @@ public class TreatmentCategoryController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @GetMapping
@@ -55,7 +55,7 @@ public class TreatmentCategoryController {
             summary = "Get all treatment categories",
             description = "Retrieves a list of all treatment categories."
     )
-    public ResponseEntity<ApiResponse<List<TreatmentCategoryResponse>>> getAllTreatmentCategories(
+    public ResponseEntity<ClinixApiResponse<List<TreatmentCategoryResponse>>> getAllTreatmentCategories(
             @RequestParam(value = "null", required = false)
             Long parentId
     ) {
@@ -64,7 +64,7 @@ public class TreatmentCategoryController {
         List<TreatmentCategoryResponse> categories = treatmentCategoryService.getAllTreatmentCategories(parentId);
 
         return ResponseEntity
-                .ok(ApiResponse.success(categories));
+                .ok(ClinixApiResponse.success(categories));
     }
 
     @PutMapping("/{id}")
@@ -72,7 +72,7 @@ public class TreatmentCategoryController {
             summary = "Update a treatment",
             description = "Updates an existing patient treatment record."
     )
-    public ResponseEntity<ApiResponse<TreatmentCategoryResponse>> updateTreatmentCategoryById(
+    public ResponseEntity<ClinixApiResponse<TreatmentCategoryResponse>> updateTreatmentCategoryById(
             @PathVariable(required = true)
             Long id,
 
@@ -85,7 +85,7 @@ public class TreatmentCategoryController {
 
         TreatmentCategoryResponse response = treatmentCategoryService.updateTreatmentCategoryById(id, request);
 
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ClinixApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
@@ -93,7 +93,7 @@ public class TreatmentCategoryController {
             summary = "Delete a treatment",
             description = "Deletes an existing patient treatment record."
     )
-    public ResponseEntity<ApiResponse<Boolean>> deleteTreatmentCategory(
+    public ResponseEntity<ClinixApiResponse<Boolean>> deleteTreatmentCategory(
             @PathVariable(required = true)
             Long id
     ) {
@@ -101,6 +101,6 @@ public class TreatmentCategoryController {
 
         boolean deletionStatus = treatmentCategoryService.deleteTreatmentCategoryById(id);
 
-        return ResponseEntity.ok(ApiResponse.success(deletionStatus));
+        return ResponseEntity.ok(ClinixApiResponse.success(deletionStatus));
     }
 }

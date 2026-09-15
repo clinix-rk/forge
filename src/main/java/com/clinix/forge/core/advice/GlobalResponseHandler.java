@@ -1,6 +1,6 @@
 package com.clinix.forge.core.advice;
 
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
@@ -17,7 +17,7 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(@NonNull MethodParameter returnType, @NonNull Class converterType) {
-        return ApiResponse.class.isAssignableFrom(returnType.getParameterType());
+        return ClinixApiResponse.class.isAssignableFrom(returnType.getParameterType());
     }
 
     @Override
@@ -29,17 +29,17 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
             @NonNull ServerHttpRequest request,
             @NonNull ServerHttpResponse response
     ) {
-        if (!(body instanceof ApiResponse<?> apiResponse)) {
+        if (!(body instanceof ClinixApiResponse<?> clinixApiResponse)) {
             if (body == null) {
                 response.setStatusCode(HttpStatus.NO_CONTENT);
             }
             return body;
         }
 
-        if (apiResponse.statusCode() > 0) {
-            response.setStatusCode(HttpStatus.valueOf(apiResponse.statusCode()));
+        if (clinixApiResponse.statusCode() > 0) {
+            response.setStatusCode(HttpStatus.valueOf(clinixApiResponse.statusCode()));
         }
 
-        return apiResponse;
+        return clinixApiResponse;
     }
 }

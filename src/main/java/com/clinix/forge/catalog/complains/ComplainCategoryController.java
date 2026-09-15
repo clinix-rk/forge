@@ -3,7 +3,7 @@ package com.clinix.forge.catalog.complains;
 import com.clinix.forge.catalog.complains.dto.ComplainCategoryResponse;
 import com.clinix.forge.catalog.complains.dto.CreateComplainCategoryRequest;
 import com.clinix.forge.catalog.complains.dto.UpdateComplainCategoryRequest;
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @Validated
@@ -37,7 +39,7 @@ public class ComplainCategoryController {
             summary = "Create a new complain category",
             description = "Adds a new complain category to the system."
     )
-    public ResponseEntity<ApiResponse<ComplainCategoryResponse>> createComplainCategory(
+    public ResponseEntity<ClinixApiResponse<ComplainCategoryResponse>> createComplainCategory(
             @RequestBody
             @Valid
             CreateComplainCategoryRequest request
@@ -48,7 +50,7 @@ public class ComplainCategoryController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @GetMapping
@@ -56,7 +58,7 @@ public class ComplainCategoryController {
             summary = "Get all complain categories",
             description = "Retrieves all the complain categories."
     )
-    public ResponseEntity<ApiResponse<java.util.List<ComplainCategoryResponse>>> getAllComplainCategories(
+    public ResponseEntity<ClinixApiResponse<List<ComplainCategoryResponse>>> getAllComplainCategories(
             @RequestParam(defaultValue = "0")
             @Min(value = 0, message = "Page number must be greater than or equal to 0.")
             int pageNo,
@@ -70,7 +72,7 @@ public class ComplainCategoryController {
 
         return ResponseEntity
                 .ok()
-                .body(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
+                .body(ClinixApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
     @GetMapping("/{id}")
@@ -78,7 +80,7 @@ public class ComplainCategoryController {
             summary = "Get all sub-categories",
             description = "Sends back a list of complain categories under the requested category."
     )
-    public ResponseEntity<ApiResponse<java.util.List<ComplainCategoryResponse>>> getallSubCategoriesForId(
+    public ResponseEntity<ClinixApiResponse<List<ComplainCategoryResponse>>> getallSubCategoriesForId(
             @RequestParam(defaultValue = "1")
             @Min(value = 1, message = "Page number must be greater than or equal to 1.")
             int pageNo,
@@ -90,7 +92,7 @@ public class ComplainCategoryController {
     ) {
         Page<ComplainCategoryResponse> response = complainCategoryService.getPaginatedComplainCategories(pageNo, pageSize);
 
-        return ResponseEntity.ok(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
+        return ResponseEntity.ok(ClinixApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
     @PutMapping("/{id}")
@@ -98,7 +100,7 @@ public class ComplainCategoryController {
             summary = "Update Complain Category",
             description = "Updates an existing complain category."
     )
-    public ResponseEntity<ApiResponse<ComplainCategoryResponse>> updateComplainCategory(
+    public ResponseEntity<ClinixApiResponse<ComplainCategoryResponse>> updateComplainCategory(
             @PathVariable(name = "id", required = true)
             Long id,
 
@@ -108,7 +110,7 @@ public class ComplainCategoryController {
     ) {
         ComplainCategoryResponse response = complainCategoryService.updateComplainCategoryById(id, request);
 
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ClinixApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
@@ -116,12 +118,12 @@ public class ComplainCategoryController {
             summary = "Delete a complain category",
             description = "Deletes a complain category record from database"
     )
-    public ResponseEntity<ApiResponse<Boolean>> getAllComplainCategories(
+    public ResponseEntity<ClinixApiResponse<Boolean>> getAllComplainCategories(
             @PathVariable(required = true)
             Long id
     ) {
         boolean successStatus = complainCategoryService.deleteComplainCategoryById(id);
 
-        return ResponseEntity.ok(ApiResponse.success(successStatus));
+        return ResponseEntity.ok(ClinixApiResponse.success(successStatus));
     }
 }

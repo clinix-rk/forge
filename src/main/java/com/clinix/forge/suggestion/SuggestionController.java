@@ -1,6 +1,6 @@
 package com.clinix.forge.suggestion;
 
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.suggestion.dto.CreateSuggestionRequest;
 import com.clinix.forge.suggestion.dto.SuggestionResponse;
@@ -19,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @Validated
 @RestController
@@ -36,7 +38,7 @@ public class SuggestionController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid input data"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Patient not found")
     })
-    public ResponseEntity<ApiResponse<SuggestionResponse>> createSuggestion(
+    public ResponseEntity<ClinixApiResponse<SuggestionResponse>> createSuggestion(
             @PathVariable Long patientId,
             @RequestBody @Valid CreateSuggestionRequest request
     ) {
@@ -44,12 +46,12 @@ public class SuggestionController {
         SuggestionResponse response = suggestionService.createSuggestion(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(summary = "Get suggestions (Paginated)", description = "Retrieves a paginated list of suggestions.")
-    public ResponseEntity<ApiResponse<java.util.List<SuggestionResponse>>> getAllSuggestions(
+    public ResponseEntity<ClinixApiResponse<List<SuggestionResponse>>> getAllSuggestions(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize,
             @PathVariable Long patientId
@@ -58,12 +60,12 @@ public class SuggestionController {
         Page<SuggestionResponse> suggestions = suggestionService.getAllSuggestions(patientId, pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(suggestions.getContent(), new PaginationMetadata(suggestions.getNumber(), suggestions.getSize(), suggestions.getTotalElements(), suggestions.getTotalPages(), suggestions.hasNext(), suggestions.hasPrevious())));
+                .body(ClinixApiResponse.success(suggestions.getContent(), new PaginationMetadata(suggestions.getNumber(), suggestions.getSize(), suggestions.getTotalElements(), suggestions.getTotalPages(), suggestions.hasNext(), suggestions.hasPrevious())));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get suggestion by ID", description = "Retrieves a suggestion's details by database ID.")
-    public ResponseEntity<ApiResponse<SuggestionResponse>> getSuggestionById(
+    public ResponseEntity<ClinixApiResponse<SuggestionResponse>> getSuggestionById(
             @PathVariable Long patientId,
             @PathVariable Long id
     ) {
@@ -71,12 +73,12 @@ public class SuggestionController {
         SuggestionResponse response = suggestionService.getSuggestionById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update suggestion by ID", description = "Updates an existing suggestion's details.")
-    public ResponseEntity<ApiResponse<SuggestionResponse>> updateSuggestionById(
+    public ResponseEntity<ClinixApiResponse<SuggestionResponse>> updateSuggestionById(
             @PathVariable Long patientId,
             @PathVariable Long id,
             @RequestBody @Valid UpdateSuggestionRequest request
@@ -85,7 +87,7 @@ public class SuggestionController {
         SuggestionResponse updatedSuggestion = suggestionService.updateSuggestionById(id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(updatedSuggestion));
+                .body(ClinixApiResponse.success(updatedSuggestion));
     }
 
     @DeleteMapping("/{id}")

@@ -3,7 +3,7 @@ package com.clinix.forge.catalog.prescription.dosages;
 import com.clinix.forge.catalog.prescription.dosages.dto.CreateDrugDosageRequest;
 import com.clinix.forge.catalog.prescription.dosages.dto.DrugDosageResponse;
 import com.clinix.forge.catalog.prescription.dosages.dto.UpdateDrugDosageRequest;
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @Validated
 @RestController
@@ -30,19 +32,19 @@ public class DosageController {
 
     @PostMapping
     @Operation(summary = "Add a drug dosage pattern", description = "Creates a new drug dosage pattern.")
-    public ResponseEntity<ApiResponse<DrugDosageResponse>> createDrugDosage(
+    public ResponseEntity<ClinixApiResponse<DrugDosageResponse>> createDrugDosage(
             @RequestBody @Valid CreateDrugDosageRequest request
     ) {
         log.debug("API call: Create new drug dosage pattern");
         DrugDosageResponse response = dosageService.createDrugDosage(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(summary = "Get drug dosages (Paginated)", description = "Retrieves a paginated list of all drug dosage patterns.")
-    public ResponseEntity<ApiResponse<java.util.List<DrugDosageResponse>>> getAllDrugDosages(
+    public ResponseEntity<ClinixApiResponse<List<DrugDosageResponse>>> getAllDrugDosages(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize
     ) {
@@ -50,22 +52,22 @@ public class DosageController {
         Page<DrugDosageResponse> response = dosageService.getAllDrugDosages(pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
+                .body(ClinixApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get drug dosage by ID", description = "Retrieves a drug dosage pattern's details by ID.")
-    public ResponseEntity<ApiResponse<DrugDosageResponse>> getDrugDosageById(@PathVariable Long id) {
+    public ResponseEntity<ClinixApiResponse<DrugDosageResponse>> getDrugDosageById(@PathVariable Long id) {
         log.debug("API call: Fetching dosage with ID: {}", id);
         DrugDosageResponse response = dosageService.getDrugDosageById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update drug dosage by ID", description = "Updates an existing drug dosage pattern details.")
-    public ResponseEntity<ApiResponse<DrugDosageResponse>> updateDrugDosageById(
+    public ResponseEntity<ClinixApiResponse<DrugDosageResponse>> updateDrugDosageById(
             @PathVariable Long id,
             @RequestBody @Valid UpdateDrugDosageRequest request
     ) {
@@ -73,7 +75,7 @@ public class DosageController {
         DrugDosageResponse response = dosageService.updateDrugDosageById(id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
