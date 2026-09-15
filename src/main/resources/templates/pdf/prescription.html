@@ -4,9 +4,17 @@
     <meta charset="UTF-8"/>
     <title>Prescription Content</title>
     <style>
-        @page { size: A4; margin: 27.3mm 15mm 20mm 27.7mm; } /* top -12.7mm (0.5in up), left -12.7mm (0.5in) so header shifts left safely inside the content-box clip boundary */
+        @page {
+            size: A4;
+            margin: 27.3mm 15mm 20mm 27.7mm;
+        }
 
-        body, p { margin: 0; padding: 0; }
+        /* top -12.7mm (0.5in up), left -12.7mm (0.5in) so header shifts left safely inside the content-box clip boundary */
+
+        body, p {
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -17,29 +25,76 @@
         }
 
         /* Header */
-        .header-container { margin-top: 25.4mm; margin-bottom: 12px; font-size: 20pt; } /* left shift comes from the reduced @page left margin, not a negative margin here */
-        .header-line { margin-bottom: 5px; overflow: hidden; }
-        .patient-name-line { float: left; }
-        .date-line { float: right; }
-        .label, .patient-name-line .value { font-weight: bold; }
-        .label { color: #333333; }
-        .age-gender-line { clear: both; margin-bottom: 8px; }
+        .header-container {
+            margin-top: 25.4mm;
+            margin-bottom: 12px;
+        }
+
+        /* left shift comes from the reduced @page left margin, not a negative margin here */
+        .header-line {
+            margin-bottom: 5px;
+            overflow: hidden;
+            font-size: 14pt;
+        }
+
+        .patient-name-line {
+            float: left;
+        }
+
+        .date-line {
+            float: right;
+        }
+
+        .label, .patient-name-line .value {
+            font-weight: bold;
+        }
+
+        .label {
+            color: #333333;
+        }
+
+        .age-gender-line {
+            clear: both;
+            margin-bottom: 8px;
+            font-size: 10.5pt;
+        }
 
         /* Rx symbol */
         .rx-symbol {
             font-family: 'NotoSerif', sans-serif;
-            font-size: 26pt;
+            font-size: 24pt;
             font-weight: bold;
             line-height: 1.2;
             margin: 22pt 0 22pt 48px; /* 48px (0.5in @96dpi) cancels the @page left-margin shift, keeping ℞ in its original spot */
         }
 
         /* Indented body content */
-        .content-indented { margin-left: 73px; } /* original 25px + 48px (0.5in @96dpi) to cancel the @page left-margin shift */
-        .medicines-list { margin-bottom: 15px; }
-        .medicine-item { margin-bottom: 12px; page-break-inside: avoid; }
-        .medicine-line-one { font-size: 13.5pt; font-weight: bold; margin-bottom: 3px; }
-        .medicine-line-two { color: #333333; line-height: 1.4; margin-left: 15px; }
+        .content-indented {
+            margin-left: 73px;
+        }
+
+        /* original 25px + 48px (0.5in @96dpi) to cancel the @page left-margin shift */
+        .medicines-list {
+            margin-bottom: 15px;
+        }
+
+        .medicine-item {
+            margin-bottom: 12px;
+            page-break-inside: avoid;
+        }
+
+        .medicine-line-one {
+            font-size: 13pt;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .medicine-line-two {
+            color: #333333;
+            line-height: 1.4;
+            margin-left: 15px;
+            font-size: 10.5pt;
+        }
 
         /* Referral block, pinned to bottom */
         .referral-bottom-container {
@@ -49,8 +104,16 @@
             right: 0;
             page-break-inside: avoid;
         }
-        .referral-block p { margin-bottom: 8px; text-align: justify; }
-        .referral-block p:last-child { margin-bottom: 0; }
+
+        .referral-block p {
+            margin-bottom: 8px;
+            text-align: justify;
+            font-size: 10.5pt;
+        }
+
+        .referral-block p:last-child {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body>
@@ -89,18 +152,33 @@
     </div>
 </div>
 
-<div class="referral-bottom-container" th:if="${referralType == 'standard' or referralType == 'extended'}">
+<div class="referral-bottom-container" th:if="${includeReferral}">
     <div class="referral-block">
-        <p>Respected Dr. <span th:text="${rx.doctorName ?: ''}"></span></p>
-        <p>
-            Referring <span th:text="${rx.patientName}">Patient Name</span> for preoperative
-            assessment and opinion as dental procedure <span th:text="${rx.treatmentDetail}">Treatment Name</span>
-            has been planned.
+        <p>Respected
+            <span th:text="${(rx.doctorName == null || rx.doctorName.isEmpty()) ? 'Doctor,' : ('Dr. ' + rx.doctorName)}">
+                Doctor,
+            </span>
         </p>
         <p>
-            <span th:text="${rx.gender != null ? (rx.gender.equalsIgnoreCase('MALE') ? 'He' : (rx.gender.equalsIgnoreCase('FEMALE') ? 'She' : 'He/She')) : 'He/She'}">He/She</span>
-            <span th:if="${referralType == 'standard'}">is under your medical treatment, please give your opinion.</span>
-            <span th:if="${referralType == 'extended'}">is on blood thinner medicines. Please give your opinion on temporary discontinuation of blood thinner medicine also.</span>
+            Referring <span th:text="${rx.patientName}">Patient Name</span> for preoperative
+            assessment and opinion as dental procedure <span th:text="${rx.treatmentDetail}">
+            Treatment Name</span> has been planned.
+        </p>
+        <p>
+            <span th:switch="${rx.gender != null ? rx.gender.toUpperCase() : ''}">
+                <span th:case="'MALE'">He</span>
+                <span th:case="'FEMALE'">She</span>
+                <span th:case="*">He/She</span>
+            </span>
+
+            <span th:unless="${includeMedicalCondition}">
+                is under your medical treatment, please give your opinion.
+            </span>
+            <span th:if="${includeMedicalCondition}">
+                is on <span th:text="${rx.medicalCondition}">blood thinner</span> medicines.
+                Please give your opinion on temporary discontinuation of
+                <span th:text="${rx.medicalCondition}">blood thinner</span> medicine also.
+            </span>
         </p>
         <p>Thanking you,<br/><br/>For Aditya Dental Clinic.</p>
     </div>
