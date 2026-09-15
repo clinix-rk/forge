@@ -2,7 +2,7 @@ package com.clinix.forge.core.advice;
 
 import com.clinix.forge.core.exception.BaseException;
 import com.clinix.forge.core.payload.ApiError;
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
      * Examples: UserNotFoundException, InvalidCredentialsException
      */
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity<ApiResponse<Void>> handleBaseException(BaseException exception) {
+    public ResponseEntity<ClinixApiResponse<Void>> handleBaseException(BaseException exception) {
         // Log at WARN level for 4xx (client errors)
         if (exception.getStatus().is4xxClientError()) {
             log.warn(
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
         }
 
         return ResponseEntity.status(exception.getStatus())
-                .body(ApiResponse.error(
+                .body(ClinixApiResponse.error(
                         exception.getStatus().value(),
                         exception.getErrorCode(),
                         exception.getMessage()
@@ -56,7 +56,7 @@ public class GlobalExceptionHandler {
      * Triggered by @Valid on request body
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Void>> handleValidationException(
+    public ResponseEntity<ClinixApiResponse<Void>> handleValidationException(
             MethodArgumentNotValidException ex
     ) {
         // Extract field-level validation errors
@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.badRequest().body(
-                ApiResponse.validationError(errors)
+                ClinixApiResponse.validationError(errors)
         );
     }
 
@@ -87,7 +87,7 @@ public class GlobalExceptionHandler {
      * Fallback handler for unexpected errors
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
+    public ResponseEntity<ClinixApiResponse<Void>> handleGenericException(Exception ex) {
         // Log at ERROR level with full stack trace
         log.error(
                 "Unhandled exception occurred | Type: {} | Message: {}",
@@ -97,7 +97,7 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.serverError());
+                .body(ClinixApiResponse.serverError());
     }
 
     /**
@@ -105,7 +105,7 @@ public class GlobalExceptionHandler {
      * Client passed invalid argument structure
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(
+    public ResponseEntity<ClinixApiResponse<Void>> handleIllegalArgumentException(
             IllegalArgumentException ex
     ) {
         log.warn(
@@ -114,7 +114,7 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.badRequest().body(
-                ApiResponse.error(
+                ClinixApiResponse.error(
                         400,
                         "INVALID_ARGUMENT",
                         ex.getMessage()
@@ -126,7 +126,7 @@ public class GlobalExceptionHandler {
      * More specific than generic BaseException handler
      */
     @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleNoResourceFound(
+    public ResponseEntity<ClinixApiResponse<Void>> handleNoResourceFound(
             org.springframework.web.servlet.resource.NoResourceFoundException ex
     ) {
         log.warn(
@@ -142,12 +142,12 @@ public class GlobalExceptionHandler {
      * Handle max upload size exceeded errors (400 Bad Request)
      */
     @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
-    public ResponseEntity<ApiResponse<Void>> handleMaxUploadSizeExceeded(
+    public ResponseEntity<ClinixApiResponse<Void>> handleMaxUploadSizeExceeded(
             org.springframework.web.multipart.MaxUploadSizeExceededException ex
     ) {
         log.warn("Uploaded file exceeds maximum allowed size: {}", ex.getMessage());
         return ResponseEntity.badRequest().body(
-                ApiResponse.error(
+                ClinixApiResponse.error(
                         400,
                         "FILE_TOO_LARGE",
                         "File size exceeds limit of 10 MB."

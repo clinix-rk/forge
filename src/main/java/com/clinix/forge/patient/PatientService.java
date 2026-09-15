@@ -89,29 +89,20 @@ public class PatientService {
     /**
      * Get a paginated and filtered list of patients based on search parameters.
      *
-     * @param name     Filter name
-     * @param phoneNo  Filter phone number
-     * @param caseNo   Filter case number
+     * @param term     Search Term
      * @param pageNo   1-based page number
      * @param pageSize page size limit
      * @return Paginated list of patient responses
      */
     @Transactional(readOnly = true)
     public Page<PatientResponse> searchPatients(
-            String name, String phoneNo, String caseNo, int pageNo, int pageSize) {
-        log.debug("Searching patients - Name: {}, Phone: {}, CaseNo: {}, PageNo: {}, PageSize: {}",
-                name, phoneNo, caseNo, pageNo, pageSize);
-
-        // Perform validations and sanitation using utility
-        PatientUtility.validateSearchParameters(name, phoneNo, caseNo);
-        String sanitizedName = PatientUtility.sanitizeSearchTerm(name);
-        String sanitizedPhoneNo = PatientUtility.sanitizeSearchTerm(phoneNo);
-        String sanitizedCaseNo = PatientUtility.sanitizeSearchTerm(caseNo);
+            String term, int pageNo, int pageSize) {
+        log.debug("Searching patients with serach term: {}, Returning page {} of size {}",
+                term, pageNo, pageSize);
 
         // Use 0-based page index directly
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
-        Page<PatientEntity> patientPage = patientRepository.searchPatients(
-                sanitizedName, sanitizedCaseNo, sanitizedPhoneNo, pageRequest);
+        Page<PatientEntity> patientPage = patientRepository.searchPatients(term, pageRequest);
 
         return patientPage.map(patientMapper::toResponse);
     }

@@ -30,10 +30,11 @@
             margin-bottom: 12px;
         }
 
-        /* left shift now comes from the reduced @page left margin, not a negative margin here */
+        /* left shift comes from the reduced @page left margin, not a negative margin here */
         .header-line {
             margin-bottom: 5px;
             overflow: hidden;
+            font-size: 14pt;
         }
 
         .patient-name-line {
@@ -55,6 +56,7 @@
         .age-gender-line {
             clear: both;
             margin-bottom: 8px;
+            font-size: 10.5pt;
         }
 
         /* Rx symbol */
@@ -82,7 +84,7 @@
         }
 
         .medicine-line-one {
-            font-size: 11.5pt;
+            font-size: 13pt;
             font-weight: bold;
             margin-bottom: 3px;
         }
@@ -91,13 +93,14 @@
             color: #333333;
             line-height: 1.4;
             margin-left: 15px;
+            font-size: 10.5pt;
         }
 
         /* Referral block, pinned to bottom */
         .referral-bottom-container {
             position: fixed;
             bottom: 30.8mm; /* raised 12.7mm (0.5in) to match layout shift */
-            left: 0;
+            left: 48px; /* cancels the @page left-margin shift, keeping referral text in its original spot */
             right: 0;
             page-break-inside: avoid;
         }
@@ -105,6 +108,7 @@
         .referral-block p {
             margin-bottom: 8px;
             text-align: justify;
+            font-size: 10.5pt;
         }
 
         .referral-block p:last-child {
@@ -148,19 +152,33 @@
     </div>
 </div>
 
-<div class="referral-bottom-container"
-     th:if="${referralType == 'standard' or referralType == 'extended'}">
+<div class="referral-bottom-container" th:if="${includeReferral}">
     <div class="referral-block">
-        <p>Respected Dr. <span th:text="${rx.doctorName ?: ''}"></span></p>
-        <p>
-            Referring <span th:text="${rx.patientName}">Patient Name</span> for preoperative
-            assessment and opinion as dental procedure <span th:text="${rx.treatmentDetail}">Treatment Name</span>
-            has been planned.
+        <p>Respected
+            <span th:text="${(rx.doctorName == null || rx.doctorName.isEmpty()) ? 'Doctor,' : ('Dr. ' + rx.doctorName)}">
+                Doctor,
+            </span>
         </p>
         <p>
-            <span th:text="${rx.gender != null ? (rx.gender.equalsIgnoreCase('MALE') ? 'He' : (rx.gender.equalsIgnoreCase('FEMALE') ? 'She' : 'He/She')) : 'He/She'}">He/She</span>
-            <span th:if="${referralType == 'standard'}">is under your medical treatment, please give your opinion.</span>
-            <span th:if="${referralType == 'extended'}">is on blood thinner medicines. Please give your opinion on temporary discontinuation of blood thinner medicine also.</span>
+            Referring <span th:text="${rx.patientName}">Patient Name</span> for preoperative
+            assessment and opinion as dental procedure <span th:text="${rx.treatmentDetail}">
+            Treatment Name</span> has been planned.
+        </p>
+        <p>
+            <span th:switch="${rx.gender != null ? rx.gender.toUpperCase() : ''}">
+                <span th:case="'MALE'">He</span>
+                <span th:case="'FEMALE'">She</span>
+                <span th:case="*">He/She</span>
+            </span>
+
+            <span th:unless="${includeMedicalCondition}">
+                is under your medical treatment, please give your opinion.
+            </span>
+            <span th:if="${includeMedicalCondition}">
+                is on <span th:text="${rx.medicalCondition}">blood thinner</span> medicines.
+                Please give your opinion on temporary discontinuation of
+                <span th:text="${rx.medicalCondition}">blood thinner</span> medicine also.
+            </span>
         </p>
         <p>Thanking you,<br/><br/>For Aditya Dental Clinic.</p>
     </div>

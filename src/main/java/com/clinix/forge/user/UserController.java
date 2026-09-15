@@ -1,6 +1,6 @@
 package com.clinix.forge.user;
 
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.user.dto.CreateUserRequest;
 import com.clinix.forge.user.dto.UpdateUserRequest;
@@ -19,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @Validated
 @RestController
@@ -36,19 +38,19 @@ public class UserController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid input data"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Username already exists")
     })
-    public ResponseEntity<ApiResponse<UserResponse>> createUser(
+    public ResponseEntity<ClinixApiResponse<UserResponse>> createUser(
             @RequestBody @Valid CreateUserRequest request
     ) {
         log.debug("API call: Create a new user record");
         UserResponse response = userService.createUser(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(summary = "Get users (Paginated)", description = "Retrieves a paginated list of all users.")
-    public ResponseEntity<ApiResponse<java.util.List<UserResponse>>> getAllUsers(
+    public ResponseEntity<ClinixApiResponse<List<UserResponse>>> getAllUsers(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize
     ) {
@@ -56,22 +58,22 @@ public class UserController {
         Page<UserResponse> users = userService.getAllUsers(pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(users.getContent(), new PaginationMetadata(users.getNumber(), users.getSize(), users.getTotalElements(), users.getTotalPages(), users.hasNext(), users.hasPrevious())));
+                .body(ClinixApiResponse.success(users.getContent(), new PaginationMetadata(users.getNumber(), users.getSize(), users.getTotalElements(), users.getTotalPages(), users.hasNext(), users.hasPrevious())));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get user by ID", description = "Retrieves a single user's details by database ID.")
-    public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable Long id) {
+    public ResponseEntity<ClinixApiResponse<UserResponse>> getUserById(@PathVariable Long id) {
         log.debug("API call: Fetching user with ID: {}", id);
         UserResponse user = userService.getUserById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(user));
+                .body(ClinixApiResponse.success(user));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update user by ID", description = "Updates an existing user's details.")
-    public ResponseEntity<ApiResponse<UserResponse>> updateUserById(
+    public ResponseEntity<ClinixApiResponse<UserResponse>> updateUserById(
             @PathVariable Long id,
             @RequestBody @Valid UpdateUserRequest request
     ) {
@@ -79,7 +81,7 @@ public class UserController {
         UserResponse updatedUser = userService.updateUserById(id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(updatedUser));
+                .body(ClinixApiResponse.success(updatedUser));
     }
 
     @DeleteMapping("/{id}")

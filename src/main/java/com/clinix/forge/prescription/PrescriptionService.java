@@ -17,6 +17,7 @@ import com.clinix.forge.prescription.dto.*;
 import com.clinix.forge.prescription.entity.PrescriptionEntity;
 import com.clinix.forge.prescription.entity.PrescriptionMedicineEntity;
 import com.clinix.forge.prescription.repositories.PrescriptionRepository;
+import com.clinix.forge.prescription.types.PrescriptionPdfResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.thymeleaf.context.Context;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -232,27 +234,22 @@ public class PrescriptionService {
         log.info("Prescription deleted: {}", id);
     }
 
-
-    @Transactional(readOnly = true)
-    public byte[] generatePrescriptionPdf(Long id, String referralType, PdfData pdfData) {
-        log.info("Generating PDF for Prescription ID: {}", id);
-        PrescriptionEntity prescription = prescriptionRepository.findByIdWithMedicines(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Prescription not found with ID: " + id));
-
-        PatientEntity patient = prescription.getPatient();
-        String patientName = patient != null ? patient.getName() : "Unknown";
-        String caseNo = patient.getCaseNo() != null ? patient.getCaseNo() : "Missing Case Number";
-        String age = patient.getDateOfBirth() != null
-                ? java.time.Period.between(patient.getDateOfBirth(), LocalDate.now()).getYears() + " yrs"
-                : "—";
-        String gender = patient.getGender() != null ? TextFormatter.toTitleCase(patient.getGender().name()) : "Unknown";
+    private PrescriptionPdfData extractPrescriptionPdfData(PrescriptionEntity prescription,
+                                                           PatientEntity patient,
+                                                           PdfData pdfData) {
+        String patientName = patient.getName();
+        String caseNo = patient.getCaseNo();
+        String age = java.time.Period.between(patient.getDateOfBirth(), LocalDate.now()).getYears() + " yrs";
+        String gender = TextFormatter.toTitleCase(patient.getGender().name());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        String dateStr = prescription.getCreatedAt() != null
-                ? LocalDateTime.ofInstant(prescription.getCreatedAt(), ZoneId.systemDefault()).format(formatter)
-                : LocalDate.now().format(formatter);
+        String dateStr = LocalDateTime.ofInstant(prescription.getCreatedAt(), ZoneId.systemDefault()).format(formatter);
 
-        List<PrescriptionMedicineItem> medicines = prescription.getPrescriptionMedicines().stream()
+        List<PrescriptionMedicineItem> medicines = prescription.getPrescriptionMedicines()
+                .stream()
+                .sorted(Comparator.comparing(
+                        PrescriptionMedicineEntity::getSerialNo,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
                 .map(pm -> {
                     String medicineName = pm.getMedicine() != null ? pm.getMedicine().getName() : "Unknown";
                     String dosage = pm.getDosage() != null ? pm.getDosage().getDosage() : "—";
@@ -261,7 +258,7 @@ public class PrescriptionService {
                 })
                 .toList();
 
-        PrescriptionPdfData data = new PrescriptionPdfData(
+        return new PrescriptionPdfData(
                 caseNo,
                 TextFormatter.toTitleCase(patientName),
                 dateStr,
@@ -270,16 +267,44 @@ public class PrescriptionService {
                 prescription.getDetails() != null ? prescription.getDetails() : "",
                 medicines,
                 TextFormatter.toTitleCase(pdfData.doctorName()),
-                pdfData.treatmentDetail()
+                pdfData.treatmentDetail(),
+                pdfData.medicalCondition()
         );
+    }
+
+    private boolean isNotBlank(String value) {
+        return value != null && !value.isBlank();
+    }
+
+    @Transactional(readOnly = true)
+    public PrescriptionPdfResponse generatePrescriptionPdf(Long id, PdfData pdfData) {
+        log.info("Generating PDF for Prescription ID: {}", id);
+        PrescriptionEntity prescription = prescriptionRepository.findByIdWithMedicines(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Prescription not found with ID: " + id));
+
+        PatientEntity patient = Optional.ofNullable(prescription.getPatient())
+                .orElseThrow(() -> new ResourceNotFoundException("No patient available for the prescription."));
+
+        String doctorName = pdfData.doctorName();
+        String treatmentDetail = pdfData.treatmentDetail();
+        String medicalCondition = pdfData.medicalCondition();
+
+        boolean includeReferral = isNotBlank(doctorName)
+                || isNotBlank(treatmentDetail)
+                || isNotBlank(medicalCondition);
+        boolean includeMedicalCondition = isNotBlank(medicalCondition);
 
         Context context = new Context();
-        context.setVariable("rx", data);
-        context.setVariable("referralType", referralType);
+        context.setVariable("rx", extractPrescriptionPdfData(prescription, patient, pdfData));
+        context.setVariable("includeReferral", includeReferral);
+        context.setVariable("includeMedicalCondition", includeMedicalCondition);
 
         try {
-            return pdfGenerationService.generatePdf("pdf/prescription", context);
-        } catch (Exception e) {
+            return new PrescriptionPdfResponse(
+                    pdfGenerationService.generatePdf("pdf/prescription", context),
+                    patient.getCaseNo() + "-prescription"
+            );
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

@@ -3,7 +3,7 @@ package com.clinix.forge.catalog.prescription.instructions;
 import com.clinix.forge.catalog.prescription.instructions.dto.CreateInstructionRequest;
 import com.clinix.forge.catalog.prescription.instructions.dto.InstructionResponse;
 import com.clinix.forge.catalog.prescription.instructions.dto.UpdateInstructionRequest;
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @Validated
 @RestController
@@ -30,19 +32,19 @@ public class InstructionController {
 
     @PostMapping
     @Operation(summary = "Add a drug instruction pattern", description = "Creates a new drug dosage pattern.")
-    public ResponseEntity<ApiResponse<InstructionResponse>> createDrugInstruction(
+    public ResponseEntity<ClinixApiResponse<InstructionResponse>> createDrugInstruction(
             @RequestBody @Valid CreateInstructionRequest request
     ) {
         log.debug("API call: Create new drug instruction pattern");
         InstructionResponse response = instructionService.createDrugInstruction(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(summary = "Get drug instructions (Paginated)", description = "Retrieves a paginated list of all drug dosage patterns.")
-    public ResponseEntity<ApiResponse<java.util.List<InstructionResponse>>> getAllDrugInstructions(
+    public ResponseEntity<ClinixApiResponse<List<InstructionResponse>>> getAllDrugInstructions(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize
     ) {
@@ -50,22 +52,22 @@ public class InstructionController {
         Page<InstructionResponse> response = instructionService.getAllDrugInstructions(pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
+                .body(ClinixApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get drug instruction by ID", description = "Retrieves a drug dosage pattern's details by ID.")
-    public ResponseEntity<ApiResponse<InstructionResponse>> getDrugInstructionById(@PathVariable Long id) {
+    public ResponseEntity<ClinixApiResponse<InstructionResponse>> getDrugInstructionById(@PathVariable Long id) {
         log.debug("API call: Fetching instruction with ID: {}", id);
         InstructionResponse response = instructionService.getDrugInstructionById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update drug instruction by ID", description = "Updates an existing drug dosage pattern details.")
-    public ResponseEntity<ApiResponse<InstructionResponse>> updateDrugInstructionById(
+    public ResponseEntity<ClinixApiResponse<InstructionResponse>> updateDrugInstructionById(
             @PathVariable Long id,
             @RequestBody @Valid UpdateInstructionRequest request
     ) {
@@ -73,7 +75,7 @@ public class InstructionController {
         InstructionResponse response = instructionService.updateDrugInstructionById(id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")

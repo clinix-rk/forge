@@ -1,6 +1,6 @@
 package com.clinix.forge.finances;
 
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.core.pdf.PdfResponseUtil;
 import com.clinix.forge.finances.dto.FinanceResponse;
@@ -35,7 +35,7 @@ public class FinanceController {
 
     @GetMapping
     @Operation(summary = "Get finance information", description = "Retrieves finance information")
-    public ResponseEntity<ApiResponse<List<FinanceResponse>>> getFinanceInfo(
+    public ResponseEntity<ClinixApiResponse<List<FinanceResponse>>> getFinanceInfo(
             @RequestParam
             LocalDate startDate,
 
@@ -68,7 +68,7 @@ public class FinanceController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(
+                .body(ClinixApiResponse.success(
                         response.getContent(),
                         new PaginationMetadata(response.getNumber(),
                                 response.getSize(),

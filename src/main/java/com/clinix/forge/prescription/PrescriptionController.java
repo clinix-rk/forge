@@ -1,13 +1,13 @@
 package com.clinix.forge.prescription;
 
-
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.core.pdf.PdfResponseUtil;
 import com.clinix.forge.prescription.dto.CreatePrescriptionRequest;
 import com.clinix.forge.prescription.dto.PdfData;
 import com.clinix.forge.prescription.dto.PrescriptionResponse;
 import com.clinix.forge.prescription.dto.UpdatePrescriptionRequest;
+import com.clinix.forge.prescription.types.PrescriptionPdfResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Nullable;
@@ -21,7 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Slf4j
 @Validated
@@ -35,7 +36,7 @@ public class PrescriptionController {
 
     @PostMapping
     @Operation(summary = "Create a prescription", description = "Creates a new patient prescription.")
-    public ResponseEntity<ApiResponse<PrescriptionResponse>> createPrescription(
+    public ResponseEntity<ClinixApiResponse<PrescriptionResponse>> createPrescription(
             @PathVariable Long patientId,
             @RequestBody @Valid CreatePrescriptionRequest request
     ) {
@@ -43,12 +44,12 @@ public class PrescriptionController {
         PrescriptionResponse response = prescriptionService.createPrescription(patientId, request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(summary = "Get prescriptions (Paginated)", description = "Retrieves a paginated list of all prescriptions.")
-    public ResponseEntity<ApiResponse<java.util.List<PrescriptionResponse>>> getAllPrescriptions(
+    public ResponseEntity<ClinixApiResponse<List<PrescriptionResponse>>> getAllPrescriptions(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize,
             @PathVariable(required = false) Long patientId
@@ -57,12 +58,12 @@ public class PrescriptionController {
         Page<PrescriptionResponse> response = prescriptionService.getAllPrescriptions(patientId, pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
+                .body(ClinixApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get prescription by ID", description = "Retrieves a prescription's details by ID.")
-    public ResponseEntity<ApiResponse<PrescriptionResponse>> getPrescriptionById(
+    public ResponseEntity<ClinixApiResponse<PrescriptionResponse>> getPrescriptionById(
             @PathVariable Long patientId,
             @PathVariable Long id
     ) {
@@ -70,12 +71,12 @@ public class PrescriptionController {
         PrescriptionResponse response = prescriptionService.getPrescriptionById(patientId, id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update prescription by ID", description = "Updates an existing prescription record.")
-    public ResponseEntity<ApiResponse<PrescriptionResponse>> updatePrescriptionById(
+    public ResponseEntity<ClinixApiResponse<PrescriptionResponse>> updatePrescriptionById(
             @PathVariable Long id,
             @RequestBody @Valid UpdatePrescriptionRequest request
     ) {
@@ -83,7 +84,7 @@ public class PrescriptionController {
         PrescriptionResponse response = prescriptionService.updatePrescriptionById(id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
@@ -101,22 +102,13 @@ public class PrescriptionController {
     )
     public ResponseEntity<byte[]> getPrescriptionPdf(
             @PathVariable Long id,
-            @RequestParam String referralType,
             @Nullable @RequestBody PdfData data) {
 
-        log.info("API call: Generate prescription PDF for ID: {}, referralType: {}", id, referralType);
+        log.info("API call: Generate prescription PDF for ID: {}", id);
 
-        // Enforce conditional requirement
-        if (isDataRequired(referralType) && data == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Request body 'data' is required when referralType is 'extended' or 'standard'."
-            );
-        }
+        PrescriptionPdfResponse pdfResponse = prescriptionService.generatePrescriptionPdf(id, data);
 
-        byte[] pdf = prescriptionService.generatePrescriptionPdf(id, referralType, data);
-
-        return PdfResponseUtil.inline(pdf, "prescription.pdf");
+        return PdfResponseUtil.inline(pdfResponse.pdf(), pdfResponse.name());
     }
 
     private boolean isDataRequired(String referralType) {

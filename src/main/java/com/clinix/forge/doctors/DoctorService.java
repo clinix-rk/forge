@@ -15,19 +15,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Service layer responsible for doctor-related business logic and
+ * interactions with the persistence layer. All public methods are
+ * transactional where appropriate and use the injected
+ * {@link DoctorRepository} and {@link DoctorMapper} to perform CRUD
+ * operations and DTO/entity mappings.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class DoctorService {
-
-    /**
-     * Service layer responsible for doctor-related business logic and
-     * interactions with the persistence layer. All public methods are
-     * transactional where appropriate and use the injected
-     * {@link DoctorRepository} and {@link DoctorMapper} to perform CRUD
-     * operations and DTO/entity mappings.
-     */
-
     private final DoctorRepository doctorRepository;
     private final DoctorMapper doctorMapper;
 
@@ -36,13 +34,13 @@ public class DoctorService {
      *
      * <p>This method validates the provided {@link CreateDoctorRequest}, checks
      * for business rule violations (duplicate case number prefix), maps the
-     * DTO to an entity and persists it. The returned {@link Doctor}
+     * DTO to an entity and persists it. The returned {@link DoctorResponse}
      * represents the newly created resource.</p>
      *
      * @param dto DTO containing data required to create a doctor. Must not
      *            be null and will be validated via Jakarta Validation
      *            annotations.
-     * @return the persisted doctor as a {@link Doctor}
+     * @return the persisted doctor as a {@link DoctorResponse}
      * @throws DuplicateResourceException if a doctor with the same case
      *                                    number prefix already exists
      */
@@ -91,7 +89,7 @@ public class DoctorService {
      * Fetch a single doctor by its identifier.
      *
      * @param id the database identifier of the doctor to fetch
-     * @return a {@link Doctor} representing the requested doctor
+     * @return a {@link DoctorResponse} representing the requested doctor
      * @throws ResourceNotFoundException if no doctor exists with the given id
      */
     @Transactional(readOnly = true)
@@ -116,7 +114,7 @@ public class DoctorService {
      * @param id  identifier of the doctor to update
      * @param dto DTO containing fields to update (partial updates are
      *            supported depending on mapper behavior)
-     * @return the updated {@link Doctor}
+     * @return the updated {@link DoctorResponse}
      * @throws ResourceNotFoundException if no doctor exists with the given id
      */
     @Transactional(rollbackFor = Exception.class)
@@ -170,4 +168,3 @@ public class DoctorService {
                 .toList();
     }
 }
-

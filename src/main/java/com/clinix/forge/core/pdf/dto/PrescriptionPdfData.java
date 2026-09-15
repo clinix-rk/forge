@@ -11,6 +11,7 @@ public record PrescriptionPdfData(
         String details,
         List<PrescriptionMedicineItem> medicines,
         String doctorName,
-        String treatmentDetail
+        String treatmentDetail,
+        String medicalCondition
 ) {
 }

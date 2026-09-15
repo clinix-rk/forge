@@ -9,6 +9,12 @@ public record PdfData(
         String doctorName,
 
         @Schema(description = "Details of the treatment to be performed", example = "RCT")
-        String treatmentDetail
+        String treatmentDetail,
+
+        @Schema(
+                description = "Medical condition of the patient to inform to the other doctor.",
+                example = "Blood Thinner"
+        )
+        String medicalCondition
 ) {
 }

@@ -3,7 +3,7 @@ package com.clinix.forge.complain;
 import com.clinix.forge.complain.dto.ComplainResponse;
 import com.clinix.forge.complain.dto.CreateComplainRequest;
 import com.clinix.forge.complain.dto.UpdateComplainRequest;
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @Validated
 @RestController
@@ -30,7 +32,7 @@ public class ComplainController {
 
     @PostMapping
     @Operation(summary = "Register a new complain", description = "Creates a new patient complain record.")
-    public ResponseEntity<ApiResponse<ComplainResponse>> createComplain(
+    public ResponseEntity<ClinixApiResponse<ComplainResponse>> createComplain(
             @PathVariable Long patientId,
             @RequestBody @Valid CreateComplainRequest request
     ) {
@@ -38,12 +40,12 @@ public class ComplainController {
         ComplainResponse response = complainService.createComplain(patientId, request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(summary = "Get complains (Paginated)", description = "Retrieves a paginated list of all complains.")
-    public ResponseEntity<ApiResponse<java.util.List<ComplainResponse>>> getAllComplains(
+    public ResponseEntity<ClinixApiResponse<List<ComplainResponse>>> getAllComplains(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize,
             @PathVariable Long patientId
@@ -52,12 +54,12 @@ public class ComplainController {
         Page<ComplainResponse> response = complainService.getAllComplains(patientId, pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
+                .body(ClinixApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get complain by ID", description = "Retrieves a complain's details by ID.")
-    public ResponseEntity<ApiResponse<ComplainResponse>> getComplainById(
+    public ResponseEntity<ClinixApiResponse<ComplainResponse>> getComplainById(
             @PathVariable Long id,
             @PathVariable Long patientId
     ) {
@@ -65,12 +67,12 @@ public class ComplainController {
         ComplainResponse response = complainService.getComplainById(patientId, id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update complain by ID", description = "Updates an existing complain record.")
-    public ResponseEntity<ApiResponse<ComplainResponse>> updateComplainById(
+    public ResponseEntity<ClinixApiResponse<ComplainResponse>> updateComplainById(
             @PathVariable Long patientId,
             @PathVariable Long id,
             @RequestBody @Valid UpdateComplainRequest request
@@ -79,7 +81,7 @@ public class ComplainController {
         ComplainResponse response = complainService.updateComplainById(patientId, id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")

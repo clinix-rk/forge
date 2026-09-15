@@ -13,6 +13,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 @Service
@@ -34,7 +35,7 @@ public class PdfGenerationService {
         }
     }
 
-    public byte[] generatePdf(String templateName, Context context) throws Exception {
+    public byte[] generatePdf(String templateName, Context context) throws IOException {
         String htmlContent = templateEngine.process(templateName, context);
 
         Document jsoupDoc = Jsoup.parse(htmlContent, "UTF-8");

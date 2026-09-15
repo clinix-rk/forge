@@ -1,6 +1,6 @@
 package com.clinix.forge.storage;
 
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.storage.dto.CreateFileRequest;
 import com.clinix.forge.storage.dto.FileResponse;
@@ -22,6 +22,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Slf4j
 @Validated
 @RestController
@@ -40,19 +42,19 @@ public class FileController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Patient not found"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "File with same patient, name or location already exists")
     })
-    public ResponseEntity<ApiResponse<FileResponse>> createFile(
+    public ResponseEntity<ClinixApiResponse<FileResponse>> createFile(
             @RequestBody @Valid CreateFileRequest request
     ) {
         log.debug("creating file record");
         FileResponse response = fileService.createFile(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(summary = "Get files (Paginated)", description = "Retrieves a paginated list of all file metadata records.")
-    public ResponseEntity<ApiResponse<java.util.List<FileResponse>>> getAllFiles(
+    public ResponseEntity<ClinixApiResponse<List<FileResponse>>> getAllFiles(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize
     ) {
@@ -60,22 +62,22 @@ public class FileController {
         Page<FileResponse> files = fileService.getAllFiles(pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(files.getContent(), new PaginationMetadata(files.getNumber(), files.getSize(), files.getTotalElements(), files.getTotalPages(), files.hasNext(), files.hasPrevious())));
+                .body(ClinixApiResponse.success(files.getContent(), new PaginationMetadata(files.getNumber(), files.getSize(), files.getTotalElements(), files.getTotalPages(), files.hasNext(), files.hasPrevious())));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get file by ID", description = "Retrieves file metadata details by database ID.")
-    public ResponseEntity<ApiResponse<FileResponse>> getFileById(@PathVariable Long id) {
+    public ResponseEntity<ClinixApiResponse<FileResponse>> getFileById(@PathVariable Long id) {
         log.debug("API call: Fetching file with ID: {}", id);
         FileResponse file = fileService.getFileById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(file));
+                .body(ClinixApiResponse.success(file));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update file by ID", description = "Updates an existing file metadata record.")
-    public ResponseEntity<ApiResponse<FileResponse>> updateFileById(
+    public ResponseEntity<ClinixApiResponse<FileResponse>> updateFileById(
             @PathVariable Long id,
             @RequestBody @Valid UpdateFileRequest request
     ) {
@@ -83,7 +85,7 @@ public class FileController {
         FileResponse updatedFile = fileService.updateFileById(id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(updatedFile));
+                .body(ClinixApiResponse.success(updatedFile));
     }
 
     @DeleteMapping("/{id}")
@@ -100,7 +102,7 @@ public class FileController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "File uploaded successfully"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "File is empty, not a PDF, or too large (limit 10MB)")
     })
-    public ResponseEntity<ApiResponse<FileResponse>> uploadFile(
+    public ResponseEntity<ClinixApiResponse<FileResponse>> uploadFile(
             @RequestParam("patientId") Long patientId,
             @RequestParam("file") MultipartFile file
     ) {
@@ -108,17 +110,17 @@ public class FileController {
         FileResponse response = fileService.uploadPatientPdf(patientId, file);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @GetMapping("/patient/{patientId}")
     @Operation(summary = "Get file by Patient ID", description = "Retrieves file metadata details by patient ID.")
-    public ResponseEntity<ApiResponse<FileResponse>> getFileByPatientId(@PathVariable Long patientId) {
+    public ResponseEntity<ClinixApiResponse<FileResponse>> getFileByPatientId(@PathVariable Long patientId) {
         log.debug("API call: Fetching file with Patient ID: {}", patientId);
         FileResponse file = fileService.getFileByPatientId(patientId);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(file));
+                .body(ClinixApiResponse.success(file));
     }
 
     @GetMapping("/patient/{patientId}/pdf")

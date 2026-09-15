@@ -1,6 +1,6 @@
 package com.clinix.forge.treatment;
 
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.treatment.dto.CreateTreatmentRequest;
 import com.clinix.forge.treatment.dto.TreatmentResponse;
@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @Validated
 @RestController
@@ -30,7 +32,7 @@ public class TreatmentController {
 
     @PostMapping
     @Operation(summary = "Create a treatment", description = "Creates a new patient treatment record.")
-    public ResponseEntity<ApiResponse<TreatmentResponse>> createTreatment(
+    public ResponseEntity<ClinixApiResponse<TreatmentResponse>> createTreatment(
             @PathVariable Long patientId,
             @RequestBody @Valid CreateTreatmentRequest request
     ) {
@@ -38,12 +40,12 @@ public class TreatmentController {
         TreatmentResponse response = treatmentService.createTreatment(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @GetMapping
     @Operation(summary = "Get treatments (Paginated)", description = "Retrieves a paginated list of all treatments.")
-    public ResponseEntity<ApiResponse<java.util.List<TreatmentResponse>>> getAllTreatments(
+    public ResponseEntity<ClinixApiResponse<List<TreatmentResponse>>> getAllTreatments(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number must be greater than or equal to 0.") int pageNo,
             @RequestParam(defaultValue = "10") @Min(value = 5, message = "Page size must be at least 5.") @Max(value = 1000, message = "Page size must be less than or equal to 1000.") int pageSize,
             @PathVariable Long patientId
@@ -52,12 +54,12 @@ public class TreatmentController {
         Page<TreatmentResponse> response = treatmentService.getAllTreatments(patientId, pageNo, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
+                .body(ClinixApiResponse.success(response.getContent(), new PaginationMetadata(response.getNumber(), response.getSize(), response.getTotalElements(), response.getTotalPages(), response.hasNext(), response.hasPrevious())));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get treatment by ID", description = "Retrieves a treatment's details by ID.")
-    public ResponseEntity<ApiResponse<TreatmentResponse>> getTreatmentById(
+    public ResponseEntity<ClinixApiResponse<TreatmentResponse>> getTreatmentById(
             @PathVariable Long patientId,
             @PathVariable Long id
     ) {
@@ -65,12 +67,12 @@ public class TreatmentController {
         TreatmentResponse response = treatmentService.getTreatmentById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update treatment by ID", description = "Updates an existing treatment record.")
-    public ResponseEntity<ApiResponse<TreatmentResponse>> updateTreatmentById(
+    public ResponseEntity<ClinixApiResponse<TreatmentResponse>> updateTreatmentById(
             @PathVariable Long patientId,
             @PathVariable Long id,
             @RequestBody @Valid UpdateTreatmentRequest request
@@ -79,7 +81,7 @@ public class TreatmentController {
         TreatmentResponse response = treatmentService.updateTreatmentById(id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(response));
+                .body(ClinixApiResponse.success(response));
     }
 
     @DeleteMapping("/{id}")
