@@ -1,6 +1,6 @@
 package com.clinix.forge.patient;
 
-import com.clinix.forge.core.payload.ApiResponse;
+import com.clinix.forge.core.payload.ClinixApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.patient.dto.CreatePatientRequest;
 import com.clinix.forge.patient.dto.PatientResponse;
@@ -49,7 +49,7 @@ public class PatientController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid input data"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Doctor not found")
     })
-    public ResponseEntity<ApiResponse<PatientResponse>> addPatient(
+    public ResponseEntity<ClinixApiResponse<PatientResponse>> addPatient(
             @RequestBody @Valid CreatePatientRequest request
     ) {
         log.debug("API call: Create a new patient record");
@@ -57,7 +57,7 @@ public class PatientController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(savedPatient));
+                .body(ClinixApiResponse.success(savedPatient));
     }
 
     /**
@@ -72,7 +72,7 @@ public class PatientController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Patient record retrieved successfully"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Patient not found")
     })
-    public ResponseEntity<ApiResponse<PatientResponse>> getPatientById(
+    public ResponseEntity<ClinixApiResponse<PatientResponse>> getPatientById(
             @PathVariable Long id
     ) {
         log.debug("API call: Fetching patient with ID: {}", id);
@@ -80,7 +80,7 @@ public class PatientController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(patient));
+                .body(ClinixApiResponse.success(patient));
     }
 
     /**
@@ -95,7 +95,7 @@ public class PatientController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Patient record retrieved successfully"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Patient not found")
     })
-    public ResponseEntity<ApiResponse<PatientResponse>> getPatientByCaseNo(
+    public ResponseEntity<ClinixApiResponse<PatientResponse>> getPatientByCaseNo(
             @PathVariable String caseNo
     ) {
         log.debug("API call: Fetching patient with Case No: {}", caseNo);
@@ -103,7 +103,7 @@ public class PatientController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(patient));
+                .body(ClinixApiResponse.success(patient));
     }
 
     /**
@@ -122,7 +122,7 @@ public class PatientController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Patient records retrieved successfully"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid validation parameters")
     })
-    public ResponseEntity<ApiResponse<java.util.List<PatientResponse>>> searchPatients(
+    public ResponseEntity<ClinixApiResponse<List<PatientResponse>>> searchPatients(
             @RequestParam(defaultValue = "0")
             @Min(value = 0, message = "Page number must be greater than or equal to 0.")
             int pageNo,
@@ -140,11 +140,11 @@ public class PatientController {
                 pageNo, pageSize, name, phoneNo, caseNo);
 
         Page<PatientResponse> patients = patientService.searchPatients(
-                name, phoneNo, caseNo, pageNo, pageSize);
+                phoneNo, pageNo, pageSize);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(patients.getContent(), new PaginationMetadata(patients.getNumber(), patients.getSize(), patients.getTotalElements(), patients.getTotalPages(), patients.hasNext(), patients.hasPrevious())));
+                .body(ClinixApiResponse.success(patients.getContent(), new PaginationMetadata(patients.getNumber(), patients.getSize(), patients.getTotalElements(), patients.getTotalPages(), patients.hasNext(), patients.hasPrevious())));
     }
 
     /**
@@ -161,7 +161,7 @@ public class PatientController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid input data"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Patient not found")
     })
-    public ResponseEntity<ApiResponse<PatientResponse>> updatePatientById(
+    public ResponseEntity<ClinixApiResponse<PatientResponse>> updatePatientById(
             @PathVariable Long id,
             @RequestBody @Valid UpdatePatientRequest request
     ) {
@@ -170,23 +170,23 @@ public class PatientController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(updatedPatient));
+                .body(ClinixApiResponse.success(updatedPatient));
     }
 
     @GetMapping("/medical-conditions")
     @Operation(summary = "Get all medical conditions", description = "Retrieves a list of all distinct medical conditions.")
-    public ResponseEntity<ApiResponse<List<String>>> getAllMedicalConditions() {
+    public ResponseEntity<ClinixApiResponse<List<String>>> getAllMedicalConditions() {
         log.debug("API call: Fetching all medical conditions");
         List<String> conditions = patientService.getAllMedicalConditions();
-        return ResponseEntity.ok(ApiResponse.success(conditions));
+        return ResponseEntity.ok(ClinixApiResponse.success(conditions));
     }
 
     @GetMapping("/drug-allergies")
     @Operation(summary = "Get all drug allergies", description = "Retrieves a list of all distinct drug allergies.")
-    public ResponseEntity<ApiResponse<List<String>>> getAllDrugAllergies() {
+    public ResponseEntity<ClinixApiResponse<List<String>>> getAllDrugAllergies() {
         log.debug("API call: Fetching all drug allergies");
         List<String> allergies = patientService.getAllDrugAllergies();
-        return ResponseEntity.ok(ApiResponse.success(allergies));
+        return ResponseEntity.ok(ClinixApiResponse.success(allergies));
     }
 
     /**
