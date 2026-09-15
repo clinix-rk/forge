@@ -1,6 +1,5 @@
 package com.clinix.forge.prescription;
 
-
 import com.clinix.forge.core.payload.ClinixApiResponse;
 import com.clinix.forge.core.payload.PaginationMetadata;
 import com.clinix.forge.core.pdf.PdfResponseUtil;
@@ -8,6 +7,7 @@ import com.clinix.forge.prescription.dto.CreatePrescriptionRequest;
 import com.clinix.forge.prescription.dto.PdfData;
 import com.clinix.forge.prescription.dto.PrescriptionResponse;
 import com.clinix.forge.prescription.dto.UpdatePrescriptionRequest;
+import com.clinix.forge.prescription.types.PrescriptionPdfResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Nullable;
@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -103,22 +102,13 @@ public class PrescriptionController {
     )
     public ResponseEntity<byte[]> getPrescriptionPdf(
             @PathVariable Long id,
-            @RequestParam String referralType,
             @Nullable @RequestBody PdfData data) {
 
-        log.info("API call: Generate prescription PDF for ID: {}, referralType: {}", id, referralType);
+        log.info("API call: Generate prescription PDF for ID: {}", id);
 
-        // Enforce conditional requirement
-        if (isDataRequired(referralType) && data == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Request body 'data' is required when referralType is 'extended' or 'standard'."
-            );
-        }
+        PrescriptionPdfResponse pdfResponse = prescriptionService.generatePrescriptionPdf(id, data);
 
-        byte[] pdf = prescriptionService.generatePrescriptionPdf(id, referralType, data);
-
-        return PdfResponseUtil.inline(pdf, "prescription.pdf");
+        return PdfResponseUtil.inline(pdfResponse.pdf(), pdfResponse.name());
     }
 
     private boolean isDataRequired(String referralType) {
