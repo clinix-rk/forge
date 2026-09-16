@@ -9,6 +9,9 @@ public record PrescriptionMedicineResponse(
         @Schema(description = "Unique ID of the prescription medicine item record", example = "1")
         Long id,
 
+        @Schema(description = "Serial No of the medicine to prescribe", example = "1")
+        Long serialNo,
+
         @Schema(description = "Unique ID of the medicine catalog item", example = "2")
         Long medicineId,
 
