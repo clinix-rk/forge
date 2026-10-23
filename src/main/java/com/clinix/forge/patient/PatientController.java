@@ -140,7 +140,7 @@ public class PatientController {
                 pageNo, pageSize, name, phoneNo, caseNo);
 
         Page<PatientResponse> patients = patientService.searchPatients(
-                phoneNo, pageNo, pageSize);
+                caseNo, name, phoneNo, pageNo, pageSize);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

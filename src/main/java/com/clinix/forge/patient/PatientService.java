@@ -96,13 +96,11 @@ public class PatientService {
      */
     @Transactional(readOnly = true)
     public Page<PatientResponse> searchPatients(
-            String term, int pageNo, int pageSize) {
-        log.debug("Searching patients with serach term: {}, Returning page {} of size {}",
-                term, pageNo, pageSize);
+            String caseNo, String name, String phoneNo, int pageNo, int pageSize) {
 
         // Use 0-based page index directly
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
-        Page<PatientEntity> patientPage = patientRepository.searchPatients(term, pageRequest);
+        Page<PatientEntity> patientPage = patientRepository.searchPatients(caseNo, name, phoneNo, pageRequest);
 
         return patientPage.map(patientMapper::toResponse);
     }
