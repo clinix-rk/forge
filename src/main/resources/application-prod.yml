@@ -1,6 +1,6 @@
 spring:
     datasource:
-        url: jdbc:postgresql://${SPRING_DATASOURCE_HOST:postgres-db}:${SPRING_DATASOURCE_PORT:5432}/${SPRING_DATASOURCE_DATABASE:clinix_datastore}
+        url: jdbc:postgresql://${SPRING_DATASOURCE_HOST:clinix-db}:${SPRING_DATASOURCE_PORT:5432}/${SPRING_DATASOURCE_DATABASE:clinix_datastore}
         username: ${SPRING_DATASOURCE_USERNAME:clinix_application}
         password: ${SPRING_DATASOURCE_PASSWORD:password}
         hikari:
